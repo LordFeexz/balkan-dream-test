@@ -12,4 +12,5 @@ export interface Employee {
   position: string;
   isPayoneer: boolean;
   startdate: Date;
+  firingdate?: Date;
 }

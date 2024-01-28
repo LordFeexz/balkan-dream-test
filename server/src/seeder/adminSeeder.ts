@@ -17,9 +17,11 @@ config();
           password: bcrypt.hash("Default@123"),
         })
       );
+      break;
     case "down":
     case "DOWN":
       console.log(await admin.deleteOne({ email: "admin123@gmail.com" }));
+      break;
     default:
       break;
   }

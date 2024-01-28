@@ -16,7 +16,7 @@ export default new (class AdminController {
       const { email, password } = await adminValidation.loginValidate(req.body);
 
       const admin = await Admin.findOne({ email });
-      if (!admin || bcrypt.compare(password, admin.password))
+      if (!admin || !bcrypt.compare(password, admin.password))
         throw new AppError({
           message: "invalid credentials",
           statusCode: 401,

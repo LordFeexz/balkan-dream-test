@@ -41,6 +41,10 @@ export default new (class Employee extends BaseModel<IEmployee> {
           type: Boolean,
           default: false,
         },
+        firingdate: {
+          type: Date,
+          required: false,
+        },
       })
     );
   }
