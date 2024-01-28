@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { type ApplicationError } from "../base/error";
+import AppError, { type ApplicationError } from "../base/error";
 import response from "./response";
 import type { ResponsePayload } from "../interfaces/response";
 
@@ -10,8 +10,17 @@ class ErrorHandler {
     res: Response,
     next: NextFunction
   ): void {
-    let message = err.message ?? "Internal Server Error";
-    let code = (err as ApplicationError).statusCode ?? 500;
+    let message =
+      err instanceof AppError ? err.message : "Internal Server Error";
+    let code =
+      err instanceof AppError ? (err as ApplicationError).statusCode : 500;
+
+    if (err.message.includes("E11000 duplicate")) {
+      const match = err.message.match(/index: (\w+)_\d+/);
+      const fieldName = match ? match[1] : null;
+      message = `${fieldName} is already registered.`
+      code = 409
+    }
 
     const payload: ResponsePayload = {
       res,
@@ -21,8 +30,10 @@ class ErrorHandler {
     if ((err as ApplicationError).data)
       payload.data = (err as ApplicationError).data;
 
-    response.createResponse(payload)
+    if (code === 500) console.log(err)
+
+    response.createResponse(payload);
   }
 }
 
-export default new ErrorHandler().errorHandling
+export default new ErrorHandler().errorHandling;

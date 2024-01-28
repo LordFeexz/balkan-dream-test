@@ -15,12 +15,16 @@ export default new (class Employee extends BaseModel<IEmployee> {
           type: String,
           required: true,
         },
-        JBMG: {
+        JMBG: {
           type: String,
           required: true,
           unique: true,
         },
-        birthDate: {
+        birthdate: {
+          type: Date,
+          required: true,
+        },
+        startdate: {
           type: Date,
           required: true,
         },
