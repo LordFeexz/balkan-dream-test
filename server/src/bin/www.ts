@@ -1,8 +1,13 @@
 import { config } from "dotenv";
 import app from "..";
+import mongoConnect from "../database/mongo";
 
 config();
 
-const port = process.env.PORT ?? 3001;
+(async () => {
+  await mongoConnect();
+  console.log(`Database connected`);
 
-app.listen(port, () => console.log(`app listening on port ${port}`));
+  const port = process.env.PORT ?? 3001;
+  app.listen(port, () => console.log(`app listening on port ${port}`));
+})();
