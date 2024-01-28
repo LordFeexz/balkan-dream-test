@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import AppError, { type ApplicationError } from "../base/error";
 import response from "./response";
 import type { ResponsePayload } from "../interfaces/response";
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
 class ErrorHandler {
   public errorHandling(
@@ -20,6 +21,11 @@ class ErrorHandler {
       const fieldName = match ? match[1] : null;
       message = `${fieldName} is already registered.`
       code = 409
+    }
+
+    if (err instanceof JsonWebTokenError || err instanceof TokenExpiredError) {
+      code = 401;
+      message = "missing or invalid token";
     }
 
     const payload: ResponsePayload = {
