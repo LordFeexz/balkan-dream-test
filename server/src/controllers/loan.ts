@@ -5,6 +5,8 @@ import response from "../middlewares/response";
 import type { IEmployee } from "../interfaces/employee";
 import AppError from "../base/error";
 import Loan from "../models/loan";
+import Salary from "../models/salary";
+import helpers from "../helpers";
 
 export default new (class LoanController {
   public async createLoan(
@@ -58,11 +60,25 @@ export default new (class LoanController {
           statusCode: 409,
         });
 
-      //check salary
+      const salary = await Salary.findOne({
+        employeeId: (employee as any)._id,
+      });
+      if (!salary)
+        throw new AppError({
+          message: "salary not found",
+          statusCode: 404,
+        });
+
+      //you can change the schema implementation
+      if (salary.amount < amount)
+        throw new AppError({
+          message: "loan amount cannot greater than salary amount",
+          statusCode: 400,
+        });
 
       await Loan.create({
         amount,
-        installment: 0,
+        installment: helpers.countInstallment(amount, period),
         date,
         unit,
         description,
