@@ -23,15 +23,17 @@ export default new (class EmployeeController {
         ...payload
       } = await employeeValidation.validateNewEmployee(req.body);
 
-      const data = await Employee.create({ ...payload }, { session });
+      const data = await Employee.create([{ ...payload }], { session });
       await Salary.create(
-        {
-          amount: salaryAmount,
-          date: payload.startdate,
-          description: "N/A",
-          employeeId: (data as any)._id,
-          historyRaises: [] as HistoryRaises[],
-        },
+        [
+          {
+            amount: salaryAmount,
+            date: payload.startdate,
+            description: "N/A",
+            employeeId: (data[0] as any)._id,
+            historyRaises: [] as HistoryRaises[],
+          },
+        ],
         { session }
       );
 
@@ -40,7 +42,7 @@ export default new (class EmployeeController {
         res,
         code: 201,
         message: "ok",
-        data,
+        data: data[0],
       });
     } catch (err) {
       await session.abortTransaction();

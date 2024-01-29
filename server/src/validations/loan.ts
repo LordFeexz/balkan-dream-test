@@ -20,6 +20,7 @@ export default new (class LoanValidation extends BaseValidation {
       .required("period is required")
       .min(1, "minimum period is 1")
       .max(12, "maximum period is 12"),
+    note: yup.string().optional(),
   });
 
   public validateCreateLoan = async (data: any) =>

@@ -20,4 +20,5 @@ export interface CreateLoanProps {
   unit: LoanUnit;
   employeeId: string;
   period: number;
+  note?: string;
 }
