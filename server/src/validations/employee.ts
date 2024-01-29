@@ -1,6 +1,6 @@
 import BaseValidation from "../base/validation";
 import * as yup from "yup";
-import type { Employee } from "../interfaces/employee";
+import type { NewEmployeeProps } from "../interfaces/employee";
 
 export default new (class EmployeeValidations extends BaseValidation {
   private readonly validateNewEmployeeSchema = yup.object().shape({
@@ -27,13 +27,17 @@ export default new (class EmployeeValidations extends BaseValidation {
     position: yup.string().required("position is required"),
     startdate: yup.date().optional().default(new Date()),
     isPayoneer: yup.boolean().optional().default(false),
+    salaryAmount: yup
+      .number()
+      .required("salaryAmount is required")
+      .min(1, "salaryAmount must greater than 0"),
   });
 
   public validateNewEmployee = async (data: any) =>
-    await this.validate<Employee>(this.validateNewEmployeeSchema, data);
+    await this.validate<NewEmployeeProps>(this.validateNewEmployeeSchema, data);
 
   public validateBulkNewEmployee = async (data: any) =>
-    await this.validate<{ datas: Employee[] }>(
+    await this.validate<{ datas: NewEmployeeProps[] }>(
       yup.object().shape({
         datas: yup
           .array()

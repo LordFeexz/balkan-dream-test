@@ -34,6 +34,17 @@ export default new (class Loan extends BaseModel<ILoan> {
           required: true,
           ref: "Employee",
         },
+        status: {
+          type: String,
+          enum: ["Process", "Finish", "NPL"],
+          default: "Process",
+        },
+        period: {
+          type: Number,
+          required: true,
+          min: [1, "Minimum period is 1"],
+          max: [12, "Maximum period is 12"],
+        },
       })
     );
   }

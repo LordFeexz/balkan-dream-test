@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import type { LoanUnit } from ".";
+import type { LoanStatus, LoanUnit } from ".";
 import type { BaseDocument } from "../base/model";
 
 export interface ILoan extends BaseDocument {
@@ -9,4 +9,15 @@ export interface ILoan extends BaseDocument {
   description: string;
   unit: LoanUnit;
   employeeId: Types.ObjectId;
+  status: LoanStatus;
+  period: number;
+}
+
+export interface CreateLoanProps {
+  amount: number;
+  date: Date;
+  description: string;
+  unit: LoanUnit;
+  employeeId: string;
+  period: number;
 }

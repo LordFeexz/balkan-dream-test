@@ -24,6 +24,18 @@ export default new (class Salary extends BaseModel<ISalary> {
           required: true,
           ref: "Employee",
         },
+        historyRaises: [
+          {
+            amount: {
+              type: Number,
+              required: true,
+            },
+            date: {
+              type: Date,
+              required: true,
+            },
+          },
+        ],
       })
     );
   }

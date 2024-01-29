@@ -16,7 +16,7 @@ export default abstract class BaseModel<T extends BaseDocument> {
   public model: Model<
     T,
     {},
-    {},
+    any,
     {},
     Document<unknown, {}, T> & T & { _id: Types.ObjectId },
     any

@@ -6,4 +6,10 @@ export interface ISalary extends BaseDocument {
   date: Date;
   description: string;
   employeeId: Types.ObjectId;
+  historyRaises: HistoryRaises[];
+}
+
+export interface HistoryRaises {
+  amount: number;
+  date: Date;
 }
