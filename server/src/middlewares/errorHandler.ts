@@ -17,6 +17,7 @@ class ErrorHandler {
       err instanceof AppError ? (err as ApplicationError).statusCode : 500;
 
     if (err.message.includes("E11000 duplicate")) {
+      console.log(err.message)
       const match = err.message.match(/index: (\w+)_\d+/);
       const fieldName = match ? match[1] : null;
       message = `${fieldName} is already registered.`

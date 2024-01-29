@@ -25,6 +25,44 @@ export default new (class EmployeeController {
     }
   }
 
+  public async registerBulkNewEmployee(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { datas } = await employeeValidation.validateBulkNewEmployee(
+        req.body
+      );
+
+      const unique = datas.filter(
+        (val, i, self) => i === self.findIndex((el) => el.JMBG === val.JMBG)
+      );
+
+      const employees = await Employee.find({
+        JMBG: { $in: unique.map(({ JMBG }) => JMBG) },
+      });
+
+      const payload = unique.filter(
+        (el) => !employees.some((employee) => employee.JMBG === el.JMBG)
+      );
+      if (!payload.length)
+        throw new AppError({
+          message: "there is no processed user,please check your user data",
+          statusCode: 400,
+        });
+
+      response.createResponse({
+        res,
+        code: 201,
+        message: "ok",
+        data: await Employee.insertMany(payload),
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
   public async firedAEmployee(
     req: Request,
     res: Response,

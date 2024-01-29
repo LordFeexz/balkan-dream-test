@@ -6,6 +6,7 @@ export default new (class EmployeeRoute extends BaseRoutes {
   routes(): void {
     this.router
       .post("/register", employeeController.registerNewEmployee)
+      .post("/register/bulk", employeeController.registerBulkNewEmployee)
       .delete(
         "/:employeeId",
         checkValidObjectId("employeeId"),
