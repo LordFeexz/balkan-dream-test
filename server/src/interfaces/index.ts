@@ -1,5 +1,21 @@
+import type { Document, Types, Model, ClientSession } from "mongoose";
+import type { BaseDocument } from "../base/model";
+
 export type Gender = "M" | "F";
 
 export type LoanUnit = "BAM" | "$";
 
 export type LoanStatus = "Process" | "Finish" | "NPL";
+
+export type ApplicationModel<T extends BaseDocument> = Model<
+  T,
+  {},
+  any,
+  {},
+  Document<unknown, {}, T> & T & { _id: Types.ObjectId },
+  any
+>;
+
+export interface DbOpts {
+  session?: ClientSession;
+}

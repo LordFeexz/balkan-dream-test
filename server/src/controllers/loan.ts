@@ -1,14 +1,12 @@
 import type { Request, Response, NextFunction } from "express";
 import loanValidation from "../validations/loan";
-import Employee from "../models/employee";
 import response from "../middlewares/response";
-import type { IEmployee } from "../interfaces/employee";
 import AppError from "../base/error";
-import Loan from "../models/loan";
-import Salary from "../models/salary";
-import helpers from "../helpers";
 import { startSession } from "mongoose";
-import LoanNote from "../models/loanNote";
+import employeeService from "../services/employee";
+import salaryService from "../services/salary";
+import loanService from "../services/loan";
+import loanNoteService from "../services/loanNote";
 
 export default new (class LoanController {
   public async createLoan(
@@ -29,9 +27,7 @@ export default new (class LoanController {
         note,
       } = await loanValidation.validateCreateLoan(req.body);
 
-      const employee = await ((Employee as unknown) as IEmployee).getByIdentifier(
-        employeeId
-      );
+      const employee = await employeeService.getByIdentifier(employeeId);
       if (!employee)
         throw new AppError({
           message: "employee not found",
@@ -54,20 +50,13 @@ export default new (class LoanController {
           statusCode: 400,
         });
 
-      if (
-        await Loan.findOne({
-          employeeId: (employee as any)._id,
-          status: "Process",
-        })
-      )
+      if (await loanService.findEmployeeProcessedLoan(employee._id))
         throw new AppError({
           message: "employee has an active loan",
           statusCode: 409,
         });
 
-      const salary = await Salary.findOne({
-        employeeId: (employee as any)._id,
-      });
+      const salary = await salaryService.findEmployeeSalary(employee._id);
       if (!salary)
         throw new AppError({
           message: "salary not found",
@@ -81,34 +70,25 @@ export default new (class LoanController {
           statusCode: 400,
         });
 
-      const data = await Loan.create(
-        [
-          {
-            amount,
-            installment: helpers.countInstallment(
-              amount,
-              period,
-              amount * (1 / 100)
-            ),
-            date,
-            unit,
-            description,
-            employeeId: (employee as any)._id,
-            period,
-          },
-        ],
+      const data = await loanService.createLoan(
+        employee._id,
+        {
+          amount,
+          unit,
+          date,
+          description,
+          period,
+        },
         { session }
       );
 
       if (note)
-        await LoanNote.create(
-          [
-            {
-              description: note,
-              employeeId: (employee as any)._id,
-              loanId: (data[0] as any)._id,
-            },
-          ],
+        await loanNoteService.createNote(
+          {
+            description: note,
+            employeeId: employee._id,
+            loanId: data._id,
+          },
           { session }
         );
 
@@ -117,7 +97,7 @@ export default new (class LoanController {
         res,
         code: 201,
         message: "success",
-        data: data[0],
+        data,
       });
     } catch (err) {
       await session.abortTransaction();

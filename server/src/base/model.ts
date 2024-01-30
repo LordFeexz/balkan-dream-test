@@ -1,11 +1,10 @@
 import {
   type Document,
   type SchemaDefinition,
-  Model,
   Schema,
   model as DbModel,
-  Types,
 } from "mongoose";
+import { ApplicationModel } from "../interfaces";
 
 export interface BaseDocument extends Document {
   createdAt: Date;
@@ -13,14 +12,7 @@ export interface BaseDocument extends Document {
 }
 
 export default abstract class BaseModel<T extends BaseDocument> {
-  public model: Model<
-    T,
-    {},
-    any,
-    {},
-    Document<unknown, {}, T> & T & { _id: Types.ObjectId },
-    any
-  >;
+  public model: ApplicationModel<T>
   protected modelSchema: SchemaDefinition<T>;
 
   private factory(

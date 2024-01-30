@@ -1,13 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import employeeValidation from "../validations/employee";
-import Employee from "../models/employee";
 import response from "../middlewares/response";
 import { Types } from "mongoose";
 import AppError from "../base/error";
 import { startSession } from "mongoose";
 import type { HistoryRaises, ISalary } from "../interfaces/salary";
 import type { NewEmployeeProps } from "../interfaces/employee";
-import Salary from "../models/salary";
+import salaryService from "../services/salary";
+import employeeService from "../services/employee";
 
 export default new (class EmployeeController {
   public async registerNewEmployee(
@@ -23,17 +23,13 @@ export default new (class EmployeeController {
         ...payload
       } = await employeeValidation.validateNewEmployee(req.body);
 
-      const data = await Employee.create([{ ...payload }], { session });
-      await Salary.create(
-        [
-          {
-            amount: salaryAmount,
-            date: payload.startdate,
-            description: "N/A",
-            employeeId: (data[0] as any)._id,
-            historyRaises: [] as HistoryRaises[],
-          },
-        ],
+      const data = await employeeService.createEmployee(payload, { session });
+      await salaryService.createSalary(
+        {
+          date: payload.startdate,
+          amount: salaryAmount,
+          employeeId: data._id,
+        },
         { session }
       );
 
@@ -42,7 +38,7 @@ export default new (class EmployeeController {
         res,
         code: 201,
         message: "ok",
-        data: data[0],
+        data,
       });
     } catch (err) {
       await session.abortTransaction();
@@ -68,9 +64,9 @@ export default new (class EmployeeController {
         (val, i, self) => i === self.findIndex((el) => el.JMBG === val.JMBG)
       );
 
-      const employees = await Employee.find({
-        JMBG: { $in: unique.map(({ JMBG }) => JMBG) },
-      });
+      const employees = await employeeService.findMultipleByJMBG(
+        unique.map(({ JMBG }) => JMBG)
+      );
 
       const payload = unique.filter(
         (el) => !employees.some((employee) => employee.JMBG === el.JMBG)
@@ -81,7 +77,9 @@ export default new (class EmployeeController {
           statusCode: 400,
         });
 
-      const insertedData = await Employee.insertMany(payload, { session });
+      const insertedData = await employeeService.createManyEmployee(payload, {
+        session,
+      });
       const salaryPayload: ISalary[] = [];
       for (const data of insertedData) {
         const body = unique.find(
@@ -96,7 +94,7 @@ export default new (class EmployeeController {
           historyRaises: [] as HistoryRaises[],
         } as ISalary);
       }
-      await Salary.insertMany(salaryPayload, { session });
+      await salaryService.createManySalary(salaryPayload, { session });
 
       await session.commitTransaction();
       response.createResponse({
@@ -122,7 +120,7 @@ export default new (class EmployeeController {
       const { employeeId } = req.params;
       const employeeObjectId = new Types.ObjectId(employeeId);
 
-      const employee = await Employee.findById(employeeObjectId);
+      const employee = await employeeService.findById(employeeObjectId);
       if (!employee)
         throw new AppError({
           message: "employee not found",
@@ -135,14 +133,7 @@ export default new (class EmployeeController {
           statusCode: 409,
         });
 
-      await Employee.updateOne(
-        { _id: employeeObjectId },
-        {
-          $set: {
-            firingdate: new Date(),
-          },
-        }
-      );
+      await employeeService.firedAnEmployee(employeeObjectId);
 
       response.createResponse({ res, code: 200, message: "success" });
     } catch (err) {
