@@ -1,6 +1,10 @@
 import { isValidObjectId, Types } from "mongoose";
 import BaseService from "../base/services";
-import type { IEmployee, NewEmployeeProps } from "../interfaces/employee";
+import type {
+  EmployeeDetail,
+  IEmployee,
+  NewEmployeeProps,
+} from "../interfaces/employee";
 import employee from "../models/employee";
 import type { DbOpts, Gender } from "../interfaces";
 
@@ -35,5 +39,36 @@ export default new (class Employee extends BaseService<IEmployee> {
 
   public async createManyEmployee(data: NewEmployeeProps[], DbOpts?: DbOpts) {
     return await this.createMany(data, DbOpts);
+  }
+
+  public async findEmployeeDetail(_id: Types.ObjectId) {
+    const agg = await this.model.aggregate([
+      {
+        $match: {
+          _id,
+        },
+      },
+      {
+        $lookup: {
+          from: "salaries",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "salary",
+        },
+      },
+      {
+        $unwind: "$salary",
+      },
+      {
+        $lookup: {
+          from: "loans",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "loans",
+        },
+      },
+    ]);
+
+    return Array.isArray(agg) ? (agg[0] as EmployeeDetail) : null;
   }
 })();

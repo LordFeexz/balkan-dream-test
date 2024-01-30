@@ -2,7 +2,6 @@ import { Schema } from "mongoose";
 import BaseModel from "../base/model";
 import type { ISalary } from "../interfaces/salary";
 
-//first time i think its a salary payment model but i just realize,this is a salaryRaise model
 export default new (class Salary extends BaseModel<ISalary> {
   constructor() {
     super(
@@ -32,6 +31,22 @@ export default new (class Salary extends BaseModel<ISalary> {
               required: true,
             },
             lastChange: {
+              type: Date,
+              required: true,
+            },
+          },
+        ],
+        paymentHistory: [
+          {
+            amount: {
+              Type: Number,
+              required: true,
+            },
+            description: {
+              type: String,
+              default: "N/A",
+            },
+            date: {
               type: Date,
               required: true,
             },

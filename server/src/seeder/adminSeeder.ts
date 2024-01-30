@@ -4,7 +4,7 @@ import bcrypt from "../utils/bcrypt";
 import { config } from "dotenv";
 
 config();
-
+//run ts-node src/seeder/adminSeeder up
 (async function () {
   const connection = await mongoConnect();
   switch (process.argv[2]) {

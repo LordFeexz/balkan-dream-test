@@ -11,7 +11,6 @@ export default new (class SalaryValidation extends BaseValidation {
           .required("amount is required")
           .min(1, "minimum salary input is 1"),
         description: yup.string().optional().default("N/A"),
-        employeeId: yup.string().required("employeeId is required"),
       }),
       data
     );

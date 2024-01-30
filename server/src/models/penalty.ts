@@ -25,16 +25,15 @@ export default new (class Penalty extends BaseModel<IPenalty> {
           required: true,
           ref: "Employee",
         },
-        loanId: {
-          type: Schema.ObjectId,
-          required: true,
-          ref: "Loan",
-        },
         unit: {
           type: String,
           required: true,
           enum: ["BAM", "$"],
           default: "BAM",
+        },
+        isPayed: {
+          type: Boolean,
+          default: false,
         },
       })
     );

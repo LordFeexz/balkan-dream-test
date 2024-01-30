@@ -7,6 +7,7 @@ export interface ISalary extends BaseDocument {
   description: string;
   employeeId: Types.ObjectId;
   historyRaises: HistoryRaises[];
+  paymentHistory: PaymentHistory[];
 }
 
 export interface HistoryRaises {
@@ -14,8 +15,13 @@ export interface HistoryRaises {
   lastChange: Date;
 }
 
+export interface PaymentHistory {
+  amount: number;
+  description: string;
+  date: Date;
+}
+
 export interface UpdateSalaryProps {
   amount: number;
   description: string;
-  employeeId: string;
 }

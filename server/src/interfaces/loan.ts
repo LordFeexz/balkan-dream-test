@@ -18,7 +18,6 @@ export interface CreateLoanProps {
   date: Date;
   description: string;
   unit: LoanUnit;
-  employeeId: string;
   period: number;
   note?: string;
 }

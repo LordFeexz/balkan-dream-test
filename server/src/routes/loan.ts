@@ -3,6 +3,6 @@ import loanController from "../controllers/loan";
 
 export default new (class LoanRoute extends BaseRoutes {
   routes(): void {
-    this.router.post("/", loanController.createLoan);
+    this.router.post("/:employeeId", loanController.createLoan);
   }
 })().router;

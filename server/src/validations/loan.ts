@@ -14,7 +14,6 @@ export default new (class LoanValidation extends BaseValidation {
       .string()
       .required("unit is required")
       .oneOf(["BAM", "$"], "invalid unit"),
-    employeeId: yup.string().required("employeeId is required"),
     period: yup
       .number()
       .required("period is required")

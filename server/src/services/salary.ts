@@ -1,7 +1,11 @@
 import { Types } from "mongoose";
 import BaseService from "../base/services";
 import type { DbOpts } from "../interfaces";
-import type { HistoryRaises, ISalary } from "../interfaces/salary";
+import type {
+  HistoryRaises,
+  ISalary,
+  PaymentHistory,
+} from "../interfaces/salary";
 import salary from "../models/salary";
 
 export default new (class SalaryService extends BaseService<ISalary> {
@@ -56,6 +60,7 @@ export default new (class SalaryService extends BaseService<ISalary> {
         description: "N/A",
         employeeId,
         historyRaises: [] as HistoryRaises[],
+        paymentHistory: [] as PaymentHistory[],
       },
       DbOpts
     );

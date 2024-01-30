@@ -19,13 +19,13 @@ export default new (class LoanController {
     try {
       const {
         amount,
-        employeeId,
         unit,
         date,
         description,
         period,
         note,
       } = await loanValidation.validateCreateLoan(req.body);
+      const { employeeId } = req.params;
 
       const employee = await employeeService.getByIdentifier(employeeId);
       if (!employee)
