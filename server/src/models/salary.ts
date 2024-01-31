@@ -39,7 +39,7 @@ export default new (class Salary extends BaseModel<ISalary> {
         paymentHistory: [
           {
             amount: {
-              Type: Number,
+              type: Number,
               required: true,
             },
             description: {
