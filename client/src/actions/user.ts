@@ -27,3 +27,25 @@ export const loginHandler = ({
       reject(err);
     }
   });
+
+export const googleLogin = (googleToken: string): Promise<string> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        data: { message, data },
+        status,
+      } = await request.Mutation<string>({
+        url: "/admin/google-login",
+        method: HTTPPOST,
+        data: {
+          googleToken,
+        },
+      });
+
+      if (status !== 200) throw { message };
+
+      resolve(data);
+    } catch (err) {
+      reject(err);
+    }
+  });

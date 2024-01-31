@@ -5,6 +5,8 @@ declare global {
       TOKEN_SECRET: string;
       PORT: string;
       DATABASE_URL: string;
+      GOOGLE_OAUTH_CLIENT_SECRET: string;
+      GOOGLE_OAUTH_CLIENT_ID: string;
     }
   }
 }

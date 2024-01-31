@@ -14,4 +14,12 @@ export default new (class AdminValidations extends BaseValidation {
       }),
       data
     );
+
+  public googleLoginValidate = async (data: any) =>
+    await this.validate<{ googleToken: string }>(
+      yup.object().shape({
+        googleToken: yup.string().required("googleToken is required"),
+      }),
+      data
+    );
 })();

@@ -74,7 +74,9 @@ export default function LoginPage() {
                 onChangeHandler={onChange}
                 name="password"
               />
-              <button type="submit">submit</button>
+              <button type="submit" className="btn btn-primary submit-button">
+                submit
+              </button>
             </form>
 
             <p className="no-data" style={{ marginBottom: "-.25rem" }}>
