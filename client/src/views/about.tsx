@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, FileText } from "react-feather";
-import p1 from "../../images/p1.png";
+import p1 from "../images/p1.png";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useState } from "react";
 import ModalVideo from "react-modal-video";

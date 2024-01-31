@@ -2,7 +2,9 @@ import { createBrowserRouter, redirect } from "react-router-dom";
 import LoginPage from "../views/login";
 import MainLayout from "../components/layout/main";
 import NotFound from "../views/notFound";
-import AboutPage from "../views/about/about";
+import AboutPage from "../views/about";
+import TermPage from "../views/term";
+import PrivacyPage from "../views/privacy";
 
 export default createBrowserRouter([
   {
@@ -13,12 +15,18 @@ export default createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-    // loader: () =>
-    //   !localStorage.getItem("access_token") ? redirect("/login") : null,
     children: [
       {
         path: "/about",
         element: <AboutPage />,
+      },
+      {
+        path: "/terms",
+        element: <TermPage />,
+      },
+      {
+        path: "/privacy",
+        element: <PrivacyPage />,
       },
     ],
   },
