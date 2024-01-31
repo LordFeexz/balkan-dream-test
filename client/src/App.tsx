@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import routes from "./routes";
 import "./styles/index.css";
+import "../node_modules/react-modal-video/css/modal-video.css";
 
 function App() {
   return (
