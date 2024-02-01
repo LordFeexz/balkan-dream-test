@@ -35,9 +35,9 @@ export default new (class LoanController {
         });
 
       const now = new Date();
-      if (employee.firingdate && employee.firingdate < now)
+      if (employee.enddate && employee.enddate < now)
         throw new AppError({
-          message: "employee is already fired",
+          message: "employee is already resign",
           statusCode: 400,
         });
 

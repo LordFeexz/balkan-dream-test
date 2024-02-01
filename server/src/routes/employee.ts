@@ -5,6 +5,7 @@ import checkValidObjectId from "../middlewares/checkValidObjectId";
 export default new (class EmployeeRoute extends BaseRoutes {
   routes(): void {
     this.router
+      .get("/", employeeController.getAll)
       .post("/register", employeeController.registerNewEmployee)
       .post("/register/bulk", employeeController.registerBulkNewEmployee)
       .delete(

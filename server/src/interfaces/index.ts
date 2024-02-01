@@ -19,3 +19,27 @@ export type ApplicationModel<T extends BaseDocument> = Model<
 export interface DbOpts {
   session?: ClientSession;
 }
+
+export interface PaginationProps {
+  page: number;
+  limit: number;
+  sortBy: string;
+  direction: string;
+}
+
+export type SearchQuery = PaginationProps & {
+  search?: string;
+};
+
+export interface PaginationOptionalProps {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  direction?: string;
+  search?: string;
+}
+
+export type DataWithTotal<T = any> = {
+  data: T;
+  total: number;
+};

@@ -14,7 +14,7 @@ export interface Employee {
   position: string;
   isPayoneer: boolean;
   startdate: Date;
-  firingdate?: Date;
+  enddate?: Date;
   getByIdentifier: (identifier: string) => Promise<Employee | null>;
 }
 

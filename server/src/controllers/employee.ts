@@ -127,15 +127,51 @@ export default new (class EmployeeController {
           statusCode: 404,
         });
 
-      if (employee.firingdate)
+      if (employee.enddate)
         throw new AppError({
-          message: "employee is already fired",
+          message: "employee is already resign",
           statusCode: 409,
         });
 
       await employeeService.firedAnEmployee(employeeObjectId);
 
       response.createResponse({ res, code: 200, message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async getAll(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const {
+        page,
+        limit,
+        sortBy,
+        direction,
+        search,
+      } = await employeeValidation.queryValidation(req.query);
+
+      const { total, data } = await employeeService.findEmployees({
+        page,
+        limit,
+        sortBy,
+        direction,
+        search,
+      });
+
+      response.createResponse(
+        { res, code: 200, message: "OK", data },
+        {
+          totalData: total,
+          limit,
+          page,
+          totalPage: Math.ceil(total / limit),
+        }
+      );
     } catch (err) {
       next(err);
     }

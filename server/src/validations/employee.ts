@@ -1,6 +1,7 @@
 import BaseValidation from "../base/validation";
 import * as yup from "yup";
 import type { NewEmployeeProps } from "../interfaces/employee";
+import type { SearchQuery } from "../interfaces";
 
 export default new (class EmployeeValidations extends BaseValidation {
   private readonly validateNewEmployeeSchema = yup.object().shape({
@@ -44,6 +45,18 @@ export default new (class EmployeeValidations extends BaseValidation {
           .of(this.validateNewEmployeeSchema)
           .required("datas is required")
           .min(1, "minimum input value is 1"),
+      }),
+      data
+    );
+
+  public queryValidation = async (data: any) =>
+    await this.validate<SearchQuery>(
+      yup.object().shape({
+        page: yup.number().optional().default(1),
+        limit: yup.number().optional().default(20),
+        sortBy: yup.string().optional().default("createdAt"),
+        direction: yup.string().optional().default("desc"),
+        search: yup.string().optional(),
       }),
       data
     );

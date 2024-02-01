@@ -1,5 +1,5 @@
 import axios, { type AxiosInstance, type AxiosResponse } from "axios";
-import type { BaseResponse } from '../interfaces/request'
+import type { BaseResponse, BaseResponseWithPagination } from '../interfaces/request'
 
 export interface Query {
   url: string;
@@ -29,8 +29,8 @@ class ThirdPartyRequest {
     url,
     headers,
     params,
-  }: Query): Promise<AxiosResponse<BaseResponse<T>>> {
-    return this.client<BaseResponse<T>>({
+  }: Query): Promise<AxiosResponse<BaseResponseWithPagination<T>>> {
+    return this.client<BaseResponseWithPagination<T>>({
       url,
       headers,
       method: "GET",

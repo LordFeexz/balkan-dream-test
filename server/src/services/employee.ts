@@ -6,7 +6,8 @@ import type {
   NewEmployeeProps,
 } from "../interfaces/employee";
 import employee from "../models/employee";
-import type { DbOpts, Gender } from "../interfaces";
+import type { DataWithTotal, DbOpts, Gender, SearchQuery } from "../interfaces";
+import helpers from "../helpers";
 
 export default new (class Employee extends BaseService<IEmployee> {
   constructor() {
@@ -70,5 +71,67 @@ export default new (class Employee extends BaseService<IEmployee> {
     ]);
 
     return Array.isArray(agg) ? (agg[0] as EmployeeDetail) : null;
+  }
+
+  public async findEmployees({
+    search,
+    sortBy,
+    direction,
+    limit,
+    page,
+  }: SearchQuery): Promise<DataWithTotal<IEmployee[]>> {
+    const query: any[] = [];
+
+    if (search)
+      query.push({
+        $match: {
+          $or: helpers.getUserSearch(search),
+        },
+      });
+
+    query.push(
+      {
+        $facet: {
+          data: [
+            {
+              $skip: (page - 1) * limit,
+            },
+            {
+              $limit: limit,
+            },
+            {
+              $sort: {
+                [helpers.allowedSortedField(
+                  ["createdAt", "updatedAt", "gender", "_id"],
+                  sortBy,
+                  "createdAt"
+                )]: helpers.getSortDirection(direction),
+              },
+            },
+          ],
+          count: [{ $count: "total" }],
+        },
+      },
+      {
+        $unwind: "$count",
+      },
+      {
+        $project: {
+          data: 1,
+          total: "$count.total",
+        },
+      }
+    );
+    try {
+      const [result] = await this.model.aggregate<DataWithTotal<IEmployee[]>>(
+        query
+      );
+      return result;
+    } catch (err) {
+      return {
+        data: [],
+        total: 0,
+      };
+    }
   }
 })();
