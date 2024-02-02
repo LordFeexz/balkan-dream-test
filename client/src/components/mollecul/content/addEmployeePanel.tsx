@@ -1,10 +1,6 @@
-import type { Employee } from "../../../interfaces/employee";
+import AddEmployeeForm from "../../organ/form/addEmployee";
 
-export interface AddEmployeePanelProps {
-  employees: Employee[];
-}
-
-export default function AddEmployeePanel({ employees }: AddEmployeePanelProps) {
+export default function AddEmployeePanel() {
   return (
     <div className="col-md-4">
       <div className="portlet portlet-boxed">
@@ -13,8 +9,8 @@ export default function AddEmployeePanel({ employees }: AddEmployeePanelProps) {
         </div>
         <div className="portlet-body">
           <div id="settings-content" className="stacked-content">
-            <div className="tab-pane fade in active" id="profile-tab">
-              {/* <AddEmployeeForm addEmployee={this.addEmployee}/> */}
+            <div className="tab-pane in active" id="profile-tab">
+              <AddEmployeeForm />
             </div>
           </div>
         </div>

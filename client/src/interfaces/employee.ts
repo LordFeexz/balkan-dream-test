@@ -18,3 +18,15 @@ export interface GetListEmployee {
   totalData: number;
   totalPage: number;
 }
+
+export interface AddEmployeeState {
+  name: string;
+  surname: string;
+  JMBG: string;
+  birthdate: string;
+  gender: string;
+  position: string;
+  startdate: string;
+  isPayoneer: boolean;
+  salaryAmount: number;
+}

@@ -21,19 +21,13 @@ export default function Employee() {
   return (
     <div className="container">
       <div className="row">
-        <AddEmployeePanel
-          //   addEmployee={addEmployee}
-          employees={employees}
-        />
+        <AddEmployeePanel />
         <div className="col-md-8">
           <div className="portlet portlet-boxed">
             <div className="portlet-header">
               <h4 className="portlet-title">Employees</h4>
             </div>
-            <EmployeeTable
-              employees={employees}
-              //   removeEmployee={removeEmployee}
-            />
+            <EmployeeTable employees={employees} />
           </div>
         </div>
       </div>
