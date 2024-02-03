@@ -1,38 +1,16 @@
 import type { Employee } from "../../../interfaces/employee";
-import { XCircle, CheckCircle } from "react-feather";
 import { Link } from "react-router-dom";
+import SetStatusEmployeeBtn from "../../atom/button/setStatusBtn";
 
 export interface EmployeeDetailProps {
   employee: Employee;
 }
 
-function isActiveEmployee(active: boolean) {
-  return active ? (
-    <a
-      className="table-actions"
-      style={{ cursor: "pointer" }}
-      title="Set the employee as active, again?"
-      // onClick={this.setEmployeeAsActive.bind(this, item.rowNumber)}
-    >
-      <CheckCircle size="18" color="lime" />
-    </a>
-  ) : (
-    <a
-      className="table-actions"
-      title="Set the employee as inactive?"
-      style={{ cursor: "pointer" }}
-      // onClick={this.setEmployeeAsInactive.bind(this, item.rowNumber)}
-    >
-      <XCircle size="18" />
-    </a>
-  );
-}
-
 export default function EmployeeDetail({ employee }: EmployeeDetailProps) {
   return (
-    <tr key={employee.JMBG}>
+    <tr>
       <td>
-        <Link to={`/employees/${employee.JMBG}`}> {employee.name} </Link>{" "}
+        <Link to={`/employees/${employee._id}`}> {employee.name} </Link>{" "}
       </td>
       <td>{employee.surname}</td>
       <td>{employee.position}</td>
@@ -43,7 +21,12 @@ export default function EmployeeDetail({ employee }: EmployeeDetailProps) {
           }`}
         ></i>
       </td>
-      <td>{isActiveEmployee(!!employee.enddate)}</td>
+      <td>
+        <SetStatusEmployeeBtn
+          id={employee._id}
+          active={employee.enddate === undefined || employee.enddate === null}
+        />
+      </td>
     </tr>
   );
 }

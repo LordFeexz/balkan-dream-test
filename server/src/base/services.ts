@@ -22,12 +22,24 @@ export default abstract class BaseService<T extends BaseDocument> {
     return (await this.model.findById(id)) as T | null;
   }
 
-  public async firedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
+  public async inActivatedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
     return await this.model.findByIdAndUpdate(
       _id,
       {
         $set: {
-          firingdate: new Date(),
+          enddate: new Date(),
+        },
+      },
+      { ...dbOpts, new: true }
+    );
+  }
+
+  public async activatedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
+    return await this.model.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          enddate: null,
         },
       },
       { ...dbOpts, new: true }

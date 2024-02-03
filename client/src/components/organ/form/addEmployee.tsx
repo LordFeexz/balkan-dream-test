@@ -8,7 +8,7 @@ import LoadingOverlayWrapper from "react-loading-overlay-ts";
 
 export default function AddEmployeeForm() {
   const dispatch = useDispatch();
-  const [data, setData] = useState<AddEmployeeState>({
+  const defaultValue = {
     name: "",
     surname: "",
     JMBG: "",
@@ -18,7 +18,8 @@ export default function AddEmployeeForm() {
     startdate: new Date().toString(),
     isPayoneer: false,
     salaryAmount: 0,
-  });
+  };
+  const [data, setData] = useState<AddEmployeeState>(defaultValue);
   const [loading, setLoading] = useState<boolean>(false);
 
   const onChangeHandler = (
@@ -54,17 +55,7 @@ export default function AddEmployeeForm() {
 
     dispatch<any>(addEmployee(data))
       .then(() => {
-        setData({
-          name: "",
-          surname: "",
-          JMBG: "",
-          birthdate: new Date().toString(),
-          gender: "",
-          position: "",
-          startdate: new Date().toString(),
-          isPayoneer: false,
-          salaryAmount: 0,
-        });
+        setData(defaultValue);
       })
       .catch((err: Error) => {
         swalError(err?.message || "Internal Server Error");

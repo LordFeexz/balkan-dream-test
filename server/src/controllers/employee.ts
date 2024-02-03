@@ -111,16 +111,17 @@ export default new (class EmployeeController {
     }
   }
 
-  public async firedAEmployee(
+  public async inActiveAnEmployee(
     req: Request,
     res: Response,
     next: NextFunction
   ): Promise<void> {
     try {
       const { employeeId } = req.params;
-      const employeeObjectId = new Types.ObjectId(employeeId);
 
-      const employee = await employeeService.findById(employeeObjectId);
+      const employee = await employeeService.findById(
+        new Types.ObjectId(employeeId)
+      );
       if (!employee)
         throw new AppError({
           message: "employee not found",
@@ -133,7 +134,38 @@ export default new (class EmployeeController {
           statusCode: 409,
         });
 
-      await employeeService.firedAnEmployee(employeeObjectId);
+      await employeeService.inActivatedAnEmployee(employee._id);
+
+      response.createResponse({ res, code: 200, message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async activatedAnEmployee(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { employeeId } = req.params;
+
+      const employee = await employeeService.findById(
+        new Types.ObjectId(employeeId)
+      );
+      if (!employee)
+        throw new AppError({
+          message: "employee not found",
+          statusCode: 404,
+        });
+
+      if (!employee.enddate)
+        throw new AppError({
+          message: "user still active",
+          statusCode: 409,
+        });
+
+      await employeeService.activatedAnEmployee(employee._id);
 
       response.createResponse({ res, code: 200, message: "success" });
     } catch (err) {

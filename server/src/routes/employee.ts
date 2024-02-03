@@ -11,7 +11,12 @@ export default new (class EmployeeRoute extends BaseRoutes {
       .delete(
         "/:employeeId",
         checkValidObjectId("employeeId"),
-        employeeController.firedAEmployee
+        employeeController.inActiveAnEmployee
+      )
+      .patch(
+        "/:employeeId",
+        checkValidObjectId("employeeId"),
+        employeeController.activatedAnEmployee
       );
   }
 })().router;

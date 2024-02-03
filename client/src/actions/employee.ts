@@ -10,9 +10,13 @@ import type {
 import request from "../lib/axios";
 import type { ThunkAction } from "redux-thunk";
 import type { EmployeeAction } from "../reducer/employee";
-import { GETLISTEMPLOYEE } from "../constant/employee";
+import {
+  GETLISTEMPLOYEE,
+  SETACTIVESTATUS,
+  SETINACTIVESTATUS,
+} from "../constant/employee";
 import { RootReducer } from "../store";
-import { HTTPPOST } from "../constant/request";
+import { HTTPDELETE, HTTPPATCH, HTTPPOST } from "../constant/request";
 
 export const getListEmployee = ({
   page = 1,
@@ -92,6 +96,68 @@ export const addEmployee = (
       });
 
       resolve(result);
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+export const inactiveEmployee = (
+  id: string
+): ThunkAction<Promise<string>, RootReducer, any, EmployeeAction<string>> => (
+  dispatch
+) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        data: { message },
+        status,
+      } = await request.Mutation<null>({
+        url: `/employee/${id}`,
+        method: HTTPDELETE,
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+      });
+
+      if (status !== 200) throw { message };
+
+      dispatch<EmployeeAction<string>>({
+        type: SETINACTIVESTATUS,
+        payload: id,
+      });
+
+      resolve(message as string);
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+export const activatedAnEmployee = (
+  id: string
+): ThunkAction<Promise<string>, RootReducer, any, EmployeeAction<string>> => (
+  dispatch
+) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        data: { message },
+        status,
+      } = await request.Mutation<null>({
+        url: `/employee/${id}`,
+        method: HTTPPATCH,
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+      });
+
+      if (status !== 200) throw { message };
+
+      dispatch<EmployeeAction<string>>({
+        type: SETACTIVESTATUS,
+        payload: id,
+      });
+
+      resolve(message as string);
     } catch (err) {
       reject(err);
     }
