@@ -1,11 +1,9 @@
-import { DateTimePicker } from "react-widgets";
+import DateTimePicker from "react-datepicker";
+import type { SyntheticEvent } from "react";
 
 export interface DatePickerProps {
   value: string;
-  onChangeHandler: (
-    date: Date | null | undefined,
-    dateStr: string | undefined
-  ) => void;
+  onChangeHandler: (date: Date | null, e: SyntheticEvent<any, Event>) => void;
   name: string;
 }
 
@@ -15,10 +13,14 @@ export default function DatePicker({
   name,
 }: DatePickerProps) {
   return (
-    <DateTimePicker
-      value={!!value ? new Date(value) : undefined}
-      onChange={onChangeHandler}
-      name={name}
-    />
+    <div className="form-control" style={{ overflow: "hidden" }}>
+      <DateTimePicker
+        selected={!!value ? new Date(value) : new Date()}
+        onChange={onChangeHandler}
+        name={name}
+        showTimeSelect
+        dateFormat="dd/MM/yyyy"
+      />
+    </div>
   );
 }

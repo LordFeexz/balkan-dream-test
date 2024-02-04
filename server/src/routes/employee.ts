@@ -8,6 +8,11 @@ export default new (class EmployeeRoute extends BaseRoutes {
       .get("/", employeeController.getAll)
       .post("/register", employeeController.registerNewEmployee)
       .post("/register/bulk", employeeController.registerBulkNewEmployee)
+      .get(
+        "/:employeeId",
+        checkValidObjectId("employeeId"),
+        employeeController.findByIdentifier
+      )
       .delete(
         "/:employeeId",
         checkValidObjectId("employeeId"),

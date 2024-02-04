@@ -18,7 +18,7 @@ export default function SetStatusEmployeeBtn({
 }: SetStatusEmployeeBtnProps) {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(active)
+
   const onClick = (e: MouseEvent) => {
     swalConfirm(
       active ? "Set the employee as inactive?" : "Set the employee as active?"

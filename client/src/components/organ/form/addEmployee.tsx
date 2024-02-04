@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent, type SyntheticEvent } from "react";
 import DatePicker from "../../atom/form/datePicker";
 import type { AddEmployeeState } from "../../../interfaces/employee";
 import { swalError } from "../../../helpers/swal";
@@ -35,7 +35,7 @@ export default function AddEmployeeForm() {
 
   const datePickerChangeHandler =
     (field: "birthdate" | "startdate") =>
-    (date: Date | null | undefined, dateStr: string | undefined) => {
+    (date: Date | null , e:SyntheticEvent<any,Event>) => {
       if (date)
         setData((prev) => ({
           ...prev,

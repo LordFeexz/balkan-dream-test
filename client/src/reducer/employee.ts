@@ -1,5 +1,5 @@
 import type { Reducer, Action } from "redux";
-import type { Employee, GetListEmployee } from "../interfaces/employee";
+import type { Employee, EmployeeDetail, GetListEmployee } from "../interfaces/employee";
 import {
   type EmployeeTypes,
   GETLISTEMPLOYEE,
@@ -8,7 +8,7 @@ import {
 } from "../constant/employee";
 
 export interface EmployeeState {
-  employees: Employee[];
+  employees: EmployeeDetail[];
   totalData: number;
   totalPage: number;
 }
@@ -47,7 +47,7 @@ const reducer: Reducer<EmployeeState, EmployeeAction> = (
         return {
             ...state,
             employees: state.employees.map((el) =>
-              el._id === payload ? { ...el, enddate: new Date() } : el
+              el._id === payload ? { ...el, enddate: new Date().toDateString() } : el
             ),
           };
     default:

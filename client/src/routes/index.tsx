@@ -5,7 +5,8 @@ import NotFound from "../views/notFound";
 import AboutPage from "../views/about";
 import TermPage from "../views/term";
 import PrivacyPage from "../views/privacy";
-import Employee from "../views/employees";
+import Employee from "../views/employees/employees";
+import EmployeeDetailPage from "../views/employees/detail";
 
 export default createBrowserRouter([
   {
@@ -32,6 +33,12 @@ export default createBrowserRouter([
       {
         path: "/employees",
         element: <Employee />,
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
+      },
+      {
+        path: "/employees/:identifier",
+        element: <EmployeeDetailPage />,
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,
       },

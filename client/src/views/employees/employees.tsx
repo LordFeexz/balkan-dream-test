@@ -1,22 +1,20 @@
-import AddEmployeePanel from "../components/mollecul/content/addEmployeePanel";
-import EmployeeTable from "../components/organ/table/employeeTable";
+import AddEmployeePanel from "../../components/mollecul/content/addEmployeePanel";
+import EmployeeTable from "../../components/organ/table/employeeTable";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootReducer } from "../store";
-import type { EmployeeState } from "../reducer/employee";
-import { useEffect, useState } from "react";
-import { getListEmployee } from "../actions/employee";
+import type { RootReducer } from "../../store";
+import type { EmployeeState } from "../../reducer/employee";
+import { useEffect } from "react";
+import { getListEmployee } from "../../actions/employee";
 
 export default function Employee() {
   const dispatch = useDispatch();
-  const { employees, totalPage } = useSelector<RootReducer, EmployeeState>(
+  const { employees } = useSelector<RootReducer, EmployeeState>(
     ({ employeeReducer }) => employeeReducer
   );
-  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
-    if (!employees.length && page === 1)
-      dispatch<any>(getListEmployee({ page }));
-  }, [page]);
+    if (!employees.length) dispatch<any>(getListEmployee({ page: 1 }));
+  }, [employees.length]);
 
   return (
     <div className="container">

@@ -208,4 +208,27 @@ export default new (class EmployeeController {
       next(err);
     }
   }
+
+  public async findByIdentifier(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { employeeId } = req.params;
+
+      const data = await employeeService.findEmployeeDetail(
+        new Types.ObjectId(employeeId)
+      );
+      if (!data)
+        throw new AppError({
+          message: "employee not found",
+          statusCode: 404,
+        });
+
+      response.createResponse({ res, code: 200, message: "OK", data });
+    } catch (err) {
+      next(err);
+    }
+  }
 })();

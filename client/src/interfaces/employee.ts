@@ -1,20 +1,27 @@
-import type { Gender } from ".";
+import type { BaseDocument, Gender } from ".";
+import type { ILoan } from "./loan";
+import type { ISalary } from "./salary";
 
-export interface Employee {
+export interface Employee extends BaseDocument {
   _id: string;
   name: string;
   surname: string;
   JMBG: string;
-  birthdate: Date;
+  birthdate: string;
   gender: Gender;
   position: string;
   isPayoneer: boolean;
-  startdate: Date;
-  enddate?: Date;
+  startdate: string;
+  enddate?: string;
 }
 
+export type EmployeeDetail = Employee & {
+  salary: ISalary;
+  loans: ILoan[];
+};
+
 export interface GetListEmployee {
-  employees: Employee[];
+  employees: EmployeeDetail[];
   totalData: number;
   totalPage: number;
 }

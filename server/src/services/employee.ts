@@ -100,6 +100,25 @@ export default new (class Employee extends BaseService<IEmployee> {
               $limit: limit,
             },
             {
+              $lookup: {
+                from: "salaries",
+                localField: "_id",
+                foreignField: "employeeId",
+                as: "salary",
+              },
+            },
+            {
+              $unwind: "$salary",
+            },
+            {
+              $lookup: {
+                from: "loans",
+                localField: "_id",
+                foreignField: "employeeId",
+                as: "loans",
+              },
+            },
+            {
               $sort: {
                 [helpers.allowedSortedField(
                   ["createdAt", "updatedAt", "gender", "_id"],

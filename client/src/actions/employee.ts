@@ -1,6 +1,7 @@
 import type {
   AddEmployeeState,
   Employee,
+  EmployeeDetail,
   GetListEmployee,
 } from "../interfaces/employee";
 import type {
@@ -33,7 +34,7 @@ export const getListEmployee = ({
       const {
         status,
         data: { message, data, totalData, totalPage },
-      } = await request.Query<Employee[]>({
+      } = await request.Query<EmployeeDetail[]>({
         url: "/employee",
         params: { page, limit, sortBy },
         headers: {
@@ -158,6 +159,27 @@ export const activatedAnEmployee = (
       });
 
       resolve(message as string);
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+export const findEmployeeById = (id: string): Promise<EmployeeDetail> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        data: { data, message },
+        status,
+      } = await request.Query<EmployeeDetail>({
+        url: `/employee/${id}`,
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+      });
+
+      if (status !== 200) throw { message };
+
+      resolve(data);
     } catch (err) {
       reject(err);
     }
