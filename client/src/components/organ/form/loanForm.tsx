@@ -4,10 +4,17 @@ import DatePicker from "../../atom/form/datePicker";
 import DescriptionForm from "../../mollecul/form/descriptionForm";
 import NumberForm from "../../mollecul/form/numberForm";
 import UnitForm from "../../mollecul/form/unitForm";
-import { useState, type ChangeEvent, type FormEvent,type SyntheticEvent } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type SyntheticEvent,
+  useContext,
+} from "react";
 import { createLoan } from "../../../actions/loan";
 import { swalError } from "../../../helpers/swal";
 import { useParams } from "react-router-dom";
+import { context } from "../../../context/tabContent";
 
 export default function LoanForm() {
   const { identifier } = useParams();
@@ -20,6 +27,7 @@ export default function LoanForm() {
     note: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
+  const { setDisplayData } = useContext(context);
 
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -32,8 +40,8 @@ export default function LoanForm() {
   };
 
   const datePickerHandler = (
-    date: Date | null ,
-    e:SyntheticEvent<any,Event>
+    date: Date | null,
+    e: SyntheticEvent<any, Event>
   ) => {
     if (date)
       setData((prev) => ({
@@ -49,7 +57,10 @@ export default function LoanForm() {
 
     createLoan(identifier as string, data)
       .then((val) => {
-        console.log(val);
+        setDisplayData((prev) => ({
+          ...prev,
+          loans: [val, ...prev.loans],
+        }));
       })
       .catch((err: Error) => {
         swalError(err?.message || "Internal Server Error");

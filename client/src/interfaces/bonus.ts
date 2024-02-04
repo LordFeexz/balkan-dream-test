@@ -8,3 +8,11 @@ export interface IBonus extends BaseDocument {
   employeeId: string;
   unit: LoanUnit;
 }
+
+export interface BonusFormProps {
+  date: string;
+  amount: number;
+  description: string;
+  isRepeating: boolean;
+  unit: LoanUnit;
+}
