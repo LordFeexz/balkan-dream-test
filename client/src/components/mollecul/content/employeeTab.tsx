@@ -1,30 +1,28 @@
-import type { ProfileTabItem } from "../../../interfaces";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import DisplayTab from "./displayTab";
 import Rodal from "rodal";
 import noDataPng from "../../../images/no-data-illustration.png";
 import GetEmployeeForm from "../../organ/form/getEmployeeForm";
+import { context } from "../../../context/tabContent";
+import { getActiveEmployeeTabContent } from "../../../helpers/global";
 
-export interface EmployeeTabContentProps {
-  activeTab: ProfileTabItem;
-}
-
-export default function EmployeeTabContent({
-  activeTab,
-}: EmployeeTabContentProps) {
-  const [displayData, setDisplayData] = useState([]);
+export default function EmployeeTabContent() {
   const [open, setOpen] = useState<boolean>(false);
 
   const toggleOpen = () => {
     setOpen(!open);
   };
+
+  const ctx = useContext(context);
+
+  const displayData = getActiveEmployeeTabContent(ctx.activeTab.name, ctx);
   return (
     <>
       <div className="col-md-8">
         <div className="form-content">
           <div className="portlet portlet-boxed">
             <div className="portlet-header tab-content-portlet-header">
-              <h4 className="portlet-title">{activeTab.name}</h4>
+              <h4 className="portlet-title">{ctx.activeTab.name}</h4>
               <button
                 className="btn btn-primary submit-button"
                 onClick={toggleOpen}
@@ -33,17 +31,8 @@ export default function EmployeeTabContent({
                 Add new
               </button>
             </div>
-            {displayData.length ? (
-              <DisplayTab
-                item={{
-                  id: 1,
-                  date: new Date().toString(),
-                  description: "",
-                  unit: "BAM",
-                  amount: 0,
-                }}
-                onClick={() => {}}
-              />
+            {!!displayData.length ? (
+              <DisplayTab />
             ) : (
               <div className="portlet-body no-data__wrapper">
                 <img
@@ -71,7 +60,7 @@ export default function EmployeeTabContent({
           transform: "translateY(-50%)",
         }}
       >
-        <GetEmployeeForm tabId={activeTab.id} />
+        <GetEmployeeForm tabId={ctx.activeTab.id} />
       </Rodal>
     </>
   );

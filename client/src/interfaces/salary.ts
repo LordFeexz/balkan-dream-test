@@ -1,8 +1,8 @@
-import type { BaseDocument } from ".";
+import type { BaseDocument, LoanUnit } from ".";
 
 export interface ISalary extends BaseDocument {
   amount: number;
-  date: Date;
+  date: string;
   description: string;
   employeeId: string;
   historyRaises: HistoryRaises[];
@@ -11,11 +11,15 @@ export interface ISalary extends BaseDocument {
 
 export interface HistoryRaises {
   amount: number;
-  lastChange: Date;
+  lastChange: string;
+  description: string;
+  date: string;
+  unit: LoanUnit;
 }
 
 export interface PaymentHistory {
   amount: number;
   description: string;
-  date: Date;
+  date: string;
+  unit: LoanUnit;
 }

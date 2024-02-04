@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import type { BaseDocument } from "../base/model";
+import type { LoanUnit } from ".";
 
 export interface IBonus extends BaseDocument {
   amount: number;
@@ -7,4 +8,5 @@ export interface IBonus extends BaseDocument {
   description: string;
   isRepeating: boolean;
   employeeId: Types.ObjectId;
+  unit: LoanUnit;
 }

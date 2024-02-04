@@ -28,6 +28,12 @@ export default new (class Bonus extends BaseModel<IBonus> {
           required: true,
           ref: "Employee",
         },
+        unit: {
+          type: String,
+          required: true,
+          enum: ["BAM", "$"],
+          default: "BAM",
+        },
       })
     );
   }

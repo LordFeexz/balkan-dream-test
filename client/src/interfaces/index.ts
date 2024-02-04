@@ -1,3 +1,5 @@
+import type { TabName } from "./context";
+
 export type Gender = "M" | "F";
 
 export type LoanUnit = "BAM" | "$";
@@ -11,7 +13,7 @@ export interface BaseDocument {
 
 export interface ProfileTabItem {
   id: number;
-  name: string;
+  name: TabName;
   active: boolean;
   confirmed: boolean;
 }
@@ -21,6 +23,4 @@ export interface DisplayContent {
   date: string;
   description: string;
   unit: LoanUnit;
-  id: any;
 }
-

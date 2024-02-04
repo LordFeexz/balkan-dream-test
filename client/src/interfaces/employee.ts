@@ -1,5 +1,8 @@
 import type { BaseDocument, Gender } from ".";
+import type { IBonus } from "./bonus";
 import type { ILoan } from "./loan";
+import type { ILoanPayment } from "./loanPayment";
+import type { IPenalty } from "./penalty";
 import type { ISalary } from "./salary";
 
 export interface Employee extends BaseDocument {
@@ -18,6 +21,9 @@ export interface Employee extends BaseDocument {
 export type EmployeeDetail = Employee & {
   salary: ISalary;
   loans: ILoan[];
+  loanPayments: ILoanPayment[];
+  bonuses: IBonus[];
+  penalties: IPenalty[];
 };
 
 export interface GetListEmployee {

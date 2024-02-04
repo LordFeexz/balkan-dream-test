@@ -7,6 +7,7 @@ import TermPage from "../views/term";
 import PrivacyPage from "../views/privacy";
 import Employee from "../views/employees/employees";
 import EmployeeDetailPage from "../views/employees/detail";
+import TabContentWrapper from "../context/tabContent";
 
 export default createBrowserRouter([
   {
@@ -38,7 +39,11 @@ export default createBrowserRouter([
       },
       {
         path: "/employees/:identifier",
-        element: <EmployeeDetailPage />,
+        element: (
+          <TabContentWrapper>
+            <EmployeeDetailPage />
+          </TabContentWrapper>
+        ),
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,
       },

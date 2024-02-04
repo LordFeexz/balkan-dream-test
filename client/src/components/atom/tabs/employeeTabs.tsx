@@ -1,23 +1,21 @@
 import { ChevronRight, Info } from "react-feather";
 import { profileTabItems } from "../../../constant/tabs";
-import type { Dispatch, SetStateAction } from "react";
+import { useContext } from "react";
+import { context } from "../../../context/tabContent";
+import { ProfileTabItem } from "../../../interfaces";
 
-export interface EmployeeTabsProps {
-  items: typeof profileTabItems;
-  setItems: Dispatch<SetStateAction<typeof profileTabItems>>;
-}
+export default function EmployeeTabs() {
+  const { setDisplayData } = useContext(context);
 
-export default function EmployeeTabs({ items, setItems }: EmployeeTabsProps) {
   const onClick = (id: number) => {
-    setItems((prev) =>
-      prev
-        .map((el) => ({ ...el, active: false }))
-        .map((el) => (el.id === id ? { ...el, active: true } : el))
-    );
+    setDisplayData((prev) => ({
+      ...prev,
+      activeTab: profileTabItems.find((el) => el.id === id) as ProfileTabItem,
+    }));
   };
   return (
     <>
-      {items.map((item) => (
+      {profileTabItems.map((item) => (
         <a
           className={`list-group-item ${item.active ? "selectedTab" : ""}`}
           key={item.id}

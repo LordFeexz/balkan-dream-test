@@ -4,31 +4,34 @@ import anniversaryPng from "../../images/anniversary-illustration.png";
 import birthDayPng from "../../images/birthday-illustration.png";
 import { ArrowLeft, ArrowRight } from "react-feather";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import type { RootReducer } from "../../store";
-import type { EmployeeState } from "../../reducer/employee";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useContext } from "react";
 import type { EmployeeDetail } from "../../interfaces/employee";
 import { findEmployeeById } from "../../actions/employee";
 import SalaryList from "../../components/atom/content/salaryList";
 import EmployeeTabsProfile from "../../components/organ/tabs/employeeTabProfile";
+import { context } from "../../context/tabContent";
 
 export default function EmployeeDetailPage() {
   const { identifier } = useParams();
   const navigate = useNavigate();
 
-  const { employees } = useSelector<RootReducer, EmployeeState>(
-    ({ employeeReducer }) => employeeReducer
-  );
-  const [employee, setEmployee] = useState<EmployeeDetail | undefined>(() =>
-    employees.find((el) => el._id === identifier || el.JMBG === identifier)
-  );
+  const [employee, setEmployee] = useState<EmployeeDetail | null>(null);
+
+  const { setDisplayData } = useContext(context);
 
   useEffect(() => {
     if (!employee)
       findEmployeeById(identifier as string)
         .then((val: EmployeeDetail) => {
           setEmployee(val);
+          setDisplayData((prev) => ({
+            ...prev,
+            salary: val.salary,
+            loans: val.loans,
+            loanPayments: val.loanPayments,
+            bonuses: val.bonuses,
+            penalties: val.penalties,
+          }));
         })
         .catch((err) => {
           navigate("/employees");

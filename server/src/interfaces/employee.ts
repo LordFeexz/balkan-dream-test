@@ -1,6 +1,9 @@
 import type { Gender } from ".";
 import type { BaseDocument } from "../base/model";
+import { IBonus } from "./bonus";
 import type { ILoan } from "./loan";
+import type { ILoanPayment } from "./loanPayment";
+import type { IPenalty } from "./penalty";
 import type { ISalary } from "./salary";
 
 export type IEmployee = BaseDocument & Employee;
@@ -33,4 +36,7 @@ export interface NewEmployeeProps {
 export type EmployeeDetail = IEmployee & {
   salary: ISalary;
   loans: ILoan[];
+  loanPayments: ILoanPayment[];
+  bonuses: IBonus[];
+  penalties: IPenalty[];
 };

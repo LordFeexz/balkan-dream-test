@@ -1,6 +1,5 @@
 import BonusForm from "./bonusForm";
 import LoanForm from "./loanForm";
-import LoanNoteForm from "./loanNote";
 import LoanPaymentForm from "./loanPayment";
 import PenaltyForm from "./penaltyForm";
 import SalaryRaise from "./salaryRaiseForm";
@@ -20,8 +19,6 @@ export default function GetEmployeeForm({ tabId }: GetEmployeeFormProps) {
     case 4:
       return <LoanForm />;
     case 5:
-      return <LoanNoteForm />;
-    case 6:
       return <LoanPaymentForm />;
     default:
       return <SalaryRaise />;

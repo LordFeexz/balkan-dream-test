@@ -34,6 +34,20 @@ export default new (class Salary extends BaseModel<ISalary> {
               type: Date,
               required: true,
             },
+            description: {
+              type: String,
+              default: "N/A",
+            },
+            date: {
+              type: Date,
+              required: true,
+            },
+            unit: {
+              type: String,
+              required: true,
+              enum: ["BAM", "$"],
+              default: "BAM",
+            },
           },
         ],
         paymentHistory: [
@@ -49,6 +63,12 @@ export default new (class Salary extends BaseModel<ISalary> {
             date: {
               type: Date,
               required: true,
+            },
+            unit: {
+              type: String,
+              required: true,
+              enum: ["BAM", "$"],
+              default: "BAM",
             },
           },
         ],

@@ -43,34 +43,62 @@ export default new (class Employee extends BaseService<IEmployee> {
   }
 
   public async findEmployeeDetail(_id: Types.ObjectId) {
-    const agg = await this.model.aggregate([
-      {
-        $match: {
-          _id,
+    try {
+      const agg = await this.model.aggregate([
+        {
+          $match: {
+            _id,
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "salaries",
-          localField: "_id",
-          foreignField: "employeeId",
-          as: "salary",
+        {
+          $lookup: {
+            from: "salaries",
+            localField: "_id",
+            foreignField: "employeeId",
+            as: "salary",
+          },
         },
-      },
-      {
-        $unwind: "$salary",
-      },
-      {
-        $lookup: {
-          from: "loans",
-          localField: "_id",
-          foreignField: "employeeId",
-          as: "loans",
+        {
+          $unwind: "$salary",
         },
-      },
-    ]);
+        {
+          $lookup: {
+            from: "loans",
+            localField: "_id",
+            foreignField: "employeeId",
+            as: "loans",
+          },
+        },
+        {
+          $lookup: {
+            from: "loanpayments",
+            localField: "_id",
+            foreignField: "employeeId",
+            as: "loanPayments",
+          },
+        },
+        {
+          $lookup: {
+            from: "bonuses",
+            localField: "_id",
+            foreignField: "employeeId",
+            as: "bonuses",
+          },
+        },
+        {
+          $lookup: {
+            from: "penalties",
+            localField: "_id",
+            foreignField: "employeeId",
+            as: "penalties",
+          },
+        },
+      ]);
 
-    return Array.isArray(agg) ? (agg[0] as EmployeeDetail) : null;
+      return Array.isArray(agg) ? (agg[0] as EmployeeDetail) : null;
+    } catch (err) {
+      return null;
+    }
   }
 
   public async findEmployees({

@@ -27,12 +27,6 @@ export const profileTabItems: ProfileTabItem[] = [
   },
   {
     id: 5,
-    name: "Loan Notes",
-    active: false,
-    confirmed: false,
-  },
-  {
-    id: 6,
     name: "Loan Extra Payments",
     active: false,
     confirmed: false,

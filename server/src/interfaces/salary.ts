@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import type { BaseDocument } from "../base/model";
+import type { LoanUnit } from ".";
 
 export interface ISalary extends BaseDocument {
   amount: number;
@@ -13,12 +14,16 @@ export interface ISalary extends BaseDocument {
 export interface HistoryRaises {
   amount: number;
   lastChange: Date;
+  description: string;
+  date: Date;
+  unit: LoanUnit;
 }
 
 export interface PaymentHistory {
   amount: number;
   description: string;
   date: Date;
+  unit: LoanUnit;
 }
 
 export interface UpdateSalaryProps {

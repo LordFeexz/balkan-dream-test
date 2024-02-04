@@ -30,6 +30,12 @@ export default new (class LoanPayment extends BaseModel<ILoanPayment> {
           required: true,
           ref: "Loan",
         },
+        unit: {
+          type: String,
+          required: true,
+          enum: ["BAM", "$"],
+          default: "BAM",
+        },
       })
     );
   }
