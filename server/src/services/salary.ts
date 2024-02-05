@@ -19,7 +19,7 @@ export default new (class SalaryService extends BaseService<ISalary> {
     opts?: DbOpts
   ) {
     const now = new Date();
-    return await this.model.updateOne(
+    return await this.model.findOneAndUpdate(
       { employeeId },
       {
         $set: {
@@ -29,11 +29,11 @@ export default new (class SalaryService extends BaseService<ISalary> {
         $push: {
           historyRaises: {
             amount: data.previousSalary,
-            lastChange: now,
+            date: now,
           },
         },
       },
-      { ...opts }
+      { ...opts, new: true }
     );
   }
 

@@ -47,4 +47,18 @@ export default abstract class BaseValidation {
 
     return true;
   }
+
+  protected optionalDate = yup.date().optional().default(new Date());
+
+  protected optionalDesc = yup.string().optional().default("N/A");
+
+  protected requiredUnit = yup
+    .string()
+    .required("unit is required")
+    .oneOf(["BAM", "$"], "invalid unit");
+
+  protected requiredAmount = yup
+    .number()
+    .required("amount is required")
+    .min(1, "amount must be greater than 0");
 }

@@ -4,16 +4,10 @@ import type { CreateLoanProps } from "../interfaces/loan";
 
 export default new (class LoanValidation extends BaseValidation {
   private readonly createLoanSchema = yup.object().shape({
-    amount: yup
-      .number()
-      .required("amount is required")
-      .min(1, "amount must be greater than 0"),
-    date: yup.date().optional().default(new Date()),
+    amount: this.requiredAmount,
+    date: this.optionalDate,
     description: yup.string().optional().default("N/A"),
-    unit: yup
-      .string()
-      .required("unit is required")
-      .oneOf(["BAM", "$"], "invalid unit"),
+    unit: this.requiredUnit,
     period: yup
       .number()
       .required("period is required")

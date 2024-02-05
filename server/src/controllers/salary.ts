@@ -33,22 +33,21 @@ export default new (class SalaryController {
           statusCode: 404,
         });
 
-      if (salary.amount < amount)
+      if (salary.amount > amount)
         throw new AppError({
           message: "new salary cannot lower than current salary",
           statusCode: 400,
         });
 
-      await salaryService.updateData(employee._id, {
-        amount,
-        description,
-        previousSalary: salary.amount,
-      });
-
       response.createResponse({
         res,
         code: 200,
         message: "ok",
+        data: await salaryService.updateData(employee._id, {
+          amount,
+          description,
+          previousSalary: salary.amount,
+        }),
       });
     } catch (err) {
       next(err);

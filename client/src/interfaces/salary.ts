@@ -11,7 +11,6 @@ export interface ISalary extends BaseDocument {
 
 export interface HistoryRaises {
   amount: number;
-  lastChange: string;
   description: string;
   date: string;
   unit: LoanUnit;
@@ -22,4 +21,9 @@ export interface PaymentHistory {
   description: string;
   date: string;
   unit: LoanUnit;
+}
+
+export interface UpdateSalaryProps {
+  amount: number;
+  description: string;
 }

@@ -13,7 +13,6 @@ export interface ISalary extends BaseDocument {
 
 export interface HistoryRaises {
   amount: number;
-  lastChange: Date;
   description: string;
   date: Date;
   unit: LoanUnit;

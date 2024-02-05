@@ -30,10 +30,6 @@ export default new (class Salary extends BaseModel<ISalary> {
               type: Number,
               required: true,
             },
-            lastChange: {
-              type: Date,
-              required: true,
-            },
             description: {
               type: String,
               default: "N/A",
