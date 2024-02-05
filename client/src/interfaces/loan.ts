@@ -19,3 +19,10 @@ export interface CreateLoanProps {
   period: number;
   note?: string;
 }
+
+export interface CreateLoanPaymentProps {
+  amount: number;
+  date: string;
+  description: string;
+  unit: LoanUnit;
+}

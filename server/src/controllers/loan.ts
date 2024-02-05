@@ -2,11 +2,12 @@ import type { Request, Response, NextFunction } from "express";
 import loanValidation from "../validations/loan";
 import response from "../middlewares/response";
 import AppError from "../base/error";
-import { startSession } from "mongoose";
+import { Types, startSession } from "mongoose";
 import employeeService from "../services/employee";
 import salaryService from "../services/salary";
 import loanService from "../services/loan";
 import loanNoteService from "../services/loanNote";
+import loanPaymentService from "../services/loanPayment";
 
 export default new (class LoanController {
   public async createLoan(
@@ -104,6 +105,54 @@ export default new (class LoanController {
       next(err);
     } finally {
       await session.endSession();
+    }
+  }
+
+  public async createLoanExtraPayment(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { employeeId } = req.params;
+      const employeeObjectId = new Types.ObjectId(employeeId);
+
+      const payload = await loanValidation.validateCreateLoanPayment(req.body);
+
+      const employee = await employeeService.findById(employeeObjectId);
+      if (!employee)
+        throw new AppError({
+          message: "employee not found",
+          statusCode: 404,
+        });
+
+      const loan = await loanService.findEmployeeProcessedLoan(
+        employeeObjectId
+      );
+      if (!loan)
+        throw new AppError({
+          message: "employee has no on going loan",
+          statusCode: 404,
+        });
+
+      if (loan.installment < payload.amount)
+        throw new AppError({
+          message: "amount cannot greater than loan installment",
+          statusCode: 404,
+        });
+
+      response.createResponse({
+        res,
+        code: 201,
+        message: "success",
+        data: await loanPaymentService.createData(
+          employeeObjectId,
+          loan._id,
+          payload
+        ),
+      });
+    } catch (err) {
+      next(err);
     }
   }
 })();
