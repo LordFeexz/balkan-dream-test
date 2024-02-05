@@ -8,3 +8,10 @@ export interface IPenalty extends BaseDocument {
   employeeId: string;
   isPayed: boolean;
 }
+
+export interface CreatePenaltyProps {
+  amount: number;
+  unit: LoanUnit;
+  description: string;
+  date: string;
+}

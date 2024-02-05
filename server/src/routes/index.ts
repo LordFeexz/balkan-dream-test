@@ -4,6 +4,7 @@ import admin from "./admin";
 import bonus from "./bonus";
 import employee from "./employee";
 import loan from "./loan";
+import penalty from "./penalty";
 import salary from "./salary";
 
 export default new (class Routes extends BaseRoutes {
@@ -14,6 +15,7 @@ export default new (class Routes extends BaseRoutes {
       .use("/employee", employee)
       .use("/salary", salary)
       .use("/bonus", bonus)
+      .use("/penalty", penalty)
       .use("/loan", loan);
   }
 })().router;

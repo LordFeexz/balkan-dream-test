@@ -35,7 +35,7 @@ export default function SalaryRaise() {
       .then((val) => {
         setDisplayData((prev) => ({
           ...prev,
-          salary: {...val},
+          salary: { ...val },
         }));
       })
       .catch((err: Error) => {
