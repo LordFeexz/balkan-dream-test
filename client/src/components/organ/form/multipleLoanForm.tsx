@@ -1,33 +1,41 @@
-import LoadingOverlayWrapper from "react-loading-overlay-ts";
-import type { CreateLoanProps } from "../../../interfaces/loan";
-import DatePicker from "../../atom/form/datePicker";
 import DescriptionForm from "../../mollecul/form/descriptionForm";
 import NumberForm from "../../mollecul/form/numberForm";
 import UnitForm from "../../mollecul/form/unitForm";
 import {
   useState,
-  type ChangeEvent,
   type FormEvent,
+  type ChangeEvent,
   type SyntheticEvent,
-  useContext,
 } from "react";
-import { createLoan } from "../../../actions/loan";
+import type {
+  CreateBulkLoanResp,
+  CreateLoanProps,
+} from "../../../interfaces/loan";
+import DatePicker from "../../atom/form/datePicker";
+import EmployeeSelect from "../../mollecul/form/employeeSelectId";
 import { swalError } from "../../../helpers/swal";
-import { useParams } from "react-router-dom";
-import { context } from "../../../context/tabContent";
+import { useDispatch } from "react-redux";
+import { bulkCreateEmployeeLoan } from "../../../actions/loan";
+import LoadingOverlayWrapper from "react-loading-overlay-ts";
 
-export default function LoanForm() {
-  const { identifier } = useParams();
-  const [data, setData] = useState<CreateLoanProps>({
+export default function MultipleLoanForm() {
+  const dispatch = useDispatch();
+  const defaultValue: CreateLoanProps & { employeeId: string } = {
     amount: 0,
     unit: "BAM",
     date: "",
     description: "",
     period: 0,
     note: "",
-  });
+    employeeId: "",
+  };
+  const [data, setData] = useState<CreateLoanProps & { employeeId: string }>(
+    defaultValue
+  );
+  const [loanForm, setLoanForms] = useState<
+    (CreateLoanProps & { employeeId: string })[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const { setDisplayData } = useContext(context);
 
   const onChangeHandler = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -53,14 +61,24 @@ export default function LoanForm() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setLoading(true);
+    const optionalKey = ["description", "note", "date"];
+    for (const key in data)
+      if (!(data as any)[key] && !optionalKey.includes(key)) {
+        swalError(`${key} is required`);
+        return;
+      }
 
-    createLoan(identifier as string, data)
-      .then((val) => {
-        setDisplayData((prev) => ({
-          ...prev,
-          loans: [val, ...prev.loans],
-        }));
+    setLoanForms((prev) => [data, ...prev]);
+    setData(defaultValue);
+  };
+
+  const submitLoans = (e: FormEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    setLoading(true);
+    dispatch<any>(bulkCreateEmployeeLoan(loanForm))
+      .then((val: CreateBulkLoanResp) => {
+        setLoanForms([]);
       })
       .catch((err: Error) => {
         swalError(err?.message || "Internal Server Error");
@@ -71,7 +89,7 @@ export default function LoanForm() {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <form className="portlet-body" onSubmit={onSubmit}>
       <div className="form-group">
         <label htmlFor="date">Date</label>
         <DatePicker
@@ -80,7 +98,6 @@ export default function LoanForm() {
           name="date"
         />
       </div>
-
       <NumberForm
         value={data.amount.toString()}
         name="amount"
@@ -102,6 +119,11 @@ export default function LoanForm() {
         onChangeHandler={onChangeHandler}
       />
 
+      <EmployeeSelect
+        onChangeHandler={onChangeHandler}
+        value={data.employeeId}
+        name="employeeId"
+      />
       <DescriptionForm
         label="Description"
         name="description"
@@ -116,14 +138,25 @@ export default function LoanForm() {
         onChangeHandler={onChangeHandler}
       />
 
-      <LoadingOverlayWrapper spinner active={loading}>
-        <button
-          disabled={loading}
-          type="submit"
-          className="btn btn-primary submit-button">
-          Submit
-        </button>
-      </LoadingOverlayWrapper>
+      <button
+        type="submit"
+        style={{ float: "left" }}
+        className="btn btn-primary">
+        Save loan
+      </button>
+
+      {!!loanForm.length && (
+        <LoadingOverlayWrapper spinner active={loading}>
+          <button
+            disabled={loading}
+            type="button"
+            style={{ float: "right" }}
+            className="btn btn-primary"
+            onClick={submitLoans}>
+            Submit Loan(s)
+          </button>
+        </LoadingOverlayWrapper>
+      )}
     </form>
   );
 }

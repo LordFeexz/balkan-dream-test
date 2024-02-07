@@ -2,12 +2,15 @@ import { isValidObjectId, Types } from "mongoose";
 import BaseService from "../base/services";
 import type {
   EmployeeDetail,
+  EmployeeName,
   IEmployee,
   NewEmployeeProps,
 } from "../interfaces/employee";
 import employee from "../models/employee";
 import type { DataWithTotal, DbOpts, Gender, SearchQuery } from "../interfaces";
 import helpers from "../helpers";
+import type { ILoan } from "../interfaces/loan";
+import type { ISalary } from "../interfaces/salary";
 
 export default new (class Employee extends BaseService<IEmployee> {
   constructor() {
@@ -180,5 +183,103 @@ export default new (class Employee extends BaseService<IEmployee> {
         total: 0,
       };
     }
+  }
+
+  public async getListEmployeeName() {
+    try {
+      const [result] = await this.model.aggregate([
+        {
+          $facet: {
+            data: [
+              {
+                $project: {
+                  _id: 1,
+                  surname: 1,
+                },
+              },
+            ],
+            total: [
+              {
+                $count: "total",
+              },
+            ],
+          },
+        },
+        { $unwind: "$total" },
+        {
+          $project: {
+            data: 1,
+            total: "$total.total",
+          },
+        },
+      ]);
+      return result as { data: EmployeeName[]; total: number };
+    } catch (err) {
+      return {
+        data: [],
+        total: 0,
+      };
+    }
+  }
+
+  public async inActivatedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
+    return await this.model.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          enddate: new Date(),
+        },
+      },
+      { ...dbOpts, new: true }
+    );
+  }
+
+  public async activatedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
+    return await this.model.findByIdAndUpdate(
+      _id,
+      {
+        $set: {
+          enddate: null,
+        },
+      },
+      { ...dbOpts, new: true }
+    );
+  }
+
+  public async findMultipleByJMBG(jmbg: string[]) {
+    return await this.model.find({ JMBG: { $in: jmbg } });
+  }
+
+  public async findMultipleByIds(ids: Types.ObjectId[]) {
+    return await this.model.find({ _id: { $in: ids } });
+  }
+
+  public async findMultipleByIdsAndPopulate(ids: Types.ObjectId[]) {
+    return (await this.model.aggregate([
+      {
+        $match: {
+          _id: { $in: ids },
+        },
+      },
+      {
+        $lookup: {
+          from: "loans",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "loans",
+        },
+      },
+      {
+        $lookup: {
+          from: "salaries",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "salary",
+        },
+      },
+      {
+        $unwind: "$salary",
+      },
+    ])) as (IEmployee & { loans: ILoan[]; salary: ISalary })[];
   }
 })();

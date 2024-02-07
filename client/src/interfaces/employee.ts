@@ -43,3 +43,8 @@ export interface AddEmployeeState {
   isPayoneer: boolean;
   salaryAmount: number;
 }
+
+export interface EmployeeName {
+  _id: string;
+  surname: string;
+}

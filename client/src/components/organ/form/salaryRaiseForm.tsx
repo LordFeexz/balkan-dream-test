@@ -18,7 +18,7 @@ export default function SalaryRaise() {
   const [loading, setLoading] = useState<boolean>(false);
 
   const onChangeHandler = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setData((prev) => ({

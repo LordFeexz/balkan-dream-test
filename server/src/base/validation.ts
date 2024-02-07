@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import AppError from "./error";
+import type { SearchQuery } from "../interfaces";
 
 export default abstract class BaseValidation {
   protected async validate<T = any>(schema: yup.Schema, data: any): Promise<T> {
@@ -61,4 +62,16 @@ export default abstract class BaseValidation {
     .number()
     .required("amount is required")
     .min(1, "amount must be greater than 0");
+
+  public queryValidation = async (data: any) =>
+    await this.validate<SearchQuery>(
+      yup.object().shape({
+        page: yup.number().optional().default(1),
+        limit: yup.number().optional().default(20),
+        sortBy: yup.string().optional().default("createdAt"),
+        direction: yup.string().optional().default("desc"),
+        search: yup.string().optional(),
+      }),
+      data
+    );
 }

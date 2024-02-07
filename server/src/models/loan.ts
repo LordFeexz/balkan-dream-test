@@ -45,6 +45,28 @@ export default new (class Loan extends BaseModel<ILoan> {
           min: [1, "Minimum period is 1"],
           max: [12, "Maximum period is 12"],
         },
+        paymentHistory: [
+          {
+            unit: {
+              type: String,
+              required: true,
+              enum: ["BAM", "$"],
+              default: "BAM",
+            },
+            date: {
+              type: Date,
+              required: true,
+            },
+            description: {
+              type: String,
+              default: "N/A",
+            },
+            amount: {
+              type: Number,
+              required: true,
+            },
+          },
+        ],
       })
     );
   }

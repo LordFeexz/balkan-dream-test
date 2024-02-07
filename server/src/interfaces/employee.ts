@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import type { Gender } from ".";
 import type { BaseDocument } from "../base/model";
 import { IBonus } from "./bonus";
@@ -40,3 +41,8 @@ export type EmployeeDetail = IEmployee & {
   bonuses: IBonus[];
   penalties: IPenalty[];
 };
+
+export interface EmployeeName {
+  _id: Types.ObjectId;
+  surname: string;
+}

@@ -21,10 +21,10 @@ export interface DbOpts {
 }
 
 export interface PaginationProps {
-  page: number;
-  limit: number;
-  sortBy: string;
-  direction: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  direction?: string;
 }
 
 export type SearchQuery = PaginationProps & {

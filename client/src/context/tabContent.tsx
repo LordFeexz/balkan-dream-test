@@ -4,7 +4,6 @@ import {
   type ReactNode,
   type Dispatch,
   type SetStateAction,
-  useEffect
 } from "react";
 import type { TabEmployeeContext } from "../interfaces/context";
 import type { HistoryRaises, PaymentHistory } from "../interfaces/salary";
@@ -25,6 +24,7 @@ export default function TabContentWrapper({
 }: TabContentWrapperProps) {
   const [displayData, setDisplayData] = useState<TabEmployeeContext>({
     salary: {
+      _id:'',
       amount: 0,
       employeeId: "",
       date: "",

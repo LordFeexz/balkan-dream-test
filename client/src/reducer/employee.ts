@@ -1,5 +1,5 @@
 import type { Reducer, Action } from "redux";
-import type { Employee, EmployeeDetail, GetListEmployee } from "../interfaces/employee";
+import type {  EmployeeDetail, GetListEmployee } from "../interfaces/employee";
 import {
   type EmployeeTypes,
   GETLISTEMPLOYEE,

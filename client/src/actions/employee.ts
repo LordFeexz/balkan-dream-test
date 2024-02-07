@@ -2,6 +2,7 @@ import type {
   AddEmployeeState,
   Employee,
   EmployeeDetail,
+  EmployeeName,
   GetListEmployee,
 } from "../interfaces/employee";
 import type {
@@ -182,5 +183,26 @@ export const findEmployeeById = (id: string): Promise<EmployeeDetail> =>
       resolve(data);
     } catch (err) {
       reject(err);
+    }
+  });
+
+export const getEmployeeName = async (): Promise<EmployeeName[]> =>
+  new Promise(async (resolve) => {
+    try {
+      const {
+        status,
+        data: { data, message },
+      } = await request.Query<EmployeeName[]>({
+        url: "/employee/name",
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+      });
+
+      if (status !== 200) throw { message };
+
+      resolve(data);
+    } catch (err) {
+      resolve([]);
     }
   });

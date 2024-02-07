@@ -6,7 +6,7 @@ import type {
 } from "../interfaces/loan";
 
 export default new (class LoanValidation extends BaseValidation {
-  private readonly createLoanSchema = yup.object().shape({
+  private readonly createLoanSchema = {
     amount: this.requiredAmount,
     date: this.optionalDate,
     description: this.optionalDesc,
@@ -17,10 +17,34 @@ export default new (class LoanValidation extends BaseValidation {
       .min(1, "minimum period is 1")
       .max(12, "maximum period is 12"),
     note: yup.string().optional(),
-  });
+  };
 
   public validateCreateLoan = async (data: any) =>
-    await this.validate<CreateLoanProps>(this.createLoanSchema, data);
+    await this.validate<CreateLoanProps>(
+      yup.object().shape(this.createLoanSchema),
+      data
+    );
+
+  public validateBulkCreateLoan = async (data: any) =>
+    await this.validate<{
+      datas: (CreateLoanProps & { employeeId: string })[];
+    }>(
+      yup.object().shape({
+        datas: yup
+          .array()
+          .of(
+            yup
+              .object()
+              .shape({
+                ...this.createLoanSchema,
+                employeeId: yup.string().required("employeeId is required"),
+              })
+          )
+          .required("datas is required")
+          .min(1, "minimum datas is 1"),
+      }),
+      data
+    );
 
   public validateCreateLoanPayment = async (data: any) =>
     await this.validate<CreateLoanPaymentProps>(

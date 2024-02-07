@@ -8,6 +8,7 @@ import PrivacyPage from "../views/privacy";
 import Employee from "../views/employees/employees";
 import EmployeeDetailPage from "../views/employees/detail";
 import TabContentWrapper from "../context/tabContent";
+import LoanPage from "../views/loan";
 
 export default createBrowserRouter([
   {
@@ -46,6 +47,12 @@ export default createBrowserRouter([
         ),
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,
+      },
+      {
+        path: "/loans",
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
+        element: <LoanPage />,
       },
     ],
   },

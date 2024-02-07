@@ -9,16 +9,17 @@ import employeeReducer, {
   type EmployeeState,
   type EmployeeAction,
 } from "../reducer/employee";
-import type { Employee } from "../interfaces/employee";
+import loanReducer, { type LoanAction, type LoanState } from "../reducer/loan";
 
 export interface RootReducer {
   employeeReducer: EmployeeState;
+  loanReducer: LoanState;
 }
 
 const reducer: Reducer<
   RootReducer,
-  EmployeeAction<Employee>,
+  EmployeeAction<any> & LoanAction<any>,
   any
-> = combineReducers({ employeeReducer });
+> = combineReducers({ employeeReducer, loanReducer });
 
 export default createStore(reducer, applyMiddleware(thunk));

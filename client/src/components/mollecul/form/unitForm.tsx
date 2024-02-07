@@ -1,4 +1,5 @@
 import type { ChangeEvent } from "react";
+import SelectForm from "../../atom/form/selectForm";
 
 export interface UnitFormProps {
   onChangeHandler: (e: ChangeEvent<HTMLSelectElement>) => void;
@@ -12,20 +13,12 @@ export default function UnitForm({
   value,
 }: UnitFormProps) {
   return (
-    <div className="form-group">
-      <label htmlFor={name}>Unit</label>
-      <select
-        name={name}
-        className="form-control"
-        required
-        value={value}
-        defaultValue=""
-        onChange={onChangeHandler}
-      >
-        <option></option>
-        <option value="BAM">BAM</option>
-        <option value="$">$</option>
-      </select>
-    </div>
+    <SelectForm
+      name={name}
+      value={value}
+      onChangeHandler={onChangeHandler}
+      label="Unit"
+      datas={["BAM", "$"].map((el) => ({ value: el, label: el }))}
+    />
   );
 }

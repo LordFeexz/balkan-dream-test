@@ -14,26 +14,41 @@ export default new (class Helper {
     }
   }
 
-  public getUserSearch(search: string) {
+  public getUserSearch(search: string, prefix?: string) {
     const regex = new RegExp(search);
     const obj = {
       $regex: regex,
       $options: "i",
     };
-    return [
-      {
-        position: obj,
-      },
-      {
-        name: obj,
-      },
-      {
-        surname: obj,
-      },
-      {
-        JMBG: obj,
-      },
-    ];
+    return !prefix
+      ? [
+          {
+            position: obj,
+          },
+          {
+            name: obj,
+          },
+          {
+            surname: obj,
+          },
+          {
+            JMBG: obj,
+          },
+        ]
+      : [
+          {
+            [`${prefix}.position`]: obj,
+          },
+          {
+            [`${prefix}.name`]: obj,
+          },
+          {
+            [`${prefix}.surname`]: obj,
+          },
+          {
+            [`${prefix}.JMBG`]: obj,
+          },
+        ];
   }
 
   public allowedSortedField(

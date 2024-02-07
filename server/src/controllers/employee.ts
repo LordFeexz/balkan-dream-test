@@ -231,4 +231,31 @@ export default new (class EmployeeController {
       next(err);
     }
   }
+
+  public async getListName(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { total, data } = await employeeService.getListEmployeeName();
+      if (!total)
+        throw new AppError({
+          message: "data not found",
+          statusCode: 404,
+        });
+
+      response.createResponse(
+        { res, code: 200, message: "OK", data },
+        {
+          totalData: total,
+          limit: Infinity,
+          page: 1,
+          totalPage: 1,
+        }
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
 })();

@@ -2,12 +2,14 @@ import type { Request, Response, NextFunction } from "express";
 import loanValidation from "../validations/loan";
 import response from "../middlewares/response";
 import AppError from "../base/error";
-import { Types, startSession } from "mongoose";
+import { Types, isValidObjectId, startSession } from "mongoose";
 import employeeService from "../services/employee";
 import salaryService from "../services/salary";
 import loanService from "../services/loan";
 import loanNoteService from "../services/loanNote";
 import loanPaymentService from "../services/loanPayment";
+import type { CreateLoanProps } from "../interfaces/loan";
+import helpers from "../helpers";
 
 export default new (class LoanController {
   public async createLoan(
@@ -65,7 +67,7 @@ export default new (class LoanController {
         });
 
       //you can change the schema implementation
-      if (salary.amount < amount)
+      if (salary.amount < helpers.countInstallment(amount, period))
         throw new AppError({
           message: "loan amount cannot greater than salary amount",
           statusCode: 400,
@@ -99,6 +101,159 @@ export default new (class LoanController {
         code: 201,
         message: "success",
         data,
+      });
+    } catch (err) {
+      await session.abortTransaction();
+      next(err);
+    } finally {
+      await session.endSession();
+    }
+  }
+
+  public async createBulkLoan(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    const session = await startSession();
+    session.startTransaction();
+    try {
+      const { datas } = await loanValidation.validateBulkCreateLoan(req.body);
+
+      const employeeIds: Types.ObjectId[] = [];
+      for (const data of datas) {
+        if (!isValidObjectId(data.employeeId)) continue;
+
+        employeeIds.push(new Types.ObjectId(data.employeeId));
+      }
+
+      const employees = await employeeService.findMultipleByIdsAndPopulate(
+        employeeIds
+      );
+      if (!employees.length)
+        throw new AppError({
+          message: "employees not found",
+          statusCode: 404,
+        });
+
+      const payload: (CreateLoanProps & { employeeId: Types.ObjectId })[] = [];
+      const failed: (CreateLoanProps & {
+        employeeId: string;
+        reason: string;
+      })[] = [];
+      const now = new Date();
+      for (const employee of employees) {
+        const data = datas.find(
+          (el) => el.employeeId === employee._id.toString()
+        ) as CreateLoanProps & { employeeId: string };
+
+        if (employee.loans.find((el) => el.status === "Process")) {
+          failed.push({ ...data, reason: "employee has an active loan" });
+          continue;
+        }
+
+        if (employee.enddate && employee.enddate < now) {
+          failed.push({
+            ...data,
+            reason: "employee is already resign",
+          });
+          continue;
+        }
+
+        const startWork = employee.startdate;
+        startWork.setDate(
+          startWork.getMonth() + 2 + (startWork.getDate() + 28)
+        );
+        if (startWork < now) {
+          failed.push({
+            ...data,
+            reason:
+              "employee hasnt start working or employee hasnt been working for at least one month",
+          });
+          continue;
+        }
+
+        if (
+          employee.salary.amount <
+          helpers.countInstallment(data.amount, data.period)
+        ) {
+          failed.push({
+            ...data,
+            reason: "loan installment cannot greater than salary amount",
+          });
+          continue;
+        }
+
+        payload.push({
+          ...data,
+          employeeId: new Types.ObjectId(data.employeeId),
+          note: undefined,
+        });
+      }
+
+      if (!payload.length)
+        return response.createResponse({
+          res,
+          code: 400,
+          message: "there is no processed data",
+          data: {
+            success: 0,
+            failed: failed.length,
+            failedData: failed,
+            successData: [],
+          },
+        });
+
+      const result = await loanService.createManyLoans(payload, { session });
+      const notes = await loanNoteService.createManyNotes(
+        result
+          .map((el) => {
+            const data = datas.find(
+              (data) => data.employeeId === el.employeeId.toString()
+            ) as CreateLoanProps & { employeeId: string };
+
+            return data?.note
+              ? {
+                  employeeId: el.employeeId,
+                  loanId: el._id,
+                  description: data.note,
+                }
+              : null;
+          })
+          .filter((el) => el !== null) as any,
+        { session }
+      );
+
+      await session.commitTransaction();
+      response.createResponse({
+        res,
+        code: 201,
+        message: "success",
+        data: {
+          success: result.length,
+          failed: failed.length,
+          failedData: failed,
+          successData: result.map((el) => ({
+            amount: el.amount,
+            installment: el.installment,
+            date: el.date,
+            description: el.description,
+            unit: el.unit,
+            employeeId: el.employeeId,
+            status: el.status,
+            period: el.period,
+            paymentHistory: el.paymentHistory,
+            note:
+              notes.find(
+                (note) =>
+                  note.loanId.toString() === el._id.toString() &&
+                  note.employeeId.toString() === el.employeeId.toString()
+              ) || null,
+            employee: employees.find(
+              (employee) => employee._id.toString() === el.employeeId.toString()
+            ),
+          })),
+        },
       });
     } catch (err) {
       await session.abortTransaction();
@@ -151,6 +306,71 @@ export default new (class LoanController {
           payload
         ),
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async getAllProcessLoan(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const {
+        page,
+        limit,
+        sortBy,
+        direction,
+        search,
+      } = await loanValidation.queryValidation(req.query);
+
+      const { total, data } = await loanService.getProcessLoan({
+        page,
+        limit,
+        sortBy,
+        direction,
+        search,
+      });
+
+      response.createResponse(
+        { res, code: 200, message: "OK", data },
+        {
+          totalData: total,
+          limit,
+          page,
+          totalPage: Math.ceil(total / limit),
+        }
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async getSummaryLoan(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { page, limit } = await loanValidation.queryValidation(req.query);
+
+      const { total, data } = await loanService.getSummaryLoan({ page, limit });
+      if (!total)
+        throw new AppError({
+          message: "data not found",
+          statusCode: 404,
+        });
+
+      response.createResponse(
+        { res, code: 200, message: "OK", data },
+        {
+          totalData: total,
+          limit,
+          page,
+          totalPage: 1,
+        }
+      );
     } catch (err) {
       next(err);
     }

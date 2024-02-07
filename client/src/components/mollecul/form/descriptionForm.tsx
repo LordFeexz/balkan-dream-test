@@ -3,7 +3,7 @@ import type { ChangeEvent } from "react";
 export interface DescriptionFormProps {
   value: string;
   name: string;
-  onChangeHandler: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeHandler: (e: ChangeEvent<any>) => void;
   required?: boolean;
   label: string;
 }
@@ -18,9 +18,8 @@ export default function DescriptionForm({
   return (
     <div className="form-group">
       <label htmlFor={name}>{label}</label>
-      <input
+      <textarea
         name={name}
-        type="text"
         className="form-control"
         required={required}
         value={value}

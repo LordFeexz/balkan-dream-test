@@ -9,6 +9,7 @@ export type LoanStatus = "Process" | "Finish" | "NPL";
 export interface BaseDocument {
   createdAt: string;
   updatedAt: string;
+  _id: string;
 }
 
 export interface ProfileTabItem {

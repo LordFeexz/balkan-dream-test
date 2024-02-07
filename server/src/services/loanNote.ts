@@ -30,4 +30,22 @@ export default new (class LoanNoteService extends BaseService<ILoanNote> {
       DbOpts
     );
   }
+
+  public async createManyNotes(
+    datas: {
+      description: string;
+      employeeId: Types.ObjectId;
+      loanId: Types.ObjectId;
+    }[],
+    DbOpts?: DbOpts
+  ) {
+    return await this.createMany(
+      datas.map(({ description, employeeId, loanId }) => ({
+        description,
+        employeeId,
+        loanId,
+      })),
+      DbOpts
+    );
+  }
 })();
