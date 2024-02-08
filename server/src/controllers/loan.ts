@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import loanValidation from "../validations/loan";
 import response from "../middlewares/response";
 import AppError from "../base/error";
-import { Types, isValidObjectId, startSession } from "mongoose";
+import { Types, startSession } from "mongoose";
 import employeeService from "../services/employee";
 import salaryService from "../services/salary";
 import loanService from "../services/loan";
@@ -120,15 +120,8 @@ export default new (class LoanController {
     try {
       const { datas } = await loanValidation.validateBulkCreateLoan(req.body);
 
-      const employeeIds: Types.ObjectId[] = [];
-      for (const data of datas) {
-        if (!isValidObjectId(data.employeeId)) continue;
-
-        employeeIds.push(new Types.ObjectId(data.employeeId));
-      }
-
       const employees = await employeeService.findMultipleByIdsAndPopulate(
-        employeeIds
+        helpers.mapEmployeeId(datas)
       );
       if (!employees.length)
         throw new AppError({

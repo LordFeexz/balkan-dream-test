@@ -9,15 +9,15 @@ import type {
   ILoan,
   SummaryLoan,
 } from "../interfaces/loan";
-import { ILoanPayment } from "../interfaces/loanPayment";
+import type { ILoanPayment } from "../interfaces/loanPayment";
 import request from "../lib/axios";
 import type {
   DataWithPagination,
   PaginationProps,
 } from "../interfaces/request";
 import type { ThunkAction } from "redux-thunk";
-import { RootReducer } from "../store";
-import { LoanAction } from "../reducer/loan";
+import type { RootReducer } from "../store";
+import type { LoanAction } from "../reducer/loan";
 import {
   CREATEBULKEMPLOYEELOAN,
   GETALLEMPLOYEELOAN,
@@ -179,7 +179,7 @@ export const bulkCreateEmployeeLoan = (
         },
         data: { datas },
       });
-      console.log(data);
+
       if (status !== 201 || data.success < 1) throw { message };
 
       dispatch<LoanAction<EmployeeLoan[]>>({

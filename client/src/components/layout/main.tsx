@@ -13,12 +13,12 @@ export default function MainLayout() {
       <header className="" role="banner">
         <div className="container">
           <div className="navbar navbar__container">
-            <Link to="/home">
+            <Link to="/employees">
               <img src={logo} alt="EMS Mars logo" className="logo" />
             </Link>
             <ul className="navbar__menu">
               <li className={currentRoute === "/home" ? "active" : ""}>
-                <Link to="/home"> Home </Link>
+                <Link to="/penalty"> Penalty </Link>
               </li>
 
               <li className={currentRoute === "/employees" ? "active" : ""}>

@@ -11,7 +11,7 @@ export default function NotFound() {
         <div className="notfound-subtitle">
           The page you're looking for doesn't exist.
         </div>
-        <p onClick={() => navigate("/")} className="notfound-btn">
+        <p onClick={() => navigate("/employees")} className="notfound-btn">
           Go back
         </p>
       </div>

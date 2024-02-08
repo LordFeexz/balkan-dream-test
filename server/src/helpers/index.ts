@@ -1,3 +1,5 @@
+import { Types, isValidObjectId } from "mongoose";
+
 export default new (class Helper {
   public countInstallment = (amount: number, period: number, fee = 0) =>
     Math.ceil(amount / period) + fee;
@@ -63,5 +65,15 @@ export default new (class Helper {
     const d = new Date(date);
 
     return `${d.getDate()}-${d.getMonth() + 1}-${d.getFullYear()}`;
+  }
+
+  public mapEmployeeId(datas: { employeeId: string }[]) {
+    const employeeIds: Types.ObjectId[] = [];
+    for (const data of datas) {
+      if (!isValidObjectId(data.employeeId)) continue;
+
+      employeeIds.push(new Types.ObjectId(data.employeeId));
+    }
+    return employeeIds;
   }
 })();

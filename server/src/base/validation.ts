@@ -63,6 +63,10 @@ export default abstract class BaseValidation {
     .required("amount is required")
     .min(1, "amount must be greater than 0");
 
+  protected requiredEmployeeId = yup
+    .string()
+    .required("employeeId is required");
+
   public queryValidation = async (data: any) =>
     await this.validate<SearchQuery>(
       yup.object().shape({

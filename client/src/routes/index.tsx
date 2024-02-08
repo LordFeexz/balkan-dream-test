@@ -9,6 +9,8 @@ import Employee from "../views/employees/employees";
 import EmployeeDetailPage from "../views/employees/detail";
 import TabContentWrapper from "../context/tabContent";
 import LoanPage from "../views/loan";
+import PenaltyPage from "../views/penalty";
+import PenaltyWrapper from "../context/penaltyContext";
 
 export default createBrowserRouter([
   {
@@ -53,6 +55,16 @@ export default createBrowserRouter([
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,
         element: <LoanPage />,
+      },
+      {
+        path: "/penalty",
+        element: (
+          <PenaltyWrapper>
+            <PenaltyPage />
+          </PenaltyWrapper>
+        ),
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
       },
     ],
   },

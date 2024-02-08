@@ -1,7 +1,9 @@
 import { getEmployeeName } from "../../../actions/employee";
-import { EmployeeName } from "../../../interfaces/employee";
+import type { EmployeeState } from "../../../reducer/employee";
+import type { RootReducer } from "../../../store";
 import SelectForm from "../../atom/form/selectForm";
-import { type ChangeEvent, useState, useEffect } from "react";
+import { type ChangeEvent, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 export interface EmployeeSelectProps {
   onChangeHandler: (e: ChangeEvent<HTMLSelectElement>) => void;
@@ -14,20 +16,24 @@ export default function EmployeeSelect({
   name,
   value,
 }: EmployeeSelectProps) {
-  const [data, setData] = useState<EmployeeName[]>([]);
+  const dispatch = useDispatch();
+  const { employeeNames } = useSelector<RootReducer, EmployeeState>(
+    ({ employeeReducer }) => employeeReducer
+  );
+
   useEffect(() => {
-    if (!data.length)
-      (async () => {
-        setData(await getEmployeeName());
-      })();
-  }, [data.length]);
+    if (!employeeNames.length) dispatch<any>(getEmployeeName());
+  }, [employeeNames.length]);
 
   return (
     <SelectForm
       name={name}
       value={value}
       label="Employee"
-      datas={data.map(({surname,_id}) => ({value:_id,label:surname}))}
+      datas={employeeNames.map(({ surname, _id }) => ({
+        value: _id,
+        label: surname,
+      }))}
       onChangeHandler={onChangeHandler}
     />
   );

@@ -25,3 +25,10 @@ export interface DisplayContent {
   description: string;
   unit: LoanUnit;
 }
+
+export type CreateBulkResp<T = any, F = any> = {
+  success: number;
+  failed: number;
+  failedData: F[];
+  successData: T[];
+};

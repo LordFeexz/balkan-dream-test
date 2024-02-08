@@ -3,6 +3,9 @@ import penaltyController from "../controllers/penalty";
 
 export default new (class PenaltyRoute extends BaseRoutes {
   routes(): void {
-    this.router.post("/:employeeId", penaltyController.createPenalty);
+    this.router
+      .get("/", penaltyController.getAll)
+      .post("/bulk", penaltyController.createBulkPenalty)
+      .post("/:employeeId", penaltyController.createPenalty);
   }
 })().router;

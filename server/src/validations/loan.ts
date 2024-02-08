@@ -33,12 +33,10 @@ export default new (class LoanValidation extends BaseValidation {
         datas: yup
           .array()
           .of(
-            yup
-              .object()
-              .shape({
-                ...this.createLoanSchema,
-                employeeId: yup.string().required("employeeId is required"),
-              })
+            yup.object().shape({
+              ...this.createLoanSchema,
+              employeeId: this.requiredEmployeeId,
+            })
           )
           .required("datas is required")
           .min(1, "minimum datas is 1"),

@@ -1,4 +1,4 @@
-import type { BaseDocument, LoanStatus, LoanUnit } from ".";
+import type { BaseDocument, CreateBulkResp, LoanStatus, LoanUnit } from ".";
 import type { Employee } from "./employee";
 import type { ILoanNote } from "./loanNote";
 
@@ -63,12 +63,10 @@ export interface SummaryLoan {
   remainingInstallment: number;
 }
 
-export interface CreateBulkLoanResp {
-  success: number;
-  failed: number;
-  failedData: BulkLoanFailedData[];
-  successData: EmployeeLoan[];
-}
+export type CreateBulkLoanResp = CreateBulkResp<
+  EmployeeLoan,
+  BulkLoanFailedData
+>;
 
 export type BulkLoanFailedData = {
   employeeId: string;

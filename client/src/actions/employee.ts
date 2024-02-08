@@ -13,11 +13,12 @@ import request from "../lib/axios";
 import type { ThunkAction } from "redux-thunk";
 import type { EmployeeAction } from "../reducer/employee";
 import {
+  GETEMPLOYEENAME,
   GETLISTEMPLOYEE,
   SETACTIVESTATUS,
   SETINACTIVESTATUS,
 } from "../constant/employee";
-import { RootReducer } from "../store";
+import type { RootReducer } from "../store";
 import { HTTPDELETE, HTTPPATCH, HTTPPOST } from "../constant/request";
 
 export const getListEmployee = ({
@@ -186,7 +187,12 @@ export const findEmployeeById = (id: string): Promise<EmployeeDetail> =>
     }
   });
 
-export const getEmployeeName = async (): Promise<EmployeeName[]> =>
+export const getEmployeeName = (): ThunkAction<
+  Promise<EmployeeName[]>,
+  RootReducer,
+  any,
+  EmployeeAction<EmployeeName[]>
+> => async (dispatch) =>
   new Promise(async (resolve) => {
     try {
       const {
@@ -200,6 +206,10 @@ export const getEmployeeName = async (): Promise<EmployeeName[]> =>
       });
 
       if (status !== 200) throw { message };
+      dispatch<EmployeeAction<EmployeeName[]>>({
+        type: GETEMPLOYEENAME,
+        payload: data,
+      });
 
       resolve(data);
     } catch (err) {

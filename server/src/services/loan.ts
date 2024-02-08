@@ -129,7 +129,7 @@ export default new (class LoanService extends BaseService<ILoan> {
         {
           $sort: {
             [helpers.allowedSortedField(
-              ["createdAt", "updatedAt", "gender", "_id"],
+              ["createdAt", "updatedAt", "_id"],
               sortBy,
               "createdAt"
             )]: helpers.getSortDirection(direction),

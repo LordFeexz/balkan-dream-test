@@ -61,9 +61,11 @@ export default function MultipleLoanForm() {
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const optionalKey = ["description", "note", "date"];
     for (const key in data)
-      if (!(data as any)[key] && !optionalKey.includes(key)) {
+      if (
+        !(data as any)[key] &&
+        !["description", "note", "date"].includes(key)
+      ) {
         swalError(`${key} is required`);
         return;
       }
