@@ -3,6 +3,7 @@ import BaseService from "../base/services";
 import type {
   EmployeeDetail,
   EmployeeName,
+  EmployeeSalaryDetail,
   IEmployee,
   NewEmployeeProps,
 } from "../interfaces/employee";
@@ -82,7 +83,7 @@ export default new (class Employee extends BaseService<IEmployee> {
         },
         {
           $lookup: {
-            from: "bonuses",
+            from: "bonus",
             localField: "_id",
             foreignField: "employeeId",
             as: "bonuses",
@@ -281,5 +282,320 @@ export default new (class Employee extends BaseService<IEmployee> {
         $unwind: "$salary",
       },
     ])) as (IEmployee & { loans: ILoan[]; salary: ISalary })[];
+  }
+
+  public async getEmployeeSalary(exchangeRate: number) {
+    return await this.model.aggregate<EmployeeSalaryDetail>([
+      {
+        $match: {
+          startdate: {
+            $lte: new Date(),
+          },
+          $or: [
+            {
+              enddate: null,
+            },
+            {
+              enddate: {
+                $exists: false,
+              },
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: "loans",
+          let: {
+            userId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                    {
+                      $eq: ["$status", "Process"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "loan",
+        },
+      },
+      {
+        $unwind: "$loan",
+      },
+      {
+        $lookup: {
+          from: "loannotes",
+          localField: "loan._id",
+          foreignField: "loanId",
+          as: "note",
+        },
+      },
+      {
+        $unwind: {
+          path: "$note",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "salaries",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "salary",
+        },
+      },
+      {
+        $unwind: "$salary",
+      },
+      {
+        $lookup: {
+          from: "penalties",
+          let: {
+            userId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$isPayed", false],
+                    },
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "penalties",
+        },
+      },
+      {
+        $unwind: {
+          path: "$penalties",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "bonus",
+          let: {
+            userId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $or: [
+                    {
+                      $eq: ["$isRepeating", true],
+                    },
+                    {
+                      $eq: [
+                        {
+                          $size: "$paymentHistory",
+                        },
+                        0,
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "bonuses",
+        },
+      },
+      {
+        $unwind: {
+          path: "$bonuses",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          totalInstallment: {
+            $sum: {
+              $cond: [
+                {
+                  $eq: ["$loan.installment", "BAM"],
+                },
+                {
+                  $multiply: ["$loan.installment", exchangeRate],
+                },
+                "$loan.installment",
+              ],
+            },
+          },
+          loan: {
+            $first: "$loan",
+          },
+          totalBonus: {
+            $sum: {
+              $cond: [
+                {
+                  $eq: ["$bonuses.unit", "BAM"],
+                },
+                {
+                  $multiply: ["$bonuses.amount", exchangeRate],
+                },
+                "$bonuses.amount",
+              ],
+            },
+          },
+          bonuses: {
+            $push: "$bonuses",
+          },
+          totalPenalties: {
+            $sum: {
+              $cond: [
+                {
+                  $eq: ["$penalties.unit", "BAM"],
+                },
+                {
+                  $multiply: ["$penalties.amount", exchangeRate],
+                },
+                "$penalties.amount",
+              ],
+            },
+          },
+          penalties: {
+            $push: "$penalties",
+          },
+          surname: {
+            $first: "$surname",
+          },
+          salary: {
+            $first: "$salary.amount",
+          },
+        },
+      },
+      {
+        $addFields: {
+          takeHomePay: {
+            $subtract: [
+              {
+                $add: ["$salary", "$totalBonus"],
+              },
+              {
+                $add: ["$totalPenalties", "$totalInstallment"],
+              },
+            ],
+          },
+          bonuses: {
+            $cond: {
+              if: {
+                $gt: ["$totalBonus", 0],
+              },
+              then: {
+                $map: {
+                  input: "$bonuses",
+                  as: "bonus",
+                  in: {
+                    _id: "$$bonus._id",
+                    amount: {
+                      $cond: [
+                        {
+                          $eq: ["$$bonus.unit", "BAM"],
+                        },
+                        {
+                          $multiply: ["$$bonus.amount", exchangeRate],
+                        },
+                        "$$bonus.amount",
+                      ],
+                    },
+                  },
+                },
+              },
+              else: [],
+            },
+          },
+          penalties: {
+            $cond: {
+              if: {
+                $gt: ["$totalPenalties", 0],
+              },
+              then: {
+                $map: {
+                  input: "$penalties",
+                  as: "penalty",
+                  in: {
+                    _id: "$$penalty._id",
+                    amount: {
+                      $cond: [
+                        {
+                          $eq: ["$$penalty.unit", "BAM"],
+                        },
+                        {
+                          $multiply: ["$$penalty.amount", exchangeRate],
+                        },
+                        "$$penalty.amount",
+                      ],
+                    },
+                  },
+                },
+              },
+              else: [],
+            },
+          },
+          isLastInstallment: {
+            $cond: {
+              if: {
+                $eq: [
+                  {
+                    $subtract: ["$loan.period", 1],
+                  },
+                  {
+                    $size: "$loan.paymentHistory",
+                  },
+                ],
+              },
+              then: true,
+              else: false,
+            },
+          },
+          loanDetail: {
+            $cond: {
+              if: {
+                $gt: [{ $type: "$loan" }, "missing"],
+              },
+              then: {
+                _id: "$loan._id",
+                installment: "$totalInstallment",
+              },
+              else: null,
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          loan: 0,
+        },
+      },
+    ]);
   }
 })();

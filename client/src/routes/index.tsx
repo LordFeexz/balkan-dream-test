@@ -11,6 +11,8 @@ import TabContentWrapper from "../context/tabContent";
 import LoanPage from "../views/loan";
 import PenaltyPage from "../views/penalty";
 import PenaltyWrapper from "../context/penaltyContext";
+import SalaryPage from "../views/salary";
+import SalaryWrapper from "../context/salaryContext";
 
 export default createBrowserRouter([
   {
@@ -62,6 +64,16 @@ export default createBrowserRouter([
           <PenaltyWrapper>
             <PenaltyPage />
           </PenaltyWrapper>
+        ),
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
+      },
+      {
+        path: "/salaries",
+        element: (
+          <SalaryWrapper>
+            <SalaryPage />
+          </SalaryWrapper>
         ),
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,

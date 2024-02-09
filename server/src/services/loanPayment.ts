@@ -21,4 +21,14 @@ export default new (class LoanPaymentService extends BaseService<ILoanPayment> {
       { ...dbOpts }
     );
   }
+
+  public async createManyData(
+    datas: (CreateLoanPaymentProps & {
+      loanId: Types.ObjectId;
+      employeeId: Types.ObjectId;
+    })[],
+    dbOpts?: DbOpts
+  ) {
+    return await this.createMany(datas, { ...dbOpts });
+  }
 })();

@@ -29,3 +29,8 @@ export interface UpdateSalaryProps {
   amount: number;
   description: string;
 }
+
+export interface GenerateSalaryProps {
+  month: number;
+  year: number;
+}

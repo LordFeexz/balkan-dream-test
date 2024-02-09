@@ -20,3 +20,7 @@ export type TabName =
   | "Penalties"
   | "Loans"
   | "Loan Extra Payments";
+
+export interface TabSalaryContext {
+  activeTab: ProfileTabItem;
+}

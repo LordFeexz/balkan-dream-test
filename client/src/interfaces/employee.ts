@@ -1,4 +1,4 @@
-import type { BaseDocument, Gender } from ".";
+import type { BaseDocument, Gender, LoanUnit } from ".";
 import type { IBonus } from "./bonus";
 import type { ILoan } from "./loan";
 import type { ILoanPayment } from "./loanPayment";
@@ -47,4 +47,34 @@ export interface AddEmployeeState {
 export interface EmployeeName {
   _id: string;
   surname: string;
+}
+
+export interface EmployeeSalaryDetail {
+  _id: string;
+  takeHomePay: number;
+  totalInstallment: number;
+  totalBonus: number;
+  totalPenalties: number;
+  surname: string;
+  salary: number;
+  penalties: EmployeeSalaryUnitDetail[];
+  bonuses: EmployeeSalaryUnitDetail[];
+  isLastInstallment: boolean;
+  loanDetail: LoanUnitDetail;
+}
+
+export interface EmployeeSalaryUnitDetail {
+  _id: string;
+  amount: number;
+}
+
+export interface LoanUnitDetail {
+  _id: string;
+  installment: number;
+}
+
+export interface GenerateSalaryResp {
+  data: EmployeeSalaryDetail[];
+  signature: string;
+  unit: LoanUnit;
 }

@@ -46,3 +46,27 @@ export interface EmployeeName {
   _id: Types.ObjectId;
   surname: string;
 }
+
+export interface EmployeeSalaryDetail {
+  _id: Types.ObjectId;
+  takeHomePay: number;
+  totalInstallment: number;
+  totalBonus: number;
+  totalPenalties: number;
+  surname: string;
+  salary: number;
+  penalties: EmployeeSalaryUnitDetail[];
+  bonuses: EmployeeSalaryUnitDetail[];
+  isLastInstallment: boolean;
+  loanDetail: LoanUnitDetail;
+}
+
+export interface EmployeeSalaryUnitDetail {
+  _id: Types.ObjectId;
+  amount: number;
+}
+
+export interface LoanUnitDetail {
+  _id: Types.ObjectId;
+  installment: number;
+}

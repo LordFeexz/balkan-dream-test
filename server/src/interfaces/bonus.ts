@@ -9,6 +9,7 @@ export interface IBonus extends BaseDocument {
   isRepeating: boolean;
   employeeId: Types.ObjectId;
   unit: LoanUnit;
+  paymentHistory: PaymentHistory[];
 }
 
 export interface BonusFormProps {
@@ -17,4 +18,10 @@ export interface BonusFormProps {
   description: string;
   isRepeating: boolean;
   unit: LoanUnit;
+}
+
+export interface PaymentHistory {
+  date: Date;
+  amount: number;
+  description: string;
 }

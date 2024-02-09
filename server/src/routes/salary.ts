@@ -4,7 +4,8 @@ import salaryController from "../controllers/salary";
 export default new (class SalaryRoute extends BaseRoutes {
   routes(): void {
     this.router
-      .patch("/:employeeId", salaryController.raiseUp)
-      .patch("/:employeeId", salaryController.generateSalary);
+      .get("/", salaryController.generateSalary)
+      .post("/", salaryController.releaseSalary)
+      .patch("/:employeeId", salaryController.raiseUp);
   }
 })().router;

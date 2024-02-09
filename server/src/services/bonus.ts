@@ -14,6 +14,9 @@ export default new (class BonusService extends BaseService<IBonus> {
     data: BonusFormProps,
     dbOpts?: DbOpts
   ) {
-    return await this.createOneData({ ...data, employeeId }, { ...dbOpts });
+    return await this.createOneData(
+      { ...data, employeeId, paymentHistory: [] },
+      { ...dbOpts }
+    );
   }
 })();

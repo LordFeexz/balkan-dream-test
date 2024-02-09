@@ -1,10 +1,9 @@
-import { ChevronRight, Info } from "react-feather";
-import { profileTabItems } from "../../../constant/tabs";
 import { useContext } from "react";
-import { context } from "../../../context/tabContent";
+import { profileTabItems } from "../../../constant/tabs";
+import { context } from "../../../context/salaryContext";
 import type { ProfileTabItem } from "../../../interfaces";
 
-export default function EmployeeTabs() {
+export default function SalaryTab() {
   const { setDisplayData } = useContext(context);
 
   const onClick = (id: number) => {
@@ -16,17 +15,17 @@ export default function EmployeeTabs() {
   return (
     <>
       {profileTabItems.map((item) => (
-        <a
-          className={`list-group-item ${item.active ? "selectedTab" : ""}`}
-          key={item.id}
+        <li
           onClick={() => {
             onClick(item.id);
           }}
+          key={item.id}
+          className={`${item.active ? "active" : ""}`}
         >
-          <Info size="18" /> &nbsp;&nbsp;
-          {item.name}
-          <ChevronRight size="18" />
-        </a>
+          <a data-toggle="tab" className="btn">
+            {item.name}
+          </a>
+        </li>
       ))}
     </>
   );

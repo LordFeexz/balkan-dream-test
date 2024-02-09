@@ -34,6 +34,22 @@ export default new (class Bonus extends BaseModel<IBonus> {
           enum: ["BAM", "$"],
           default: "BAM",
         },
+        paymentHistory: [
+          {
+            amount: {
+              type: Number,
+              required: true,
+            },
+            description: {
+              type: String,
+              default: "N/A",
+            },
+            date: {
+              type: Date,
+              required: true,
+            },
+          },
+        ],
       })
     );
   }

@@ -1,4 +1,5 @@
-import { Types } from "mongoose";
+import type { Types, MongooseBulkWritePerWriteOptions } from "mongoose";
+import type { AnyBulkWriteOperation } from "mongodb";
 import type { ApplicationModel, DbOpts } from "../interfaces";
 import type { BaseDocument } from "./model";
 
@@ -22,31 +23,13 @@ export default abstract class BaseService<T extends BaseDocument> {
     return (await this.model.findById(id)) as T | null;
   }
 
-  public async inActivatedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
-    return await this.model.findByIdAndUpdate(
-      _id,
-      {
-        $set: {
-          enddate: new Date(),
-        },
-      },
-      { ...dbOpts, new: true }
+  public async bulkUpdate(
+    payload: (AnyBulkWriteOperation<T> & MongooseBulkWritePerWriteOptions)[],
+    dbOpts?: DbOpts
+  ) {
+    return await this.model.bulkWrite(
+      payload as (AnyBulkWriteOperation & MongooseBulkWritePerWriteOptions)[],
+      { ...dbOpts }
     );
-  }
-
-  public async activatedAnEmployee(_id: Types.ObjectId, dbOpts?: DbOpts) {
-    return await this.model.findByIdAndUpdate(
-      _id,
-      {
-        $set: {
-          enddate: null,
-        },
-      },
-      { ...dbOpts, new: true }
-    );
-  }
-
-  public async findMultipleByJMBG(jmbg: string[]) {
-    return await this.model.find({ JMBG: { $in: jmbg } });
   }
 }

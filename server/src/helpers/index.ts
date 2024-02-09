@@ -76,4 +76,8 @@ export default new (class Helper {
     }
     return employeeIds;
   }
+
+  public parseToFloat(str: string) {
+    return Number(parseFloat(str).toFixed(2));
+  }
 })();
