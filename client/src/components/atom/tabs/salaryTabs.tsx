@@ -4,7 +4,7 @@ import { context } from "../../../context/salaryContext";
 import type { ProfileTabItem } from "../../../interfaces";
 
 export default function SalaryTab() {
-  const { setDisplayData } = useContext(context);
+  const { setDisplayData, activeTab } = useContext(context);
 
   const onClick = (id: number) => {
     setDisplayData((prev) => ({
@@ -14,19 +14,24 @@ export default function SalaryTab() {
   };
   return (
     <>
-      {profileTabItems.map((item) => (
-        <li
-          onClick={() => {
-            onClick(item.id);
-          }}
-          key={item.id}
-          className={`${item.active ? "active" : ""}`}
-        >
-          <a data-toggle="tab" className="btn">
-            {item.name}
-          </a>
-        </li>
-      ))}
+      {profileTabItems
+        .filter((item) => item.id !== 5)
+        .map((item) => (
+          <li
+            key={item.id}
+            className={`${item.id === activeTab.id ? "active" : ""}`}
+          >
+            <a
+              data-toggle="tab"
+              className="btn"
+              onClick={() => {
+                onClick(item.id);
+              }}
+            >
+              {item.name}
+            </a>
+          </li>
+        ))}
     </>
   );
 }

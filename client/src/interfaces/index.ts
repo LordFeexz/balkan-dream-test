@@ -32,3 +32,10 @@ export type CreateBulkResp<T = any, F = any> = {
   failedData: F[];
   successData: T[];
 };
+
+export interface DisplaySalaryTab {
+  amount: number;
+  date: string;
+  description: string;
+  surname: string;
+}

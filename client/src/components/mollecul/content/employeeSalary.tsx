@@ -1,24 +1,22 @@
+import type { EmployeeSalaryDetail } from "../../../interfaces/employee";
+
 export interface EmployeeSalaryListProps {
-  item: any;
+  item: EmployeeSalaryDetail;
 }
 
 export default function EmployeeSalaryList({ item }: EmployeeSalaryListProps) {
   return (
-    <tr key={item.jmbg}>
-      <td className="salaries-table__decoration">{item.name}</td>
-      <td>{item.totalNetSalary}</td>
-      <td className="salaries-table__decoration">{item.totalGrossSalary}</td>
-      <td>{item.bankGrossSalary}</td>
-      <td>{item.bankNetSallary}</td>
-      <td>{item.bankContributes}</td>
-      <td className="salaries-table__decoration">{item.bankHotMeal}</td>
-      <td>{item.handSalary}</td>
-      <td>{item.handBonus}</td>
-      <td>{item.handPenalty}</td>
-      <td className="salaries-table__decoration">{item.handTotal}</td>
-      <td>{item.loan}</td>
-      <td>{item.installment}</td>
-      <td>{item.note}</td>
+    <tr>
+      <td className="salaries-table__decoration">{item.surname}</td>
+      <td>{item.salary}</td>
+      <td className="salaries-table__decoration">{item.takeHomePay}</td>
+      <td>{item.salary}</td>
+      <td>{item.totalBonus}</td>
+      <td>{item.totalPenalties}</td>
+      <td className="salaries-table__decoration">{item.takeHomePay}</td>
+      <td>{item?.loanDetail?.totalLoan || "No-Data"}</td>
+      <td>{item.totalInstallment}</td>
+      <td>{item?.loanDetail?.note || "No-Data"}</td>
     </tr>
   );
 }

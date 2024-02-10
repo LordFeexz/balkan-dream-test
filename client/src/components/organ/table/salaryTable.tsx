@@ -1,9 +1,12 @@
 import { DownloadTableExcel } from "react-export-table-to-excel";
-import { useRef } from "react";
-import EmployeeSalaryList from "../../mollecul/content/employeeSalary";
+import { useRef, useContext } from "react";
+import { context } from "../../../context/salaryContext";
+import SalaryPreviewData from "../../mollecul/content/salaryPreviewData";
 
 export default function SalaryTable() {
   const tableRef = useRef<HTMLTableElement>(null);
+  const { datas } = useContext(context);
+
   return (
     <div className="portlet portlet-boxed">
       <div className="portlet-body portlet-body-salaries">
@@ -26,10 +29,6 @@ export default function SalaryTable() {
               </th>
               <th>Total Net Salary</th>
               <th className="salaries-table__decoration">Total Gross Salary</th>
-              <th>Bank Gross Salary</th>
-              <th>Bank Net Salary</th>
-              <th>Bank Contributes</th>
-              <th className="salaries-table__decoration">Bank Hot Meal</th>
               <th>Hand Salary</th>
               <th>Hand Bonus</th>
               <th>Hand Penalty</th>
@@ -40,8 +39,8 @@ export default function SalaryTable() {
             </tr>
           </thead>
           <tbody>
-            {[].map((el) => (
-              <EmployeeSalaryList item={el} key={el} />
+            {datas.map((el, idx) => (
+              <SalaryPreviewData item={el} key={idx} />
             ))}
           </tbody>
         </table>

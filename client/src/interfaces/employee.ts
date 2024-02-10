@@ -60,17 +60,21 @@ export interface EmployeeSalaryDetail {
   penalties: EmployeeSalaryUnitDetail[];
   bonuses: EmployeeSalaryUnitDetail[];
   isLastInstallment: boolean;
-  loanDetail: LoanUnitDetail;
+  loanDetail: LoanUnitDetail | null;
 }
 
 export interface EmployeeSalaryUnitDetail {
   _id: string;
   amount: number;
+  description: string;
+  date: string;
 }
 
 export interface LoanUnitDetail {
   _id: string;
+  note: string;
   installment: number;
+  totalLoan: number;
 }
 
 export interface GenerateSalaryResp {

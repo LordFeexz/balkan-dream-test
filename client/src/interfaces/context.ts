@@ -1,5 +1,6 @@
 import type { ProfileTabItem } from ".";
 import type { IBonus } from "./bonus";
+import type { EmployeeSalaryDetail } from "./employee";
 import type { ILoan } from "./loan";
 import type { ILoanPayment } from "./loanPayment";
 import type { IPenalty } from "./penalty";
@@ -23,4 +24,9 @@ export type TabName =
 
 export interface TabSalaryContext {
   activeTab: ProfileTabItem;
+  signature: string;
+  datas: EmployeeSalaryDetail[];
+  step: SalaryStep;
 }
+
+export type SalaryStep = "Generate" | "Preview" | "Release";

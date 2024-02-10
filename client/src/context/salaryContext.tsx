@@ -5,7 +5,7 @@ import {
   type SetStateAction,
   type ReactNode,
 } from "react";
-import { TabSalaryContext } from "../interfaces/context";
+import type { TabSalaryContext } from "../interfaces/context";
 import { profileTabItems } from "../constant/tabs";
 
 export type ContextValue = TabSalaryContext & {
@@ -21,6 +21,9 @@ export interface SalaryWrapperProps {
 export default function SalaryWrapper({ children }: SalaryWrapperProps) {
   const [displayData, setDisplayData] = useState<TabSalaryContext>({
     activeTab: profileTabItems[0],
+    signature: "",
+    datas: [],
+    step: 'Generate',
   });
 
   return (
