@@ -10,6 +10,7 @@ import { findEmployeeById } from "../../actions/employee";
 import SalaryList from "../../components/atom/content/salaryList";
 import EmployeeTabsProfile from "../../components/organ/tabs/employeeTabProfile";
 import { context } from "../../context/tabContent";
+import { months } from "../../constant/month";
 
 export default function EmployeeDetailPage() {
   const { identifier } = useParams();
@@ -37,6 +38,8 @@ export default function EmployeeDetailPage() {
           navigate("/employees");
         });
   }, [employee]);
+  const startdate = new Date(employee?.startdate || new Date());
+  const birthdate = new Date(employee?.birthdate || new Date());
 
   return (
     <Suspense fallback={<div>...loading</div>}>
@@ -78,7 +81,10 @@ export default function EmployeeDetailPage() {
               alt="Anniversary illustration"
               className="employee-statistics__image"
             />
-            <h4 className="list-group-item-text">{employee?.startdate}</h4>
+            <h4 className="list-group-item-text">
+              {startdate.getDate()}-{months[startdate.getMonth()].label}-
+              {startdate.getFullYear()}
+            </h4>
             <h6 className="list-group-item-heading">Anniversary</h6>
           </div>
           <div className="col-md-3 employee-statistics">
@@ -88,7 +94,8 @@ export default function EmployeeDetailPage() {
               className="employee-statistics__image"
             />
             <h4 className="list-group-item-text">
-              {employee?.birthdate || ""}
+              {birthdate.getDate()}-{months[birthdate.getMonth()].label}-
+              {birthdate.getFullYear()}
             </h4>
             <h6 className="list-group-item-heading">Birthday</h6>
           </div>

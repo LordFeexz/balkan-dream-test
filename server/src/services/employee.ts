@@ -6,6 +6,7 @@ import type {
   EmployeeSalaryDetail,
   IEmployee,
   NewEmployeeProps,
+  SummaryData,
 } from "../interfaces/employee";
 import employee from "../models/employee";
 import type { DataWithTotal, DbOpts, Gender, SearchQuery } from "../interfaces";
@@ -329,7 +330,10 @@ export default new (class Employee extends BaseService<IEmployee> {
         },
       },
       {
-        $unwind: "$loan",
+        $unwind: {
+          path: "$loan",
+          preserveNullAndEmptyArrays: true,
+        },
       },
       {
         $lookup: {
@@ -453,6 +457,9 @@ export default new (class Employee extends BaseService<IEmployee> {
           loan: {
             $first: "$loan",
           },
+          loanNote: {
+            $first: "$note",
+          },
           totalBonus: {
             $sum: {
               $cond: [
@@ -489,7 +496,7 @@ export default new (class Employee extends BaseService<IEmployee> {
             $first: "$surname",
           },
           salary: {
-            $first: "$salary.amount",
+            $first: "$salary",
           },
         },
       },
@@ -498,7 +505,67 @@ export default new (class Employee extends BaseService<IEmployee> {
           takeHomePay: {
             $subtract: [
               {
-                $add: ["$salary", "$totalBonus"],
+                $switch: {
+                  branches: [
+                    {
+                      case: {
+                        $lte: ["$salary.amount", 1000],
+                      },
+                      then: {
+                        $add: ["$salary.amount", "$totalBonus"],
+                      },
+                    },
+                    {
+                      case: {
+                        $lte: ["$salary.amount", 2000],
+                      },
+                      then: {
+                        $add: [
+                          "$totalBonus",
+                          {
+                            $subtract: [
+                              "$salary.amount",
+                              {
+                                $multiply: ["$salary.amount", 0.1],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                    {
+                      case: {
+                        $lte: ["$salary.amount", 3000],
+                      },
+                      then: {
+                        $add: [
+                          "$totalBonus",
+                          {
+                            $subtract: [
+                              "$salary.amount",
+                              {
+                                $multiply: ["$salary.amount", 0.2],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                  default: {
+                    $add: [
+                      "$totalBonus",
+                      {
+                        $subtract: [
+                          "$salary.amount",
+                          {
+                            $multiply: ["$salary.amount", 0.3],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
               },
               {
                 $add: ["$totalPenalties", "$totalInstallment"],
@@ -527,6 +594,23 @@ export default new (class Employee extends BaseService<IEmployee> {
                         "$$bonus.amount",
                       ],
                     },
+                    description: {
+                      $cond: [
+                        {
+                          $or: [
+                            {
+                              $eq: ["$$bonus.description", ""],
+                            },
+                            {
+                              $eq: ["$$bonus.description", null],
+                            },
+                          ],
+                        },
+                        "N/A",
+                        "$$bonus.description",
+                      ],
+                    },
+                    date: "$$bonus.date",
                   },
                 },
               },
@@ -555,6 +639,23 @@ export default new (class Employee extends BaseService<IEmployee> {
                         "$$penalty.amount",
                       ],
                     },
+                    description: {
+                      $cond: [
+                        {
+                          $or: [
+                            {
+                              $eq: ["$$penalty.description", ""],
+                            },
+                            {
+                              $eq: ["$$penalty.description", null],
+                            },
+                          ],
+                        },
+                        "N/A",
+                        "$$penalty.description",
+                      ],
+                    },
+                    date: "$$penalty.date",
                   },
                 },
               },
@@ -564,27 +665,57 @@ export default new (class Employee extends BaseService<IEmployee> {
           isLastInstallment: {
             $cond: {
               if: {
-                $eq: [
+                $gt: [
                   {
-                    $subtract: ["$loan.period", 1],
+                    $type: "$loan",
                   },
-                  {
-                    $size: "$loan.paymentHistory",
-                  },
+                  "Missing",
                 ],
               },
-              then: true,
+              then: {
+                $cond: {
+                  if: {
+                    $eq: [
+                      {
+                        $subtract: ["$loan.period", 1],
+                      },
+                      {
+                        $size: {
+                          $ifNull: ["$loan.paymentHistory", []],
+                        },
+                      },
+                    ],
+                  },
+                  then: true,
+                  else: false,
+                },
+              },
               else: false,
             },
           },
           loanDetail: {
             $cond: {
               if: {
-                $gt: [{ $type: "$loan" }, "missing"],
+                $gt: [
+                  {
+                    $type: "$loan",
+                  },
+                  "missing",
+                ],
               },
               then: {
                 _id: "$loan._id",
                 installment: "$totalInstallment",
+                note: {
+                  $cond: {
+                    if: {
+                      $eq: ["$loanNote", null],
+                    },
+                    then: "N/A",
+                    else: "$loanNote.description",
+                  },
+                },
+                totalLoan: "$loan.amount",
               },
               else: null,
             },
@@ -594,6 +725,268 @@ export default new (class Employee extends BaseService<IEmployee> {
       {
         $project: {
           loan: 0,
+          loanNote: 0,
+        },
+      },
+    ]);
+  }
+
+  public async getReportSummary() {
+    return await this.model.aggregate<SummaryData>([
+      {
+        $lookup: {
+          from: "salaries",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "salary",
+        },
+      },
+      {
+        $unwind: "$salary",
+      },
+      {
+        $unwind: {
+          path: "$salary.paymentHistory",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          salaryPaymentMonth: {
+            $month: "$salary.paymentHistory.date",
+          },
+          salaryPaymentYear: {
+            $year: "$salary.paymentHistory.date",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "loans",
+          let: {
+            userId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                    {
+                      $eq: ["$status", "Process"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "loan",
+        },
+      },
+      {
+        $unwind: {
+          path: "$loan",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "penalties",
+          let: {
+            userId: "$_id",
+            dateMonth: "$salaryPaymentMonth",
+            dateYear: "$salaryPaymentYear",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$isPayed", true],
+                    },
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                    {
+                      $and: [
+                        {
+                          $eq: [
+                            {
+                              $month: "$date",
+                            },
+                            "$$dateMonth",
+                          ],
+                        },
+                        {
+                          $eq: [
+                            {
+                              $year: "$date",
+                            },
+                            "$$dateYear",
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "penalties",
+        },
+      },
+      {
+        $unwind: {
+          path: "$penalties",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "bonus",
+          let: {
+            userId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "bonuses",
+        },
+      },
+      {
+        $unwind: {
+          path: "$bonuses",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$bonuses.paymentHistory",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: "$salaryPaymentMonth",
+            year: "$salaryPaymentYear",
+          },
+          totalBonus: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    {
+                      $eq: [
+                        "$salaryPaymentMonth",
+                        {
+                          $month: "$bonuses.paymentHistory.date",
+                        },
+                      ],
+                    },
+                    {
+                      $eq: [
+                        "$salaryPaymentYear",
+                        {
+                          $year: "$bonuses.paymentHistory.date",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                "$bonuses.paymentHistory.amount",
+                0,
+              ],
+            },
+          },
+          totalSalary: {
+            $sum: "$salary.amount",
+          },
+          totalPenalties: {
+            $sum: "$penalties.amount",
+          },
+          totalTax: {
+            $sum: {
+              $switch: {
+                branches: [
+                  {
+                    case: {
+                      $lte: ["$salary.amount", 1000],
+                    },
+                    then: 0,
+                  },
+                  {
+                    case: {
+                      $lte: ["$salary.amount", 2000],
+                    },
+                    then: {
+                      $multiply: ["$salary.amount", 0.1],
+                    },
+                  },
+                  {
+                    case: {
+                      $lte: ["$salary.amount", 3000],
+                    },
+                    then: {
+                      $multiply: ["$salary.amount", 0.2],
+                    },
+                  },
+                ],
+                default: {
+                  $multiply: ["$salary.amount", 0.3],
+                },
+              },
+            },
+          },
+          totalEmployee: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: "$_id.month",
+          year: "$_id.year",
+          gross: {
+            $add: ["$totalSalary", "$totalBonus"],
+          },
+          tax: "$totalTax",
+          salary: "$totalSalary",
+          employees: "$totalEmployee",
+          penalties: "$totalPenalties",
+          bonuses: "$totalBonus",
+        },
+      },
+      {
+        $addFields: {
+          net: {
+            $subtract: [
+              "$gross",
+              {
+                $add: ["$tax", "$penalties"],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $sort: {
+          month: -1,
+          year: -1,
         },
       },
     ]);

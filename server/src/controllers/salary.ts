@@ -207,7 +207,7 @@ export default new (class SalaryController {
             },
           });
 
-        if (totalInstallment) {
+        if (totalInstallment && loanDetail) {
           updateLoanModel.push({
             updateOne: {
               filter: {
@@ -216,7 +216,7 @@ export default new (class SalaryController {
               },
               update: {
                 $set: {
-                  status: isLastInstallment ? "Process" : "Finish",
+                  status: isLastInstallment ? "Finish" : "Process",
                 },
                 $push: {
                   paymentHistory: {
@@ -236,7 +236,7 @@ export default new (class SalaryController {
             unit: "$",
             amount: totalInstallment,
             employeeId,
-            loanId: loanDetail._id,
+            loanId: loanDetail?._id,
           });
         }
       }

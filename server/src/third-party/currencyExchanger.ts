@@ -4,7 +4,7 @@ import type { CurrencyExchangerResp } from "../interfaces/currencyExchanger";
 
 export default new (class CurrencyExchanger extends ThirdPartyRequest {
   constructor() {
-    super("https://www.alphavantage.co");
+    super(process.env.ALPHA_VANTAGE_BASE_URL);
   }
 
   public async getUsdExchangeRate() {

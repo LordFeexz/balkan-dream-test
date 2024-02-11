@@ -58,15 +58,31 @@ export interface EmployeeSalaryDetail {
   penalties: EmployeeSalaryUnitDetail[];
   bonuses: EmployeeSalaryUnitDetail[];
   isLastInstallment: boolean;
-  loanDetail: LoanUnitDetail;
+  loanDetail: LoanUnitDetail | null;
 }
 
 export interface EmployeeSalaryUnitDetail {
   _id: Types.ObjectId;
   amount: number;
+  description: string;
+  date: Date;
 }
 
 export interface LoanUnitDetail {
   _id: Types.ObjectId;
   installment: number;
+  note: string;
+  totalLoan: number;
+}
+
+export interface SummaryData {
+  salary: number;
+  employees: number;
+  penalties: number;
+  net: number;
+  month: number;
+  year: number;
+  gross: number;
+  tax: number;
+  bonuses: number;
 }

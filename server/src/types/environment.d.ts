@@ -8,6 +8,7 @@ declare global {
       GOOGLE_OAUTH_CLIENT_SECRET: string;
       GOOGLE_OAUTH_CLIENT_ID: string;
       ALPHA_VANTAGE_APIKEY: string;
+      ALPHA_VANTAGE_BASE_URL: string;
     }
   }
 }

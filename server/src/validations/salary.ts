@@ -28,7 +28,9 @@ export default new (class SalaryValidation extends BaseValidation {
 
   private readonly salaryUnitDetailSchema = yup.object().shape({
     _id: yup.string().required("_id is required"),
-    amount: yup.number().required("amount is required"),
+    amount: this.requiredAmount,
+    description: this.optionalDesc,
+    date: yup.string().required("date is required"),
   });
 
   public validateReleaseSalary = async (data: any, accessToken: string) =>
@@ -60,6 +62,20 @@ export default new (class SalaryValidation extends BaseValidation {
                   .array()
                   .of(this.salaryUnitDetailSchema)
                   .required("bonuses is required"),
+                isLastInstallment: yup
+                  .boolean()
+                  .required("isLastInstallment is required"),
+                loanDetail: yup
+                  .object()
+                  .shape({
+                    _id: yup.string().required("_id is required"),
+                    installment: yup
+                      .number()
+                      .required("installment is required"),
+                    note: yup.string().required("note is required"),
+                    totalLoan: yup.number().required("totalLoan is required"),
+                  })
+                  .nullable(),
               })
             )
             .required("datas is required"),

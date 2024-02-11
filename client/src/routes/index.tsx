@@ -13,6 +13,8 @@ import PenaltyPage from "../views/penalty";
 import PenaltyWrapper from "../context/penaltyContext";
 import SalaryPage from "../views/salary";
 import SalaryWrapper from "../context/salaryContext";
+import ReportPage from "../views/reports/reports";
+import ReportDetail from "../views/reports/detail";
 
 export default createBrowserRouter([
   {
@@ -75,6 +77,18 @@ export default createBrowserRouter([
             <SalaryPage />
           </SalaryWrapper>
         ),
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
+      },
+      {
+        path: "/reports",
+        element: <ReportPage />,
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
+      },
+      {
+        path: "/reports/details",
+        element: <ReportDetail />,
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,
       },
