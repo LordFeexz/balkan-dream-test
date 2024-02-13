@@ -1,12 +1,14 @@
 import ReportData from "../../components/mollecul/content/reportData";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { SummaryData } from "../../interfaces/report";
 import { getSummaryData } from "../../actions/report";
 import { Activity } from "react-feather";
 import { Link } from "react-router-dom";
+import { DownloadTableExcel } from "react-export-table-to-excel";
 
 export default function ReportPage() {
   const [data, setData] = useState<SummaryData[]>([]);
+  const tableRef = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
     if (!data.length)
@@ -14,6 +16,7 @@ export default function ReportPage() {
         setData(await getSummaryData());
       })();
   }, [data.length]);
+
   return (
     <div className="container">
       <div className="row">
@@ -34,7 +37,16 @@ export default function ReportPage() {
             </div>
 
             <div className="portlet-body" style={{ marginTop: "20px" }}>
-              <table className="table table-striped">
+              <DownloadTableExcel
+                filename="Salaries"
+                sheet="Preview"
+                currentTableRef={tableRef.current}
+              >
+                <p className="portlet-title" style={{ cursor: "pointer" }}>
+                  <span style={{ color: "#48C6EF" }}>Download as XLS</span>
+                </p>
+              </DownloadTableExcel>
+              <table className="table table-striped" ref={tableRef}>
                 <thead>
                   <tr>
                     <th>YEAR</th>
@@ -61,23 +73,3 @@ export default function ReportPage() {
     </div>
   );
 }
-// {
-//   $addFields: {
-//     startDateMonth: {
-//       $month:'$startdate'
-//     },
-//     startDateYear:{
-//       $year:'$startdate'
-//     },
-//     age:{
-//       $floor:{
-//           $divide:[
-//           {
-//             $subtract:[ISODate('2024-02-11'),'$birthdate']
-//           },
-//           1000 * 60 * 60 * 24 * 365
-//         ]
-//       }
-//     }
-//   }
-// },

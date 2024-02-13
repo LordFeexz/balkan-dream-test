@@ -39,3 +39,10 @@ export interface DisplaySalaryTab {
   description: string;
   surname: string;
 }
+
+export interface BaseDataEntry {
+  title?: string | number;
+  color: string;
+  value: number;
+  key?: string | number;
+}

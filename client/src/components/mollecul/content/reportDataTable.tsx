@@ -1,18 +1,25 @@
 import { Link } from "react-router-dom";
 import { Activity } from "react-feather";
+import type { SalaryPaymentDetail } from "../../../interfaces/report";
 
-export default function ReportDataTable() {
+export interface ReportDataTableProps {
+  data: SalaryPaymentDetail;
+  idx: number;
+}
+
+export default function ReportDataTable({ data, idx }: ReportDataTableProps) {
   return (
     <tr>
-      <td>{/* {getIds.next().value} */}</td>
-      <td>{/* {item} */}</td>
-      <td>{/* {netSalary[idx]} */}</td>
-      <td>{/* {grossSalary[idx]} */}</td>
-      <td>{/* {meals[idx]} */}</td>
-      <td>{/* {taxes[idx]} */}</td>
-      <td>{/* {handSalary[idx]} */}</td>
+      <td>{idx + 1}</td>
+      <td>{data.surname}</td>
+      <td>{data.net}</td>
+      <td>{data.gross}</td>
+      <td>{data.penalties}</td>
+      <td>{data.bonuses}</td>
+      <td>{data.tax}</td>
+      <td>{data.salary}</td>
       <td className="table-actions">
-        <Link to={{ pathname: `/reports/${"item"}` }}>
+        <Link to={{ pathname: `/reports/${data._id}` }}>
           <Activity size="20" />
         </Link>
       </td>

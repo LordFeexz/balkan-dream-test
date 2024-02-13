@@ -34,3 +34,16 @@ export interface GenerateSalaryProps {
   month: number;
   year: number;
 }
+
+export interface SalaryPaymentDetail {
+  surname: string;
+  penalties: number;
+  net: number;
+  month: number;
+  year: number;
+  gross: number;
+  tax: number;
+  bonuses: number;
+  salary: number;
+  _id: Types.ObjectId;
+}

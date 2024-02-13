@@ -9,7 +9,13 @@ import type {
   SummaryData,
 } from "../interfaces/employee";
 import employee from "../models/employee";
-import type { DataWithTotal, DbOpts, Gender, SearchQuery } from "../interfaces";
+import type {
+  DataWithTotal,
+  DbOpts,
+  EmployeeStatistic,
+  Gender,
+  SearchQuery,
+} from "../interfaces";
 import helpers from "../helpers";
 import type { ILoan } from "../interfaces/loan";
 import type { ISalary } from "../interfaces/salary";
@@ -728,6 +734,11 @@ export default new (class Employee extends BaseService<IEmployee> {
           loanNote: 0,
         },
       },
+      {
+        $addFields: {
+          salary: "$salary.amount",
+        },
+      },
     ]);
   }
 
@@ -758,37 +769,6 @@ export default new (class Employee extends BaseService<IEmployee> {
           salaryPaymentYear: {
             $year: "$salary.paymentHistory.date",
           },
-        },
-      },
-      {
-        $lookup: {
-          from: "loans",
-          let: {
-            userId: "$_id",
-          },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    {
-                      $eq: ["$employeeId", "$$userId"],
-                    },
-                    {
-                      $eq: ["$status", "Process"],
-                    },
-                  ],
-                },
-              },
-            },
-          ],
-          as: "loan",
-        },
-      },
-      {
-        $unwind: {
-          path: "$loan",
-          preserveNullAndEmptyArrays: true,
         },
       },
       {
@@ -990,5 +970,124 @@ export default new (class Employee extends BaseService<IEmployee> {
         },
       },
     ]);
+  }
+
+  public async getStatistic() {
+    const [result] = await this.model.aggregate<EmployeeStatistic>([
+      {
+        $lookup: {
+          from: "salaries",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "salary",
+        },
+      },
+      { $unwind: "$salary" },
+      {
+        $facet: {
+          genderPrecentage: [
+            {
+              $group: {
+                _id: "$gender",
+                total: {
+                  $sum: 1,
+                },
+              },
+            },
+          ],
+          rolePrecentage: [
+            {
+              $group: {
+                _id: "$position",
+                total: {
+                  $sum: 1,
+                },
+              },
+            },
+          ],
+          activeEmployeePrecentage: [
+            {
+              $group: {
+                _id: {
+                  $cond: [
+                    {
+                      $or: [
+                        {
+                          enddate: null,
+                        },
+                      ],
+                    },
+                    "Active",
+                    "Inactive",
+                  ],
+                },
+                total: {
+                  $sum: 1,
+                },
+              },
+            },
+          ],
+          agePrecentage: [
+            {
+              $group: {
+                _id: {
+                  $year: "$birthdate",
+                },
+                total: {
+                  $sum: 1,
+                },
+              },
+            },
+          ],
+          salaryPercentage: [
+            {
+              $group: {
+                _id: {
+                  $switch: {
+                    branches: [
+                      {
+                        case: {
+                          $lte: ["$salary.amount", 1000],
+                        },
+                        then: 1,
+                      },
+                      {
+                        case: {
+                          $lte: ["$salary.amount", 2000],
+                        },
+                        then: 2,
+                      },
+                      {
+                        case: {
+                          $lte: ["$salary.amount", 3000],
+                        },
+                        then: 3,
+                      },
+                      {
+                        case: {
+                          $lte: ["$salary.amount", 4000],
+                        },
+                        then: 4,
+                      },
+                      {
+                        case: {
+                          $lte: ["$salary.amount", 5000],
+                        },
+                        then: 5,
+                      },
+                    ],
+                    default: 6,
+                  },
+                },
+                total: {
+                  $sum: 1,
+                },
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    return result;
   }
 })();

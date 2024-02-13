@@ -21,10 +21,10 @@ export interface DbOpts {
 }
 
 export interface PaginationProps {
-  page?: number;
-  limit?: number;
-  sortBy?: string;
-  direction?: string;
+  page: number;
+  limit: number;
+  sortBy: string;
+  direction: string;
 }
 
 export type SearchQuery = PaginationProps & {
@@ -42,4 +42,17 @@ export interface PaginationOptionalProps {
 export type DataWithTotal<T = any> = {
   data: T;
   total: number;
+};
+
+export interface EmployeeStatistic {
+  genderPrecentage: Statistic<string>[];
+  rolePrecentage: Statistic<string>[];
+  activeEmployeePrecentage: Statistic<string>[];
+  agePrecentage: Statistic<number>[];
+  salaryPercentage: Statistic<number>[];
+}
+
+export type Statistic<T = any> = {
+  total: number;
+  _id: T;
 };
