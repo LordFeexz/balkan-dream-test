@@ -82,7 +82,10 @@ export default new (class ReportController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const data = await employeeService.getStatistic();
+      const { month, year } = await reportValidation.validateDate(req.query);
+      const [first, last] = helpers.getFirstAndLastDate(month, year);
+
+      const data = await employeeService.getStatistic(first, last);
       if (!data)
         throw new AppError({
           message: "data not found",

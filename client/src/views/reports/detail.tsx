@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import type { EmployeeSalaryDetailPerMonth } from "../../interfaces/report";
 import { getSummaryDetail } from "../../actions/report";
 import EmployeeStatistic from "../../components/organ/content/employeeStatistic";
+import { months } from "../../constant/month";
 
 export default function ReportDetail() {
   const [data, setData] = useState<EmployeeSalaryDetailPerMonth[]>([]);
@@ -38,7 +39,7 @@ export default function ReportDetail() {
             List of all relevant employees for
             <span style={{ color: "#48C6EF", fontStyle: "italic" }}>
               {" "}
-              {`${month}-${year}`}
+              {`${months[month - 1].label}-${year}`}
             </span>
           </h4>
 

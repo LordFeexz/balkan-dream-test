@@ -1225,7 +1225,7 @@ export default new (class Employee extends BaseService<IEmployee> {
     ]);
   }
 
-  public async getStatistic() {
+  public async getStatistic(fromDate: Date, endDate: Date) {
     const [result] = await this.model.aggregate<EmployeeStatistic>([
       {
         $lookup: {
@@ -1235,10 +1235,33 @@ export default new (class Employee extends BaseService<IEmployee> {
           as: "salary",
         },
       },
-      { $unwind: "$salary" },
+      {
+        $unwind: "$salary",
+      },
       {
         $facet: {
           genderPrecentage: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $lte: ["$startdate", endDate],
+                    },
+                    {
+                      $or: [
+                        {
+                          enddate: null,
+                        },
+                        {
+                          $gt: ["$enddate", endDate],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
             {
               $group: {
                 _id: "$gender",
@@ -1249,6 +1272,27 @@ export default new (class Employee extends BaseService<IEmployee> {
             },
           ],
           rolePrecentage: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $lte: ["$startdate", endDate],
+                    },
+                    {
+                      $or: [
+                        {
+                          enddate: null,
+                        },
+                        {
+                          $gt: ["$enddate", endDate],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
             {
               $group: {
                 _id: "$position",
@@ -1264,9 +1308,19 @@ export default new (class Employee extends BaseService<IEmployee> {
                 _id: {
                   $cond: [
                     {
-                      $or: [
+                      $and: [
                         {
-                          enddate: null,
+                          $lte: ["$startdate", endDate],
+                        },
+                        {
+                          $or: [
+                            {
+                              enddate: null,
+                            },
+                            {
+                              $gt: ["$enddate", endDate],
+                            },
+                          ],
                         },
                       ],
                     },
@@ -1282,6 +1336,27 @@ export default new (class Employee extends BaseService<IEmployee> {
           ],
           agePrecentage: [
             {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $lte: ["$startdate", endDate],
+                    },
+                    {
+                      $or: [
+                        {
+                          enddate: null,
+                        },
+                        {
+                          $gt: ["$enddate", endDate],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+            {
               $group: {
                 _id: {
                   $year: "$birthdate",
@@ -1293,6 +1368,26 @@ export default new (class Employee extends BaseService<IEmployee> {
             },
           ],
           salaryPercentage: [
+            {
+              $unwind: {
+                path: "$salary.paymentHistory",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $gte: ["$salary.paymentHistory.date", fromDate],
+                    },
+                    {
+                      $lte: ["$salary.paymentHistory.date", endDate],
+                    },
+                  ],
+                },
+              },
+            },
             {
               $group: {
                 _id: {

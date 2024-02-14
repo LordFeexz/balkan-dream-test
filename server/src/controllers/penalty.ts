@@ -129,7 +129,6 @@ export default new (class PenaltyController {
         });
 
       const penalties = await penaltyService.createBulkPenalty(payload);
-
       response.createResponse({
         res,
         code: 201,
