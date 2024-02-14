@@ -35,3 +35,14 @@ export type Statistic<T = any> = {
   total: number;
   _id: T;
 };
+
+export interface EmployeeSalaryDetailPerMonth {
+  net: number;
+  surname: string;
+  gross: number;
+  tax: number;
+  salary: number;
+  penalties: number;
+  bonuses: number;
+  _id: string;
+}

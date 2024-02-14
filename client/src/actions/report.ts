@@ -1,6 +1,6 @@
 import type {
+  EmployeeSalaryDetailPerMonth,
   EmployeeStatistic,
-  SalaryPaymentDetail,
   SummaryData,
 } from "../interfaces/report";
 import request from "../lib/axios";
@@ -26,17 +26,21 @@ export const getSummaryData = (): Promise<SummaryData[]> =>
     }
   });
 
-export const getSummaryDetail = (): Promise<SalaryPaymentDetail[]> =>
+export const getSummaryDetail = (
+  month: number,
+  year: number
+): Promise<EmployeeSalaryDetailPerMonth[]> =>
   new Promise(async (resolve) => {
     try {
       const {
         status,
         data: { data, message },
-      } = await request.Query<SalaryPaymentDetail[]>({
+      } = await request.Query<EmployeeSalaryDetailPerMonth[]>({
         url: "/report/summary/detail",
         headers: {
           access_token: localStorage.getItem("access_token"),
         },
+        params: { year, month },
       });
 
       if (status !== 200) throw { message };

@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import { Activity } from "react-feather";
-import type { SalaryPaymentDetail } from "../../../interfaces/report";
+import type { EmployeeSalaryDetailPerMonth } from "../../../interfaces/report";
 
 export interface ReportDataTableProps {
-  data: SalaryPaymentDetail;
+  data: EmployeeSalaryDetailPerMonth;
   idx: number;
 }
 
@@ -19,7 +19,7 @@ export default function ReportDataTable({ data, idx }: ReportDataTableProps) {
       <td>{data.tax}</td>
       <td>{data.salary}</td>
       <td className="table-actions">
-        <Link to={{ pathname: `/reports/${data._id}` }}>
+        <Link to={{ pathname: `/reports/detail/${data._id}` }}>
           <Activity size="20" />
         </Link>
       </td>

@@ -15,6 +15,7 @@ import SalaryPage from "../views/salary";
 import SalaryWrapper from "../context/salaryContext";
 import ReportPage from "../views/reports/reports";
 import ReportDetail from "../views/reports/detail";
+import EmployeeStat from "../views/reports/employeeStat";
 
 export default createBrowserRouter([
   {
@@ -25,6 +26,8 @@ export default createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    loader: () =>
+      !localStorage.getItem("access_token") ? redirect("/login") : null,
     children: [
       {
         path: "/about",
@@ -89,6 +92,12 @@ export default createBrowserRouter([
       {
         path: "/reports/details",
         element: <ReportDetail />,
+        loader: () =>
+          !localStorage.getItem("access_token") ? redirect("/login") : null,
+      },
+      {
+        path: "/reports/details/:id",
+        element: <EmployeeStat />,
         loader: () =>
           !localStorage.getItem("access_token") ? redirect("/login") : null,
       },

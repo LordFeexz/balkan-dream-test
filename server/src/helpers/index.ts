@@ -80,4 +80,13 @@ export default new (class Helper {
   public parseToFloat(str: string) {
     return Number(parseFloat(str).toFixed(2));
   }
+
+  public getFirstAndLastDate(month: number, year: number) {
+    const firstDate = new Date(year, month - 1, 1);
+    const lastDate = new Date(firstDate);
+    lastDate.setMonth(lastDate.getMonth() + 1);
+    lastDate.setDate(lastDate.getDate() - 1);
+
+    return [firstDate, lastDate];
+  }
 })();

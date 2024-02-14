@@ -22,4 +22,12 @@ export default new (class AdminValidations extends BaseValidation {
       }),
       data
     );
+
+  public microsoftLoginValidate = async (data: any) =>
+    await this.validate<{ microsoftToken: string }>(
+      yup.object().shape({
+        microsoftToken: yup.string().required("microsoftToken is required"),
+      }),
+      data
+    );
 })();

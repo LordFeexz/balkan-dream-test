@@ -1,9 +1,6 @@
 import * as yup from "yup";
 import BaseValidation from "../base/validation";
-import type {
-  GenerateSalaryProps,
-  UpdateSalaryProps,
-} from "../interfaces/salary";
+import type { UpdateSalaryProps } from "../interfaces/salary";
 import type { EmployeeSalaryDetail } from "../interfaces/employee";
 import encryption from "../utils/encryption";
 
@@ -13,15 +10,6 @@ export default new (class SalaryValidation extends BaseValidation {
       yup.object().shape({
         amount: this.requiredAmount,
         description: this.optionalDesc,
-      }),
-      data
-    );
-
-  public generateSalaryValidation = async (data: any) =>
-    await this.validate<GenerateSalaryProps>(
-      yup.object().shape({
-        month: yup.number().required("month is required"),
-        year: yup.number().required("year is required"),
       }),
       data
     );

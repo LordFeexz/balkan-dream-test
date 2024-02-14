@@ -2,7 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import AppError from "../base/error";
 import employeeService from "../services/employee";
 import response from "../middlewares/response";
-import salaryService from "../services/salary";
+import reportValidation from "../validations/report";
+import helpers from "../helpers";
 
 export default new (class ReportController {
   public async getSummaryData(
@@ -43,7 +44,13 @@ export default new (class ReportController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const data = await salaryService.getDetailSalaryPayment();
+      const { month, year } = await reportValidation.validateDate(req.query);
+      const [first, last] = helpers.getFirstAndLastDate(month, year);
+
+      const data = await employeeService.getEmployeeSalaryDetailPerMonth(
+        first,
+        last
+      );
       if (!data.length)
         throw new AppError({
           message: "data not found",

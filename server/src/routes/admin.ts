@@ -5,6 +5,7 @@ export default new (class AdminRoute extends BaseRoutes {
   routes(): void {
     this.router
       .post("/login", adminController.login)
-      .post("/google-login", adminController.googleLogin);
+      .post("/google-login", adminController.googleLogin)
+      .post("/microsoft-login", adminController.microsoftLogin);
   }
 })().router;

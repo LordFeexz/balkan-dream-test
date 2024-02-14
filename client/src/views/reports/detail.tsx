@@ -1,20 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft } from "react-feather";
 import ReportDataTable from "../../components/mollecul/content/reportDataTable";
 import { useState, useEffect } from "react";
-import type { SalaryPaymentDetail } from "../../interfaces/report";
+import type { EmployeeSalaryDetailPerMonth } from "../../interfaces/report";
 import { getSummaryDetail } from "../../actions/report";
 import EmployeeStatistic from "../../components/organ/content/employeeStatistic";
 
 export default function ReportDetail() {
-  const [data, setData] = useState<SalaryPaymentDetail[]>([]);
+  const [data, setData] = useState<EmployeeSalaryDetailPerMonth[]>([]);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+
+  const now = new Date();
+  const month = Number(query.get("month") ?? now.getMonth() + 1);
+  const year = Number(query.get("year") ?? now.getFullYear());
 
   useEffect(() => {
     if (!data.length)
       (async () => {
-        setData(await getSummaryDetail());
+        setData(await getSummaryDetail(month, year));
       })();
   }, [data.length]);
+
   return (
     <div className="container">
       <div className="row navigation-row-2">
@@ -29,7 +36,10 @@ export default function ReportDetail() {
           <h4>
             {" "}
             List of all relevant employees for
-            <span style={{ color: "#48C6EF", fontStyle: "italic" }}> </span>
+            <span style={{ color: "#48C6EF", fontStyle: "italic" }}>
+              {" "}
+              {`${month}-${year}`}
+            </span>
           </h4>
 
           <p style={{ color: "#48C6EF", margin: "0px" }}>
@@ -58,11 +68,7 @@ export default function ReportDetail() {
               </thead>
               <tbody>
                 {data.map((el, idx) => (
-                  <ReportDataTable
-                    key={`${el._id}-${el.surname}-${el.month}-${el.year}`}
-                    data={el}
-                    idx={idx}
-                  />
+                  <ReportDataTable key={el._id} data={el} idx={idx} />
                 ))}
               </tbody>
             </table>

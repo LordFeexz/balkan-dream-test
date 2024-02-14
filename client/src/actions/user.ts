@@ -49,3 +49,23 @@ export const googleLogin = (googleToken: string): Promise<string> =>
       reject(err);
     }
   });
+
+export const microsoftLogin = (microsoftToken: string): Promise<string> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        status,
+        data: { data, message },
+      } = await request.Mutation<string>({
+        url: "/admin/microsoft-login",
+        data: { microsoftToken },
+        method: HTTPPOST,
+      });
+
+      if (status !== 200) throw { message };
+
+      resolve(data);
+    } catch (err) {
+      reject(err);
+    }
+  });

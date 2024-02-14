@@ -55,9 +55,7 @@ export default new (class AdminController {
       });
 
       const { email } = ticket.getPayload() as TokenPayload;
-
-      const admin = await Admin.findOne({ email });
-      if (!admin)
+      if (!email)
         throw new AppError({
           message: "invalid credentials",
           statusCode: 401,
@@ -67,9 +65,37 @@ export default new (class AdminController {
         res,
         code: 200,
         message: "OK",
-        data: jwt.createToken(admin._id.toString()),
+        data: jwt.createTokenEmail(email),
       });
     } catch (err) {
+      next(err);
+    }
+  }
+
+  public async microsoftLogin(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { microsoftToken } = await adminValidation.microsoftLoginValidate(
+        req.body
+      );
+
+      const {aud,email} = jwt.decodeToken(microsoftToken)
+      if(aud !== process.env.MICROSOFT_CLIENT_ID) throw new AppError({
+        message: "invalid credentials",
+        statusCode: 401,
+      })
+
+      response.createResponse({
+        res,
+        code: 200,
+        message: "OK",
+        data:jwt.createTokenEmail(email),
+      });
+    } catch (err) {
+      console.log(err)
       next(err);
     }
   }

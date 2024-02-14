@@ -2,8 +2,6 @@ import ReportData from "../../components/mollecul/content/reportData";
 import { useState, useEffect, useRef } from "react";
 import type { SummaryData } from "../../interfaces/report";
 import { getSummaryData } from "../../actions/report";
-import { Activity } from "react-feather";
-import { Link } from "react-router-dom";
 import { DownloadTableExcel } from "react-export-table-to-excel";
 
 export default function ReportPage() {
@@ -31,9 +29,6 @@ export default function ReportPage() {
                   Details available by clicking on an icon
                 </span>
               </p>
-              <Link to={{ pathname: `/reports/details` }}>
-                <Activity size="20" />
-              </Link>
             </div>
 
             <div className="portlet-body" style={{ marginTop: "20px" }}>
@@ -58,6 +53,7 @@ export default function ReportPage() {
                     <th>TAXES</th>
                     <th>SALARY</th>
                     <th>EMPLOYEES</th>
+                    <th>DETAIL</th>
                   </tr>
                 </thead>
                 <tbody>
