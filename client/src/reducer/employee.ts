@@ -35,22 +35,24 @@ const reducer: Reducer<EmployeeState, EmployeeAction> = (
   { type, payload }
 ) => {
   switch (type) {
-    case GETLISTEMPLOYEE:{
+    case GETLISTEMPLOYEE: {
       const { employees, totalData, totalPage } = payload as GetListEmployee;
       return {
         ...state,
         employees,
         totalData,
         totalPage,
-      };}
-    case SETACTIVESTATUS:
+      };
+    }
+    case SETACTIVESTATUS: {
       return {
         ...state,
         employees: state.employees.map((el) =>
           el._id === payload ? { ...el, enddate: undefined } : el
         ),
       };
-    case SETINACTIVESTATUS:
+    }
+    case SETINACTIVESTATUS: {
       return {
         ...state,
         employees: state.employees.map((el) =>
@@ -59,11 +61,13 @@ const reducer: Reducer<EmployeeState, EmployeeAction> = (
             : el
         ),
       };
-    case GETEMPLOYEENAME:
+    }
+    case GETEMPLOYEENAME: {
       return {
         ...state,
         employeeNames: payload,
       };
+    }
     default:
       return state;
   }

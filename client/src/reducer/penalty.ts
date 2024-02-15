@@ -1,7 +1,7 @@
 import type { Reducer, Action } from "redux";
 import type { GetListPenalty, IPenalty } from "../interfaces/penalty";
 import type { Employee } from "../interfaces/employee";
-import { GETPENALTYLIST,type PenaltyTypes } from "../constant/penalty";
+import { GETPENALTYLIST, type PenaltyTypes } from "../constant/penalty";
 
 export interface PenaltyState {
   penalties: (IPenalty & { employee: Employee })[];

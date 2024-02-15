@@ -82,20 +82,21 @@ export default new (class AdminController {
         req.body
       );
 
-      const {aud,email} = jwt.decodeToken(microsoftToken)
-      if(aud !== process.env.MICROSOFT_CLIENT_ID) throw new AppError({
-        message: "invalid credentials",
-        statusCode: 401,
-      })
+      const { aud, email } = jwt.decodeToken(microsoftToken);
+      if (aud !== process.env.MICROSOFT_CLIENT_ID)
+        throw new AppError({
+          message: "invalid credentials",
+          statusCode: 401,
+        });
 
       response.createResponse({
         res,
         code: 200,
         message: "OK",
-        data:jwt.createTokenEmail(email),
+        data: jwt.createTokenEmail(email),
       });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       next(err);
     }
   }

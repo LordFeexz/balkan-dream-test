@@ -23,7 +23,7 @@ export default function SalaryWrapper({ children }: SalaryWrapperProps) {
     activeTab: profileTabItems[0],
     signature: "",
     datas: [],
-    step: 'Generate',
+    step: "Generate",
   });
 
   return (

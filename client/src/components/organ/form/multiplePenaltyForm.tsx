@@ -58,10 +58,7 @@ export default function MultiplePenaltyForm() {
     e.preventDefault();
 
     for (const key in data)
-      if (
-        !(data as any)[key] &&
-        !["description", "date"].includes(key)
-      ) {
+      if (!(data as any)[key] && !["description", "date"].includes(key)) {
         swalError(`${key} is required`);
         return;
       }
@@ -106,7 +103,11 @@ export default function MultiplePenaltyForm() {
         onChangeHandler={onChangeHandler}
         label="Amount"
       />
-      <UnitForm onChangeHandler={onChangeHandler} name="unit" value={data.unit} />
+      <UnitForm
+        onChangeHandler={onChangeHandler}
+        name="unit"
+        value={data.unit}
+      />
       <DescriptionForm
         name="description"
         value={data.description}

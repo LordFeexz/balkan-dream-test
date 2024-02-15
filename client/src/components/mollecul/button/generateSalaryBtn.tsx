@@ -13,7 +13,6 @@ export default function GenerateSalaryBtn() {
 
     generateSalary()
       .then(({ signature, data }) => {
-        console.log(JSON.stringify(data))
         setDisplayData((prev) => ({
           ...prev,
           signature,

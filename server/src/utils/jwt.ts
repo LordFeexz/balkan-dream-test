@@ -11,7 +11,7 @@ config();
 
 export interface JwtValue extends JwtPayload {
   _id: string;
-  email:string
+  email: string;
 }
 
 class JWT {
@@ -29,8 +29,7 @@ class JWT {
   public verifyToken = (token: string) =>
     verify(token, this.SECRET) as JwtValue;
 
-  public decodeToken = (token: string) => decode(token)as JwtValue;
-
+  public decodeToken = (token: string) => decode(token) as JwtValue;
 }
 
 export default new JWT();
