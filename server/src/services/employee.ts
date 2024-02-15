@@ -512,76 +512,6 @@ export default new (class Employee extends BaseService<IEmployee> {
       },
       {
         $addFields: {
-          takeHomePay: {
-            $subtract: [
-              {
-                $switch: {
-                  branches: [
-                    {
-                      case: {
-                        $lte: ["$salary.amount", 1000],
-                      },
-                      then: {
-                        $add: ["$salary.amount", "$totalBonus"],
-                      },
-                    },
-                    {
-                      case: {
-                        $lte: ["$salary.amount", 2000],
-                      },
-                      then: {
-                        $add: [
-                          "$totalBonus",
-                          {
-                            $subtract: [
-                              "$salary.amount",
-                              {
-                                $multiply: ["$salary.amount", 0.1],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    },
-                    {
-                      case: {
-                        $lte: ["$salary.amount", 3000],
-                      },
-                      then: {
-                        $add: [
-                          "$totalBonus",
-                          {
-                            $subtract: [
-                              "$salary.amount",
-                              {
-                                $multiply: ["$salary.amount", 0.2],
-                              },
-                            ],
-                          },
-                        ],
-                      },
-                    },
-                  ],
-                  default: {
-                    $add: [
-                      "$totalBonus",
-                      {
-                        $subtract: [
-                          "$salary.amount",
-                          {
-                            $multiply: ["$salary.amount", 0.3],
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                },
-              },
-              {
-                $add: ["$totalPenalties", "$totalInstallment"],
-              },
-            ],
-          },
           bonuses: {
             $cond: {
               if: {
@@ -729,6 +659,51 @@ export default new (class Employee extends BaseService<IEmployee> {
               },
               else: null,
             },
+          },
+          tax: {
+            $switch: {
+              branches: [
+                {
+                  case: {
+                    $lte: ["$salary.amount", 1000],
+                  },
+                  then: 0,
+                },
+                {
+                  case: {
+                    $lte: ["$salary.amount", 2000],
+                  },
+                  then: {
+                    $multiply: ["$salary.amount", 0.1],
+                  },
+                },
+                {
+                  case: {
+                    $lte: ["$salary.amount", 3000],
+                  },
+                  then: {
+                    $multiply: ["$salary.amount", 0.2],
+                  },
+                },
+              ],
+              default: {
+                $multiply: ["$salary.amount", 0.3],
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          takeHomePay: {
+            $subtract: [
+              {
+                $add: ["$salary.amount", "$totalBonus"],
+              },
+              {
+                $add: ["$totalPenalties", "$totalInstallment", "$tax"],
+              },
+            ],
           },
         },
       },
