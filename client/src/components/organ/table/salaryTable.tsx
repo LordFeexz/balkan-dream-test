@@ -29,7 +29,7 @@ export default function SalaryTable() {
               </th>
               <th>Total Net Salary</th>
               <th className="salaries-table__decoration">Total Gross Salary</th>
-              <th>Hand Salary</th>
+              <th>Hand Tax</th>
               <th>Hand Bonus</th>
               <th>Hand Penalty</th>
               <th className="salaries-table__decoration">Hand Total</th>

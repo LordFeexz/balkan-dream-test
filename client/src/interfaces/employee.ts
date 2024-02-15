@@ -57,6 +57,7 @@ export interface EmployeeSalaryDetail {
   totalPenalties: number;
   surname: string;
   salary: number;
+  tax: number;
   penalties: EmployeeSalaryUnitDetail[];
   bonuses: EmployeeSalaryUnitDetail[];
   isLastInstallment: boolean;

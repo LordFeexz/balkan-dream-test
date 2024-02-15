@@ -6,14 +6,26 @@ import { getRandomColor } from "../../../helpers/global";
 import type { BaseDataEntry } from "../../../interfaces";
 import PercentageInfo from "../../atom/content/percentageInfo";
 import InfoChart from "../../atom/content/infoChart";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function EmployeeStatistic() {
+  const navigate = useNavigate();
   const [statistic, setStatistic] = useState<EmployeeStatistic | null>(null);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+
+  const month = Number(query.get("month"));
+  const year = Number(query.get("year"));
 
   useEffect(() => {
+    if (!month || !year) {
+      navigate(`/reports/details?err=${"invalid date"}`);
+      return;
+    }
+
     if (!statistic)
       (async () => {
-        setStatistic(await getStatistic());
+        setStatistic(await getStatistic(month, year));
       })();
   }, [statistic]);
 

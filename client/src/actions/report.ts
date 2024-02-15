@@ -51,7 +51,10 @@ export const getSummaryDetail = (
     }
   });
 
-export const getStatistic = (): Promise<EmployeeStatistic | null> =>
+export const getStatistic = (
+  month: number,
+  year: number
+): Promise<EmployeeStatistic | null> =>
   new Promise(async (resolve) => {
     try {
       const {
@@ -62,6 +65,7 @@ export const getStatistic = (): Promise<EmployeeStatistic | null> =>
         headers: {
           access_token: localStorage.getItem("access_token"),
         },
+        params: { month, year },
       });
 
       if (status !== 200) throw { message };
@@ -69,5 +73,31 @@ export const getStatistic = (): Promise<EmployeeStatistic | null> =>
       resolve(data);
     } catch (err) {
       resolve(null);
+    }
+  });
+
+export const getSummaryDetailPerEmployee = (
+  id: string,
+  month: number,
+  year: number
+): Promise<EmployeeSalaryDetailPerMonth[]> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        status,
+        data: { data, message },
+      } = await request.Query<EmployeeSalaryDetailPerMonth[]>({
+        url: `/report/summary/detail/${id}`,
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+        params: { year, month },
+      });
+
+      if (status !== 200) throw { message };
+
+      resolve(data);
+    } catch (err) {
+      reject(err);
     }
   });

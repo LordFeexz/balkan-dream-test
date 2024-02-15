@@ -19,7 +19,10 @@ import type {
 import helpers from "../helpers";
 import type { ILoan } from "../interfaces/loan";
 import type { ISalary } from "../interfaces/salary";
-import type { EmployeeSalaryDetailPerMonth } from "../interfaces/report";
+import type {
+  EmployeeSalaryDetailPerMonth,
+  SalaryPerEmployee,
+} from "../interfaces/report";
 
 export default new (class Employee extends BaseService<IEmployee> {
   constructor() {
@@ -1437,5 +1440,247 @@ export default new (class Employee extends BaseService<IEmployee> {
       },
     ]);
     return result;
+  }
+
+  public async getSalaryPaymentPerEmployee(
+    _id: Types.ObjectId,
+    fromDate: Date,
+    endDate: Date
+  ) {
+    return await this.model.aggregate<SalaryPerEmployee>([
+      {
+        $match: {
+          _id,
+        },
+      },
+      {
+        $lookup: {
+          from: "salaries",
+          localField: "_id",
+          foreignField: "employeeId",
+          as: "salary",
+        },
+      },
+      {
+        $unwind: "$salary",
+      },
+      {
+        $unwind: {
+          path: "$salary.paymentHistory",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          "salary.paymentHistory.date": {
+            $lt: endDate,
+            $gte: fromDate,
+          },
+        },
+      },
+      {
+        $addFields: {
+          salaryPaymentMonth: {
+            $month: "$salary.paymentHistory.date",
+          },
+          salaryPaymentYear: {
+            $year: "$salary.paymentHistory.date",
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "penalties",
+          let: {
+            userId: "$_id",
+            dateMonth: "$salaryPaymentMonth",
+            dateYear: "$salaryPaymentYear",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$isPayed", true],
+                    },
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                    {
+                      $and: [
+                        {
+                          $eq: [
+                            {
+                              $month: "$date",
+                            },
+                            "$$dateMonth",
+                          ],
+                        },
+                        {
+                          $eq: [
+                            {
+                              $year: "$date",
+                            },
+                            "$$dateYear",
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "penalties",
+        },
+      },
+      {
+        $unwind: {
+          path: "$penalties",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "bonus",
+          let: {
+            userId: "$_id",
+          },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $eq: ["$employeeId", "$$userId"],
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "bonuses",
+        },
+      },
+      {
+        $unwind: {
+          path: "$bonuses",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $unwind: {
+          path: "$bonuses.paymentHistory",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $group: {
+          _id: {
+            month: "$salaryPaymentMonth",
+            year: "$salaryPaymentYear",
+            paymentId: "$salary.paymentHistory._id",
+          },
+          totalBonus: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    {
+                      $eq: [
+                        "$salaryPaymentMonth",
+                        {
+                          $month: "$bonuses.paymentHistory.date",
+                        },
+                      ],
+                    },
+                    {
+                      $eq: [
+                        "$salaryPaymentYear",
+                        {
+                          $year: "$bonuses.paymentHistory.date",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                "$bonuses.paymentHistory.amount",
+                0,
+              ],
+            },
+          },
+          totalSalary: {
+            $sum: "$salary.amount",
+          },
+          totalPenalties: {
+            $sum: "$penalties.amount",
+          },
+          totalTax: {
+            $sum: {
+              $switch: {
+                branches: [
+                  {
+                    case: {
+                      $lte: ["$salary.amount", 1000],
+                    },
+                    then: 0,
+                  },
+                  {
+                    case: {
+                      $lte: ["$salary.amount", 2000],
+                    },
+                    then: {
+                      $multiply: ["$salary.amount", 0.1],
+                    },
+                  },
+                  {
+                    case: {
+                      $lte: ["$salary.amount", 3000],
+                    },
+                    then: {
+                      $multiply: ["$salary.amount", 0.2],
+                    },
+                  },
+                ],
+                default: {
+                  $multiply: ["$salary.amount", 0.3],
+                },
+              },
+            },
+          },
+          surname: {
+            $first: "$surname",
+          },
+        },
+      },
+      {
+        $project: {
+          _id: "$_id.paymentId",
+          month: "$_id.month",
+          year: "$_id.year",
+          gross: {
+            $add: ["$totalSalary", "$totalBonus"],
+          },
+          tax: "$totalTax",
+          penalties: "$totalPenalties",
+          bonuses: "$totalBonus",
+          surname: 1,
+          salary: "$totalSalary",
+        },
+      },
+      {
+        $addFields: {
+          net: {
+            $subtract: [
+              "$gross",
+              {
+                $add: ["$tax", "$penalties"],
+              },
+            ],
+          },
+        },
+      },
+    ]);
   }
 })();

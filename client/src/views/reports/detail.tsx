@@ -6,6 +6,7 @@ import type { EmployeeSalaryDetailPerMonth } from "../../interfaces/report";
 import { getSummaryDetail } from "../../actions/report";
 import EmployeeStatistic from "../../components/organ/content/employeeStatistic";
 import { months } from "../../constant/month";
+import { swalError } from "../../helpers/swal";
 
 export default function ReportDetail() {
   const [data, setData] = useState<EmployeeSalaryDetailPerMonth[]>([]);
@@ -15,6 +16,11 @@ export default function ReportDetail() {
   const now = new Date();
   const month = Number(query.get("month") ?? now.getMonth() + 1);
   const year = Number(query.get("year") ?? now.getFullYear());
+  const err = query.get("err");
+
+  useEffect(() => {
+    if (err) swalError(err);
+  }, [err]);
 
   useEffect(() => {
     if (!data.length)
@@ -32,23 +38,21 @@ export default function ReportDetail() {
         </Link>
       </div>
 
-      <div>
-        <header style={{ textAlign: "center" }}>
-          <h4>
+      <header style={{ textAlign: "center" }}>
+        <h4>
+          {" "}
+          List of all relevant employees for
+          <span style={{ color: "#48C6EF", fontStyle: "italic" }}>
             {" "}
-            List of all relevant employees for
-            <span style={{ color: "#48C6EF", fontStyle: "italic" }}>
-              {" "}
-              {`${months[month - 1].label}-${year}`}
-            </span>
-          </h4>
+            {`${months[month - 1].label}-${year}`}
+          </span>
+        </h4>
 
-          <p style={{ color: "#48C6EF", margin: "0px" }}>
-            Further details available by clicking on an icon{" "}
-          </p>
-        </header>
-        <hr />
-      </div>
+        <p style={{ color: "#48C6EF", margin: "0px" }}>
+          Further details available by clicking on an icon{" "}
+        </p>
+      </header>
+      <hr />
 
       <div className="row">
         <div className="col-lg-9">
@@ -69,7 +73,13 @@ export default function ReportDetail() {
               </thead>
               <tbody>
                 {data.map((el, idx) => (
-                  <ReportDataTable key={el._id} data={el} idx={idx} />
+                  <ReportDataTable
+                    key={el._id}
+                    data={el}
+                    idx={idx}
+                    year={year}
+                    month={month}
+                  />
                 ))}
               </tbody>
             </table>

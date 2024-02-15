@@ -5,9 +5,16 @@ import type { EmployeeSalaryDetailPerMonth } from "../../../interfaces/report";
 export interface ReportDataTableProps {
   data: EmployeeSalaryDetailPerMonth;
   idx: number;
+  month: number;
+  year: number;
 }
 
-export default function ReportDataTable({ data, idx }: ReportDataTableProps) {
+export default function ReportDataTable({
+  data,
+  idx,
+  month,
+  year,
+}: ReportDataTableProps) {
   return (
     <tr>
       <td>{idx + 1}</td>
@@ -19,7 +26,12 @@ export default function ReportDataTable({ data, idx }: ReportDataTableProps) {
       <td>{data.tax}</td>
       <td>{data.salary}</td>
       <td className="table-actions">
-        <Link to={{ pathname: `/reports/detail/${data._id}` }}>
+        <Link
+          to={{
+            pathname: `/reports/details/${data._id}`,
+            search: `month=${month}&year=${year}`,
+          }}
+        >
           <Activity size="20" />
         </Link>
       </td>
