@@ -23,6 +23,7 @@ import {
   GETALLEMPLOYEELOAN,
   GETEMPLOYEELOANSUMMARY,
 } from "../constant/loan";
+import NetworkError from "../base/error";
 
 export const createLoan = (
   id: string,
@@ -42,7 +43,7 @@ export const createLoan = (
         },
       });
 
-      if (status !== 201) throw { message };
+      if (status !== 201) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -68,7 +69,7 @@ export const createLoanExtraPayment = (
         },
       });
 
-      if (status !== 201) throw { message };
+      if (status !== 201) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -99,7 +100,7 @@ export const getEmployeeLoan = ({
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
       const { loanReducer } = getState();
 
       dispatch<LoanAction<GetListEmployeeLoan>>({
@@ -140,7 +141,7 @@ export const getEmployeeLoanSummary = ({
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
       const { loanReducer } = getState();
 
       dispatch<LoanAction<GetListSummaryEmployeeLoan>>({
@@ -180,7 +181,8 @@ export const bulkCreateEmployeeLoan = (
         data: { datas },
       });
 
-      if (status !== 201 || data.success < 1) throw { message };
+      if (status !== 201 || data.success < 1)
+        throw new NetworkError({ message });
 
       dispatch<LoanAction<EmployeeLoan[]>>({
         type: CREATEBULKEMPLOYEELOAN,

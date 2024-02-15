@@ -1,3 +1,4 @@
+import NetworkError from "../base/error";
 import { HTTPPATCH, HTTPPOST } from "../constant/request";
 import type {
   EmployeeSalaryDetail,
@@ -24,7 +25,7 @@ export const raiseSalary = (
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -45,7 +46,7 @@ export const generateSalary = (): Promise<GenerateSalaryResp> =>
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -71,7 +72,7 @@ export const releaseSalary = (
         data: { datas, signature },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(message ?? "success");
     } catch (err) {

@@ -1,3 +1,4 @@
+import NetworkError from "../base/error";
 import { HTTPPOST } from "../constant/request";
 import type { LoginPayload } from "../interfaces/request";
 import request from "../lib/axios";
@@ -20,7 +21,7 @@ export const loginHandler = ({
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -42,7 +43,7 @@ export const googleLogin = (googleToken: string): Promise<string> =>
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -62,7 +63,7 @@ export const microsoftLogin = (microsoftToken: string): Promise<string> =>
         method: HTTPPOST,
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {

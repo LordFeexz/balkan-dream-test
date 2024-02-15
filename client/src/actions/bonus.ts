@@ -1,3 +1,4 @@
+import NetworkError from "../base/error";
 import { HTTPPOST } from "../constant/request";
 import type { BonusFormProps, IBonus } from "../interfaces/bonus";
 import request from "../lib/axios";
@@ -20,7 +21,7 @@ export const CreateBonus = (
         },
       });
 
-      if (status !== 201) throw { message };
+      if (status !== 201) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {

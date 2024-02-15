@@ -20,6 +20,8 @@ import {
 } from "../constant/employee";
 import type { RootReducer } from "../store";
 import { HTTPDELETE, HTTPPATCH, HTTPPOST } from "../constant/request";
+import NetworkError from "../base/error";
+import type { HistoryRaises, ISalary, PaymentHistory } from "../interfaces/salary";
 
 export const getListEmployee = ({
   page = 1,
@@ -44,7 +46,7 @@ export const getListEmployee = ({
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
       const { employeeReducer } = getState();
 
       dispatch<EmployeeAction<GetListEmployee>>({
@@ -68,7 +70,7 @@ export const addEmployee = (
   Promise<Employee>,
   RootReducer,
   any,
-  EmployeeAction<Employee>
+  EmployeeAction<GetListEmployee>
 > => async (dispatch, getState) =>
   new Promise(async (resolve, reject) => {
     try {
@@ -84,17 +86,35 @@ export const addEmployee = (
         method: HTTPPOST,
       });
 
-      if (status !== 201) throw { message };
+      if (status !== 201) throw new NetworkError({ message });
 
       const {
         employeeReducer: { employees, totalData, totalPage },
       } = getState();
 
-      dispatch<EmployeeAction<GetListEmployee | any>>({
+      dispatch<EmployeeAction<GetListEmployee>>({
         type: GETLISTEMPLOYEE,
         payload: {
-          employees: [...employees, result],
+          employees: [
+            ...employees,
+            {
+              ...result,
+              salary: {
+                amount: data.salaryAmount,
+                date: new Date().toString(),
+                description: "N/A",
+                employeeId: result._id,
+                paymentHistory: [] as PaymentHistory[],
+                historyRaises: [] as HistoryRaises[],
+              } as ISalary,
+              loans: [],
+              bonuses: [],
+              loanPayments: [],
+              penalties: [],
+            } as EmployeeDetail,
+          ],
           totalData: totalData + 1,
+          totalPage: totalPage + 1,
         },
       });
 
@@ -122,7 +142,7 @@ export const inactiveEmployee = (
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       dispatch<EmployeeAction<string>>({
         type: SETINACTIVESTATUS,
@@ -153,7 +173,7 @@ export const activatedAnEmployee = (
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       dispatch<EmployeeAction<string>>({
         type: SETACTIVESTATUS,
@@ -179,7 +199,7 @@ export const findEmployeeById = (id: string): Promise<EmployeeDetail> =>
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -205,7 +225,7 @@ export const getEmployeeName = (): ThunkAction<
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
       dispatch<EmployeeAction<EmployeeName[]>>({
         type: GETEMPLOYEENAME,
         payload: data,

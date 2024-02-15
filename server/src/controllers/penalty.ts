@@ -5,7 +5,7 @@ import AppError from "../base/error";
 import penaltyService from "../services/penalty";
 import response from "../middlewares/response";
 import helpers from "../helpers";
-import { CreatePenaltyProps } from "../interfaces/penalty";
+import type { CreatePenaltyProps } from "../interfaces/penalty";
 
 export default new (class PenaltyController {
   public async createPenalty(

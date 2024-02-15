@@ -1,3 +1,4 @@
+import NetworkError from "../base/error";
 import type {
   EmployeeSalaryDetailPerMonth,
   EmployeeStatistic,
@@ -18,7 +19,7 @@ export const getSummaryData = (): Promise<SummaryData[]> =>
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -43,7 +44,7 @@ export const getSummaryDetail = (
         params: { year, month },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -68,7 +69,7 @@ export const getStatistic = (
         params: { month, year },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -94,7 +95,7 @@ export const getSummaryDetailPerEmployee = (
         params: { year, month },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {

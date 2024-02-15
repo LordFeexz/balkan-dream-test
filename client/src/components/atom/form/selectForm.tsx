@@ -29,7 +29,9 @@ export default function SelectForm({
         defaultValue=""
         onChange={onChangeHandler}
       >
-        <option disabled>--select --</option>
+        <option selected disabled value="">
+          --select --
+        </option>
         {datas.map(({ value, label }) => (
           <option key={label} value={value}>
             {label}

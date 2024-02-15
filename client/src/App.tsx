@@ -5,6 +5,7 @@ import routes from "./routes";
 import "./styles/index.css";
 import "../node_modules/react-modal-video/css/modal-video.css";
 import "rodal/lib/rodal.css";
+import "react-datepicker/dist/react-datepicker.css";
 
 function App() {
   return (

@@ -15,6 +15,7 @@ import type { ThunkAction } from "redux-thunk";
 import type { RootReducer } from "../store";
 import type { PenaltyAction } from "../reducer/penalty";
 import { GETPENALTYLIST } from "../constant/penalty";
+import NetworkError from "../base/error";
 
 export const createPenalty = (
   id: string,
@@ -34,7 +35,7 @@ export const createPenalty = (
         },
       });
 
-      if (status !== 201) throw { message };
+      if (status !== 201) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {
@@ -65,7 +66,7 @@ export const getAllPenalty = ({
         },
       });
 
-      if (status !== 200) throw { message };
+      if (status !== 200) throw new NetworkError({ message });
       const { penaltyReducer } = getState();
 
       dispatch<PenaltyAction<GetListPenalty>>({
@@ -98,7 +99,7 @@ export const createBulkPenalty = (
         data: { datas },
       });
 
-      if (status !== 201) throw { message };
+      if (status !== 201) throw new NetworkError({ message });
 
       resolve(data);
     } catch (err) {

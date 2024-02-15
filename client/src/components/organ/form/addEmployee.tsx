@@ -1,10 +1,16 @@
-import { useState, type ChangeEvent, type FormEvent, type SyntheticEvent } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type SyntheticEvent,
+} from "react";
 import DatePicker from "../../atom/form/datePicker";
 import type { AddEmployeeState } from "../../../interfaces/employee";
 import { swalError } from "../../../helpers/swal";
 import { addEmployee } from "../../../actions/employee";
 import { useDispatch } from "react-redux";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
+import SelectForm from "../../atom/form/selectForm";
 
 export default function AddEmployeeForm() {
   const dispatch = useDispatch();
@@ -35,7 +41,7 @@ export default function AddEmployeeForm() {
 
   const datePickerChangeHandler =
     (field: "birthdate" | "startdate") =>
-    (date: Date | null , e:SyntheticEvent<any,Event>) => {
+    (date: Date | null, e: SyntheticEvent<any, Event>) => {
       if (date)
         setData((prev) => ({
           ...prev,
@@ -104,30 +110,25 @@ export default function AddEmployeeForm() {
           />
         </div>
 
-        <div className="form-group form__small">
+        <div className="form-group">
           <label htmlFor="birthdate">Date Of Birth</label>
           <DatePicker
             name="birthdate"
-            value={data.startdate}
+            value={data.birthdate}
             onChangeHandler={datePickerChangeHandler("birthdate")}
           />
         </div>
 
-        <div className="form-group form__small form__small--right">
-          <label htmlFor="gender">Gender</label>
-          <select
-            name="gender"
-            value={data.gender}
-            className="form-control"
-            required
-            onChange={onChangeHandler}>
-            <option disabled defaultValue="">
-              --- Select Gender ---
-            </option>
-            <option value="M">Male</option>
-            <option value="F">Female</option>
-          </select>
-        </div>
+        <SelectForm
+          name="gender"
+          value={data.gender}
+          label="Gender"
+          onChangeHandler={onChangeHandler}
+          datas={[
+            { label: "Male", value: "Male" },
+            { label: "Female", value: "F" },
+          ].map(({ label, value }) => ({ label, value }))}
+        />
 
         <hr></hr>
 

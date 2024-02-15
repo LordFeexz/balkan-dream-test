@@ -13,14 +13,13 @@ export default function DatePicker({
   name,
 }: DatePickerProps) {
   return (
-    <div className="form-control" style={{ overflow: "hidden" }}>
-      <DateTimePicker
-        selected={!!value ? new Date(value) : new Date()}
-        onChange={onChangeHandler}
-        name={name}
-        showTimeSelect
-        dateFormat="dd/MM/yyyy"
-      />
-    </div>
+    <DateTimePicker
+      selected={!!value ? new Date(value) : new Date()}
+      onChange={onChangeHandler}
+      onSelect={onChangeHandler}
+      name={name}
+      showTimeSelect
+      dateFormat="dd/MM/yyyy"
+    />
   );
 }
