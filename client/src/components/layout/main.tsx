@@ -1,13 +1,16 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import logo from "../../images/logo.png";
+import { logout } from "../../actions/user";
 
 export default function MainLayout() {
   const location = useLocation();
   const currentRoute = location.pathname;
 
-  const logout = () => {
+  const logoutHandler = async () => {
+    await logout();
     localStorage.removeItem("access_token");
   };
+
   return (
     <div className="wrapper">
       <header className="" role="banner">
@@ -41,7 +44,7 @@ export default function MainLayout() {
                 <Link to="/about"> About </Link>
               </li>
             </ul>
-            <Link to="/login" onClick={logout} className="navbar__links">
+            <Link to="/login" onClick={logoutHandler} className="navbar__links">
               Sign out
             </Link>
           </div>

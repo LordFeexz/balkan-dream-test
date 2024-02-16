@@ -1,5 +1,5 @@
 import NetworkError from "../base/error";
-import { HTTPPOST } from "../constant/request";
+import { HTTPDELETE, HTTPPOST } from "../constant/request";
 import type { LoginPayload } from "../interfaces/request";
 import request from "../lib/axios";
 
@@ -68,5 +68,22 @@ export const microsoftLogin = (microsoftToken: string): Promise<string> =>
       resolve(data);
     } catch (err) {
       reject(err);
+    }
+  });
+
+export const logout = (): Promise<void> =>
+  new Promise(async (resolve) => {
+    try {
+      await request.Mutation({
+        url: "/admin/logout",
+        method: HTTPDELETE,
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+      });
+
+      resolve();
+    } catch (err) {
+      resolve();
     }
   });

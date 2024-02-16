@@ -2,7 +2,6 @@ import type { NextFunction, Request, Response } from "express";
 import AppError from "../base/error";
 import jwt from "../utils/jwt";
 import Admin from "../models/admin";
-import { Types } from "mongoose";
 import type { IAdmin } from "../interfaces/admin";
 
 export default new (class Authentication {
@@ -15,9 +14,9 @@ export default new (class Authentication {
           statusCode: 401,
         });
 
-      const { _id } = jwt.verifyToken(access_token as string);
+      const { email } = jwt.verifyToken(access_token as string);
 
-      const admin = Admin.findById(new Types.ObjectId(_id));
+      const admin = Admin.findOne({ email });
       if (!admin)
         throw new AppError({
           message: "missing or invalid token",

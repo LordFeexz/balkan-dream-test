@@ -1,4 +1,3 @@
-import DatePicker from "../../atom/form/datePicker";
 import DescriptionForm from "../../mollecul/form/descriptionForm";
 import NumberForm from "../../mollecul/form/numberForm";
 import UnitForm from "../../mollecul/form/unitForm";
@@ -8,7 +7,6 @@ import {
   useContext,
   type FormEvent,
   type ChangeEvent,
-  type SyntheticEvent,
 } from "react";
 import { context } from "../../../context/tabContent";
 import type { CreatePenaltyProps, IPenalty } from "../../../interfaces/penalty";
@@ -22,7 +20,6 @@ export default function PenaltyForm() {
 
   const [data, setData] = useState<CreatePenaltyProps>({
     amount: 0,
-    date: "",
     description: "",
     unit: "BAM",
   });
@@ -36,17 +33,6 @@ export default function PenaltyForm() {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const datePickerHandler = (
-    date: Date | null,
-    e: SyntheticEvent<any, Event>
-  ) => {
-    if (date)
-      setData((prev) => ({
-        ...prev,
-        date: date.toISOString(),
-      }));
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -70,14 +56,6 @@ export default function PenaltyForm() {
   return (
     <form onSubmit={onSubmit}>
       <label className="form-title">Penalty</label>
-      <div className="form-group">
-        <label htmlFor="date">Date</label>
-        <DatePicker
-          name="date"
-          value={data.date}
-          onChangeHandler={datePickerHandler}
-        />
-      </div>
       <NumberForm
         value={data.amount.toString()}
         name="amount"

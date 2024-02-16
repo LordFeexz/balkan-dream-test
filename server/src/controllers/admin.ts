@@ -6,6 +6,7 @@ import AppError from "../base/error";
 import jwt from "../utils/jwt";
 import response from "../middlewares/response";
 import { OAuth2Client, type TokenPayload } from "google-auth-library";
+import token from "../models/token";
 
 export default new (class AdminController {
   public async login(
@@ -23,11 +24,17 @@ export default new (class AdminController {
           statusCode: 401,
         });
 
+      const data = jwt.createToken(email);
+      await token.create({
+        token: data,
+        type: "credentials",
+      });
+
       response.createResponse({
         res,
         code: 200,
         message: "OK",
-        data: jwt.createToken(admin._id.toString()),
+        data,
       });
     } catch (err) {
       next(err);
@@ -61,11 +68,17 @@ export default new (class AdminController {
           statusCode: 401,
         });
 
+      const appToken = jwt.createTokenEmail(email);
+      await token.create({
+        token: appToken,
+        type: "google",
+      });
+
       response.createResponse({
         res,
         code: 200,
         message: "OK",
-        data: jwt.createTokenEmail(email),
+        data: appToken,
       });
     } catch (err) {
       next(err);
@@ -89,14 +102,39 @@ export default new (class AdminController {
           statusCode: 401,
         });
 
+      const data = jwt.createTokenEmail(email);
+      await token.create({
+        token: data,
+        type: "microsoft",
+      });
+
       response.createResponse({
         res,
         code: 200,
         message: "OK",
-        data: jwt.createTokenEmail(email),
+        data,
       });
     } catch (err) {
       console.log(err);
+      next(err);
+    }
+  }
+
+  public async logout(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { access_token } = req.headers;
+
+      await token.deleteOne({ token: access_token });
+      response.createResponse({
+        res,
+        code: 200,
+        message: "OK",
+      });
+    } catch (err) {
       next(err);
     }
   }

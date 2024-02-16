@@ -3,7 +3,6 @@ import { createBulkPenalty } from "../../../actions/penalty";
 import { context } from "../../../context/penaltyContext";
 import { swalError } from "../../../helpers/swal";
 import type { CreatePenaltyProps } from "../../../interfaces/penalty";
-import DatePicker from "../../atom/form/datePicker";
 import DescriptionForm from "../../mollecul/form/descriptionForm";
 import EmployeeSelect from "../../mollecul/form/employeeSelectId";
 import NumberForm from "../../mollecul/form/numberForm";
@@ -13,7 +12,6 @@ import {
   type FormEvent,
   useState,
   useContext,
-  type SyntheticEvent,
   type MouseEventHandler,
 } from "react";
 
@@ -22,7 +20,6 @@ export default function MultiplePenaltyForm() {
 
   const defaultValue: CreatePenaltyProps & { employeeId: string } = {
     amount: 0,
-    date: "",
     description: "",
     employeeId: "",
     unit: "BAM",
@@ -41,17 +38,6 @@ export default function MultiplePenaltyForm() {
       ...prev,
       [name]: value,
     }));
-  };
-
-  const datePickerHandler = (
-    date: Date | null,
-    e: SyntheticEvent<any, Event>
-  ) => {
-    if (date)
-      setData((prev) => ({
-        ...prev,
-        date: date.toISOString(),
-      }));
   };
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -84,14 +70,6 @@ export default function MultiplePenaltyForm() {
   };
   return (
     <form className="portlet-body" onSubmit={onSubmit}>
-      <div className="form-group">
-        <label htmlFor="date">Date</label>
-        <DatePicker
-          onChangeHandler={datePickerHandler}
-          value={data.date}
-          name="date"
-        />
-      </div>
       <EmployeeSelect
         name="employeeId"
         value={data.employeeId}

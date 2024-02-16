@@ -29,7 +29,7 @@ export default function PenaltyList({ data }: PenaltyListProps) {
       <td className="col-md-4">
         {employeeNames.find((el) => el._id === data.employeeId)?.surname || "-"}
       </td>
-      <td className="col-md-3">{data.date}</td>
+      <td className="col-md-3">{'data.date'}</td>
       <td className="col-md-2">
         {data.amount} {data.unit}
       </td>

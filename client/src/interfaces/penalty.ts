@@ -14,7 +14,7 @@ export interface CreatePenaltyProps {
   amount: number;
   unit: LoanUnit;
   description: string;
-  date: string;
+  // date: string;
 }
 
 export interface GetListPenalty {
