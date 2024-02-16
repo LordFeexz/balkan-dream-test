@@ -21,170 +21,178 @@ import {
 import type { RootReducer } from "../store";
 import { HTTPDELETE, HTTPPATCH, HTTPPOST } from "../constant/request";
 import NetworkError from "../base/error";
-import type { HistoryRaises, ISalary, PaymentHistory } from "../interfaces/salary";
+import type {
+  HistoryRaises,
+  ISalary,
+  PaymentHistory,
+} from "../interfaces/salary";
 
-export const getListEmployee = ({
-  page = 1,
-  limit = 20,
-  sortBy = "createdAt",
-}: PaginationProps): ThunkAction<
-  Promise<DataWithPagination<Employee[]>>,
-  RootReducer,
-  any,
-  EmployeeAction<GetListEmployee>
-> => async (dispatch, getState) =>
-  new Promise(async (resolve) => {
-    try {
-      const {
-        status,
-        data: { message, data, totalData, totalPage },
-      } = await request.Query<EmployeeDetail[]>({
-        url: "/employee",
-        params: { page, limit, sortBy },
-        headers: {
-          access_token: localStorage.getItem("access_token"),
-        },
-      });
+export const getListEmployee =
+  ({
+    page = 1,
+    limit = 20,
+    sortBy = "createdAt",
+  }: PaginationProps): ThunkAction<
+    Promise<DataWithPagination<Employee[]>>,
+    RootReducer,
+    any,
+    EmployeeAction<GetListEmployee>
+  > =>
+  async (dispatch, getState) =>
+    new Promise(async (resolve) => {
+      try {
+        const {
+          status,
+          data: { message, data, totalData, totalPage },
+        } = await request.Query<EmployeeDetail[]>({
+          url: "/employee",
+          params: { page, limit, sortBy },
+          headers: {
+            access_token: localStorage.getItem("access_token"),
+          },
+        });
 
-      if (status !== 200) throw new NetworkError({ message });
-      const { employeeReducer } = getState();
+        if (status !== 200) throw new NetworkError({ message });
+        const { employeeReducer } = getState();
 
-      dispatch<EmployeeAction<GetListEmployee>>({
-        type: GETLISTEMPLOYEE,
-        payload: {
-          employees: [...employeeReducer.employees, ...data],
-          totalData,
-          totalPage,
-        },
-      });
+        dispatch<EmployeeAction<GetListEmployee>>({
+          type: GETLISTEMPLOYEE,
+          payload: {
+            employees: [...employeeReducer.employees, ...data],
+            totalData,
+            totalPage,
+          },
+        });
 
-      resolve({ data, totalData, totalPage });
-    } catch (err) {
-      resolve({ data: [], totalData: 0, totalPage: 0 });
-    }
-  });
+        resolve({ data, totalData, totalPage });
+      } catch (err) {
+        resolve({ data: [], totalData: 0, totalPage: 0 });
+      }
+    });
 
-export const addEmployee = (
-  data: AddEmployeeState
-): ThunkAction<
-  Promise<Employee>,
-  RootReducer,
-  any,
-  EmployeeAction<GetListEmployee>
-> => async (dispatch, getState) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const {
-        data: { message, data: result },
-        status,
-      } = await request.Mutation<Employee>({
-        url: "/employee/register",
-        data,
-        headers: {
-          access_token: localStorage.getItem("access_token"),
-        },
-        method: HTTPPOST,
-      });
+export const addEmployee =
+  (
+    data: AddEmployeeState
+  ): ThunkAction<
+    Promise<Employee>,
+    RootReducer,
+    any,
+    EmployeeAction<GetListEmployee>
+  > =>
+  async (dispatch, getState) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const {
+          data: { message, data: result },
+          status,
+        } = await request.Mutation<Employee>({
+          url: "/employee/register",
+          data,
+          headers: {
+            access_token: localStorage.getItem("access_token"),
+          },
+          method: HTTPPOST,
+        });
 
-      if (status !== 201) throw new NetworkError({ message });
+        if (status !== 201) throw new NetworkError({ message });
 
-      const {
-        employeeReducer: { employees, totalData, totalPage },
-      } = getState();
+        const {
+          employeeReducer: { employees, totalData, totalPage },
+        } = getState();
 
-      dispatch<EmployeeAction<GetListEmployee>>({
-        type: GETLISTEMPLOYEE,
-        payload: {
-          employees: [
-            ...employees,
-            {
-              ...result,
-              salary: {
-                amount: data.salaryAmount,
-                date: new Date().toString(),
-                description: "N/A",
-                employeeId: result._id,
-                paymentHistory: [] as PaymentHistory[],
-                historyRaises: [] as HistoryRaises[],
-              } as ISalary,
-              loans: [],
-              bonuses: [],
-              loanPayments: [],
-              penalties: [],
-            } as EmployeeDetail,
-          ],
-          totalData: totalData + 1,
-          totalPage: totalPage + 1,
-        },
-      });
+        dispatch<EmployeeAction<GetListEmployee>>({
+          type: GETLISTEMPLOYEE,
+          payload: {
+            employees: [
+              ...employees,
+              {
+                ...result,
+                salary: {
+                  amount: data.salaryAmount,
+                  date: new Date().toString(),
+                  description: "N/A",
+                  employeeId: result._id,
+                  paymentHistory: [] as PaymentHistory[],
+                  historyRaises: [] as HistoryRaises[],
+                } as ISalary,
+                loans: [],
+                bonuses: [],
+                loanPayments: [],
+                penalties: [],
+              } as EmployeeDetail,
+            ],
+            totalData: totalData + 1,
+            totalPage: totalPage + 1,
+          },
+        });
 
-      resolve(result);
-    } catch (err) {
-      reject(err);
-    }
-  });
+        resolve(result);
+      } catch (err) {
+        reject(err);
+      }
+    });
 
-export const inactiveEmployee = (
-  id: string
-): ThunkAction<Promise<string>, RootReducer, any, EmployeeAction<string>> => (
-  dispatch
-) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const {
-        data: { message },
-        status,
-      } = await request.Mutation<null>({
-        url: `/employee/${id}`,
-        method: HTTPDELETE,
-        headers: {
-          access_token: localStorage.getItem("access_token"),
-        },
-      });
+export const inactiveEmployee =
+  (
+    id: string
+  ): ThunkAction<Promise<string>, RootReducer, any, EmployeeAction<string>> =>
+  (dispatch) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const {
+          data: { message },
+          status,
+        } = await request.Mutation<null>({
+          url: `/employee/${id}`,
+          method: HTTPDELETE,
+          headers: {
+            access_token: localStorage.getItem("access_token"),
+          },
+        });
 
-      if (status !== 200) throw new NetworkError({ message });
+        if (status !== 200) throw new NetworkError({ message });
 
-      dispatch<EmployeeAction<string>>({
-        type: SETINACTIVESTATUS,
-        payload: id,
-      });
+        dispatch<EmployeeAction<string>>({
+          type: SETINACTIVESTATUS,
+          payload: id,
+        });
 
-      resolve(message as string);
-    } catch (err) {
-      reject(err);
-    }
-  });
+        resolve(message as string);
+      } catch (err) {
+        reject(err);
+      }
+    });
 
-export const activatedAnEmployee = (
-  id: string
-): ThunkAction<Promise<string>, RootReducer, any, EmployeeAction<string>> => (
-  dispatch
-) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const {
-        data: { message },
-        status,
-      } = await request.Mutation<null>({
-        url: `/employee/${id}`,
-        method: HTTPPATCH,
-        headers: {
-          access_token: localStorage.getItem("access_token"),
-        },
-      });
+export const activatedAnEmployee =
+  (
+    id: string
+  ): ThunkAction<Promise<string>, RootReducer, any, EmployeeAction<string>> =>
+  (dispatch) =>
+    new Promise(async (resolve, reject) => {
+      try {
+        const {
+          data: { message },
+          status,
+        } = await request.Mutation<null>({
+          url: `/employee/${id}`,
+          method: HTTPPATCH,
+          headers: {
+            access_token: localStorage.getItem("access_token"),
+          },
+        });
 
-      if (status !== 200) throw new NetworkError({ message });
+        if (status !== 200) throw new NetworkError({ message });
 
-      dispatch<EmployeeAction<string>>({
-        type: SETACTIVESTATUS,
-        payload: id,
-      });
+        dispatch<EmployeeAction<string>>({
+          type: SETACTIVESTATUS,
+          payload: id,
+        });
 
-      resolve(message as string);
-    } catch (err) {
-      reject(err);
-    }
-  });
+        resolve(message as string);
+      } catch (err) {
+        reject(err);
+      }
+    });
 
 export const findEmployeeById = (id: string): Promise<EmployeeDetail> =>
   new Promise(async (resolve, reject) => {
@@ -207,32 +215,34 @@ export const findEmployeeById = (id: string): Promise<EmployeeDetail> =>
     }
   });
 
-export const getEmployeeName = (): ThunkAction<
-  Promise<EmployeeName[]>,
-  RootReducer,
-  any,
-  EmployeeAction<EmployeeName[]>
-> => async (dispatch) =>
-  new Promise(async (resolve) => {
-    try {
-      const {
-        status,
-        data: { data, message },
-      } = await request.Query<EmployeeName[]>({
-        url: "/employee/name",
-        headers: {
-          access_token: localStorage.getItem("access_token"),
-        },
-      });
+export const getEmployeeName =
+  (): ThunkAction<
+    Promise<EmployeeName[]>,
+    RootReducer,
+    any,
+    EmployeeAction<EmployeeName[]>
+  > =>
+  async (dispatch) =>
+    new Promise(async (resolve) => {
+      try {
+        const {
+          status,
+          data: { data, message },
+        } = await request.Query<EmployeeName[]>({
+          url: "/employee/name",
+          headers: {
+            access_token: localStorage.getItem("access_token"),
+          },
+        });
 
-      if (status !== 200) throw new NetworkError({ message });
-      dispatch<EmployeeAction<EmployeeName[]>>({
-        type: GETEMPLOYEENAME,
-        payload: data,
-      });
+        if (status !== 200) throw new NetworkError({ message });
+        dispatch<EmployeeAction<EmployeeName[]>>({
+          type: GETEMPLOYEENAME,
+          payload: data,
+        });
 
-      resolve(data);
-    } catch (err) {
-      resolve([]);
-    }
-  });
+        resolve(data);
+      } catch (err) {
+        resolve([]);
+      }
+    });

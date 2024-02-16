@@ -21,8 +21,8 @@ export default createBrowserRouter([
   {
     path: "/login",
     element: <LoginPage />,
-    loader: () =>
-      localStorage.getItem("access_token") ? redirect("/employees") : null,
+    // loader: () =>
+    // localStorage.getItem("access_token") ? redirect("/employees") : null,
   },
   {
     path: "/",

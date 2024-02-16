@@ -9,7 +9,8 @@ export default function MicrosoftLoginBtn() {
   const msalInstance = new msal.PublicClientApplication({
     auth: {
       clientId: process.env.REACT_APP_MSAL_CLIENT_ID as string,
-      redirectUri:process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000",
+      redirectUri:
+        process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000",
     },
   });
 
@@ -25,32 +26,36 @@ export default function MicrosoftLoginBtn() {
   const microsoftHandler: MouseEventHandler = async (e) => {
     e.preventDefault();
 
-    await msalInstance.handleRedirectPromise()
-    const account = msalInstance.getAllAccounts()
-
-    if(!account.length)
-    msalInstance
-      .loginPopup({
-        scopes: ["profile", "email"],
-      })
-      .then((val: msal.AuthenticationResult) => {
-        setLoading(true);
-        microsoftLogin(val.idToken)
-          .then((token: string) => {
-            localStorage.setItem("access_token", token);
-            navigate("/employees");
-          })
-          .catch((err: Error) => {
-            throw err
-          });
-      })
-      .catch((err: Error) => {
-        swalError("something went wrong");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-    else swalError('cannot login by microsoft')
+    await msalInstance.handleRedirectPromise();
+    const accounts = msalInstance.getAllAccounts();
+    if (!accounts.length)
+      msalInstance
+        .loginPopup({
+          scopes: ["profile", "email"],
+        })
+        .then((val: msal.AuthenticationResult) => {
+          setLoading(true);
+          microsoftLogin(val.idToken)
+            .then((token: string) => {
+              localStorage.setItem("access_token", token);
+              navigate("/employees");
+            })
+            .catch((err) => {
+              return
+            });
+        })
+        .catch((err: Error) => {
+          if (err?.message !== "user_cancelled: User cancelled the flow.")
+            swalError("something went wrong");
+          return;
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    else {
+      swalError("cannot login by microsoft");
+      msalInstance.clearCache()
+    }
   };
 
   return (
