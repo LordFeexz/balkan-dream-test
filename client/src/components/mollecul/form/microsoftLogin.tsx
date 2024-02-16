@@ -5,15 +5,15 @@ import { useNavigate } from "react-router-dom";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import { microsoftLogin } from "../../../actions/user";
 
-export default function MicrosoftLoginBtn() {
-  const msalInstance = new msal.PublicClientApplication({
-    auth: {
-      clientId: process.env.REACT_APP_MSAL_CLIENT_ID as string,
-      redirectUri:
-        process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000",
-    },
-  });
+const msalInstance = new msal.PublicClientApplication({
+  auth: {
+    clientId: process.env.REACT_APP_MSAL_CLIENT_ID as string,
+    redirectUri:
+      process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000",
+  },
+});
 
+export default function MicrosoftLoginBtn() {
   useEffect(() => {
     (async () => {
       await msalInstance.initialize();
@@ -47,13 +47,14 @@ export default function MicrosoftLoginBtn() {
         .catch((err: Error) => {
           if (err?.message !== "user_cancelled: User cancelled the flow.")
             swalError("something went wrong");
+            msalInstance.clearCache()
           return;
         })
         .finally(() => {
           setLoading(false);
         });
     else {
-      swalError("cannot login by microsoft");
+      swalError("Another interaction is in progress. Please wait.");
       msalInstance.clearCache()
     }
   };

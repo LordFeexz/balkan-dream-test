@@ -25,7 +25,7 @@ export default function GoogleLoginButton() {
     googleLogin(credential)
       .then((val) => {
         localStorage.setItem("access_token", val);
-        navigate("/");
+        navigate("/employees");
       })
       .catch((err) => {
         swalError(err?.message || "Internal Server Error");
