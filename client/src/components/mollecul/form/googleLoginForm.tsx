@@ -42,7 +42,7 @@ export default function GoogleLoginButton() {
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <LoadingOverlayWrapper spinner text="...loading" active={loading}>
-        <GoogleLogin 
+        <GoogleLogin
           text="signin_with"
           onSuccess={onSuccess}
           onError={onError}
