@@ -20,7 +20,7 @@ export default function Employee() {
     <div className="container">
       <div className="row">
         <AddEmployeePanel />
-        <div className="col-md-8">
+        <div className="col-md-7">
           <div className="portlet portlet-boxed">
             <div className="portlet-header">
               <h4 className="portlet-title">Employees</h4>
