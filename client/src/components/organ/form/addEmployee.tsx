@@ -72,116 +72,116 @@ export default function AddEmployeeForm() {
   };
 
   return (
-    <LoadingOverlayWrapper spinner text="...loading" active={loading}>
-      <form onSubmit={onSubmit}>
-        <div className="form-group form__small">
-          <label htmlFor="name">Name</label>
-          <input
-            name="name"
-            type="text"
-            className="form-control"
-            required
-            onChange={onChangeHandler}
-            value={data.name}
-          />
-        </div>
-
-        <div className="form-group form__small form__small--right">
-          <label htmlFor="surname">Surname</label>
-          <input
-            name="surname"
-            value={data.surname}
-            type="text"
-            className="form-control"
-            required
-            onChange={onChangeHandler}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="jmbg">JMBG</label>
-          <input
-            name="JMBG"
-            value={data.JMBG}
-            type="text"
-            className="form-control"
-            required
-            onChange={onChangeHandler}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="birthdate">Date Of Birth</label>
-          <DatePicker
-            name="birthdate"
-            value={data.birthdate}
-            onChangeHandler={datePickerChangeHandler("birthdate")}
-          />
-        </div>
-
-        <SelectForm
-          name="gender"
-          value={data.gender}
-          label="Gender"
-          onChangeHandler={onChangeHandler}
-          datas={[
-            { label: "Male", value: "Male" },
-            { label: "Female", value: "F" },
-          ].map(({ label, value }) => ({ label, value }))}
+    <form onSubmit={onSubmit}>
+      <div className="form-group form__small">
+        <label htmlFor="name">Name</label>
+        <input
+          name="name"
+          type="text"
+          className="form-control"
+          required
+          onChange={onChangeHandler}
+          value={data.name}
         />
+      </div>
 
-        <hr></hr>
+      <div className="form-group form__small form__small--right">
+        <label htmlFor="surname">Surname</label>
+        <input
+          name="surname"
+          value={data.surname}
+          type="text"
+          className="form-control"
+          required
+          onChange={onChangeHandler}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="position">Position</label>
-          <input
-            name="position"
-            value={data.position}
-            type="text"
-            className="form-control"
-            required
-            onChange={onChangeHandler}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="jmbg">JMBG</label>
+        <input
+          name="JMBG"
+          value={data.JMBG}
+          type="text"
+          className="form-control"
+          required
+          onChange={onChangeHandler}
+        />
+      </div>
 
-        <div className="form-group">
-          <label htmlFor="startdate">Start Date</label>
-          <DatePicker
-            name="startdate"
-            value={data.startdate}
-            onChangeHandler={datePickerChangeHandler("startdate")}
-          />
-        </div>
+      <div className="form-group">
+        <label htmlFor="birthdate">Date Of Birth</label>
+        <DatePicker
+          name="birthdate"
+          value={data.birthdate}
+          onChangeHandler={datePickerChangeHandler("birthdate")}
+        />
+      </div>
 
-        <div className="form-group">
-          <input
-            name="isPayoneer"
-            className="form__small--check"
-            value={String(data.isPayoneer)}
-            type="checkbox"
-            onChange={onChangeHandler}
-          />
-          <label htmlFor="isPayoneer" className="form__small--check__label">
-            Is Payoneer
-          </label>
-        </div>
+      <SelectForm
+        name="gender"
+        value={data.gender}
+        label="Gender"
+        onChangeHandler={onChangeHandler}
+        datas={[
+          { label: "Male", value: "Male" },
+          { label: "Female", value: "F" },
+        ].map(({ label, value }) => ({ label, value }))}
+      />
 
-        <div className="form-group">
-          <label htmlFor="salaryAmount">Salary</label>
-          <input
-            name="salaryAmount"
-            value={data.salaryAmount}
-            type="number"
-            className="form-control"
-            required
-            onChange={onChangeHandler}
-          />
-        </div>
+      <hr></hr>
 
+      <div className="form-group">
+        <label htmlFor="position">Position</label>
+        <input
+          name="position"
+          value={data.position}
+          type="text"
+          className="form-control"
+          required
+          onChange={onChangeHandler}
+        />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="startdate">Start Date</label>
+        <DatePicker
+          name="startdate"
+          value={data.startdate}
+          onChangeHandler={datePickerChangeHandler("startdate")}
+        />
+      </div>
+
+      <div className="form-group">
+        <input
+          name="isPayoneer"
+          className="form__small--check"
+          value={String(data.isPayoneer)}
+          type="checkbox"
+          onChange={onChangeHandler}
+        />
+        <label htmlFor="isPayoneer" className="form__small--check__label">
+          Is Payoneer
+        </label>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="salaryAmount">Salary</label>
+        <input
+          name="salaryAmount"
+          value={data.salaryAmount}
+          type="number"
+          className="form-control"
+          required
+          onChange={onChangeHandler}
+        />
+      </div>
+
+      <LoadingOverlayWrapper spinner text="...loading" active={loading}>
         <button type="submit" className="btn btn-primary submit-button">
           Submit
         </button>
-      </form>
-    </LoadingOverlayWrapper>
+      </LoadingOverlayWrapper>
+    </form>
   );
 }

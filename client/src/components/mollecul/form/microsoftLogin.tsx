@@ -47,7 +47,7 @@ export default function MicrosoftLoginBtn() {
         .catch((err: Error) => {
           if (err?.message !== "user_cancelled: User cancelled the flow.")
             swalError("something went wrong");
-            msalInstance.clearCache()
+          msalInstance.clearCache()
           return;
         })
         .finally(() => {
@@ -64,6 +64,7 @@ export default function MicrosoftLoginBtn() {
       <button
         type="button"
         className="btn btn-primary submit-button"
+        style={{width:'100%'}}
         onClick={microsoftHandler}>
         login with microsoft
       </button>
