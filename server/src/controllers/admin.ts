@@ -109,7 +109,7 @@ export default new (class AdminController {
           statusCode: 401,
         });
 
-        if (!(await adminService.findOneByEmail(email)))
+      if (!(await adminService.findOneByEmail(email)))
         throw new AppError({
           message: "invalid credentials",
           statusCode: 401,

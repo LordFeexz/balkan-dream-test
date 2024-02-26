@@ -3,8 +3,8 @@ import { swalError } from "../../../helpers/swal";
 import { useNavigate } from "react-router-dom";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import { microsoftLogin } from "../../../actions/user";
-import msalInstance from '../../../lib/msal'
-import type {AuthenticationResult} from '@azure/msal-browser'
+import msalInstance from "../../../lib/msal";
+import type { AuthenticationResult } from "@azure/msal-browser";
 
 export default function MicrosoftLoginBtn() {
   useEffect(() => {
