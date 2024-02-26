@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, FileText } from "react-feather";
+import { FileText } from "react-feather";
 import p1 from "../images/p1.png";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { useState } from "react";
 import ModalVideo from "react-modal-video";
+import GoToLogin from "../components/atom/button/goToLogin";
 
 export default function AboutPage() {
   const downloadPdf = () => {
@@ -60,10 +61,7 @@ export default function AboutPage() {
           </p>
           <hr />
 
-          <Link to="/login" className="btn btn-hollow">
-            <ArrowLeft size="18" className="button-left-icon" /> Go to the LOGIN
-            page
-          </Link>
+          {!localStorage.getItem("access_token") && <GoToLogin />}
 
           <p>
             <span className="text-secondary">NOTE:</span> It uses two Google

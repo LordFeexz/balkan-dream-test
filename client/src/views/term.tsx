@@ -3,7 +3,12 @@ import GoToLogin from "../components/atom/button/goToLogin";
 export default function TermPage() {
   return (
     <div className="container">
-      <GoToLogin />
+      {!localStorage.getItem("access_token") && (
+        <div className="col-12">
+          <GoToLogin className="btn-xo" />
+        </div>
+      )}
+      <br />
 
       <div className="row">
         <div className="col-md-12">

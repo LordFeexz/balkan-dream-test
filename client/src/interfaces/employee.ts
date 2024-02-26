@@ -80,6 +80,5 @@ export interface LoanUnitDetail {
 
 export interface GenerateSalaryResp {
   data: EmployeeSalaryDetail[];
-  signature: string;
   unit: LoanUnit;
 }

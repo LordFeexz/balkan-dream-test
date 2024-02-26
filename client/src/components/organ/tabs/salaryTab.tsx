@@ -8,16 +8,16 @@ import { swalError, swalSuccess } from "../../../helpers/swal";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 
 export default function SalaryTabs() {
-  const { activeTab, datas, signature, setDisplayData } = useContext(context);
+  const { activeTab, datas, setDisplayData } =
+    useContext(context);
   const data = getActiveSalaryTabContent(activeTab.name, datas);
   const [loading, setLoading] = useState<boolean>(false);
 
   const submitSalary: MouseEventHandler = (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(datas))
 
     setLoading(true);
-    releaseSalary(datas, signature)
+    releaseSalary(datas)
       .then((val: string) => {
         swalSuccess(val);
         setDisplayData((prev) => ({

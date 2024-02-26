@@ -46,6 +46,7 @@ export default function GoogleLoginButton() {
           text="signin_with"
           onSuccess={onSuccess}
           onError={onError}
+          width="300"
         />
       </LoadingOverlayWrapper>
     </GoogleOAuthProvider>

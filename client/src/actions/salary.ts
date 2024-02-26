@@ -54,10 +54,7 @@ export const generateSalary = (): Promise<GenerateSalaryResp> =>
     }
   });
 
-export const releaseSalary = (
-  datas: EmployeeSalaryDetail[],
-  signature: string
-): Promise<string> =>
+export const releaseSalary = (datas: EmployeeSalaryDetail[]): Promise<string> =>
   new Promise(async (resolve, reject) => {
     try {
       const {
@@ -69,7 +66,7 @@ export const releaseSalary = (
         headers: {
           access_token: localStorage.getItem("access_token"),
         },
-        data: { datas, signature },
+        data: { datas },
       });
 
       if (status !== 200) throw new NetworkError({ message });

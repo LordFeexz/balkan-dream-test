@@ -24,7 +24,6 @@ export type TabName =
 
 export interface TabSalaryContext {
   activeTab: ProfileTabItem;
-  signature: string;
   datas: EmployeeSalaryDetail[];
   step: SalaryStep;
 }

@@ -1,10 +1,10 @@
 import { type MouseEventHandler, useEffect, useState } from "react";
-import * as msal from "@azure/msal-browser";
 import { swalError } from "../../../helpers/swal";
 import { useNavigate } from "react-router-dom";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import { microsoftLogin } from "../../../actions/user";
 import msalInstance from '../../../lib/msal'
+import type {AuthenticationResult} from '@azure/msal-browser'
 
 export default function MicrosoftLoginBtn() {
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function MicrosoftLoginBtn() {
         .loginPopup({
           scopes: ["profile", "email"],
         })
-        .then((val: msal.AuthenticationResult) => {
+        .then((val: AuthenticationResult) => {
           setLoading(true);
           microsoftLogin(val.idToken)
             .then((token: string) => {
@@ -34,13 +34,13 @@ export default function MicrosoftLoginBtn() {
               navigate("/employees");
             })
             .catch((err) => {
-              return
+              return;
             });
         })
         .catch((err: Error) => {
           if (err?.message !== "user_cancelled: User cancelled the flow.")
             swalError("something went wrong");
-          msalInstance.clearCache()
+          msalInstance.clearCache();
           return;
         })
         .finally(() => {
@@ -48,7 +48,7 @@ export default function MicrosoftLoginBtn() {
         });
     else {
       swalError("Another interaction is in progress. Please wait.");
-      msalInstance.clearCache()
+      msalInstance.clearCache();
     }
   };
 
@@ -56,10 +56,16 @@ export default function MicrosoftLoginBtn() {
     <LoadingOverlayWrapper active={loading} spinner>
       <button
         type="button"
-        className="btn btn-primary submit-button"
-        style={{width:'100%'}}
+        className="btn submit-button border border-2 border-black display-3"
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-start",
+        }}
         onClick={microsoftHandler}>
-        login with microsoft
+        <i className="fab fa-microsoft" style={{ marginRight: "8px" }}></i>
+        <span style={{ marginLeft: "50px" }}>Login with microsoft</span>
       </button>
     </LoadingOverlayWrapper>
   );

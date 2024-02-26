@@ -12,7 +12,7 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <div className="container">
+    <div className="container w-100">
       <div className="container container__login">
         <div className="login__section">
           <img

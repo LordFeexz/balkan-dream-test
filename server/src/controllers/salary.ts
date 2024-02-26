@@ -12,7 +12,6 @@ import {
 import type { AnyBulkWriteOperation } from "mongodb";
 import currencyExchanger from "../third-party/currencyExchanger";
 import helpers from "../helpers";
-import encryption from "../utils/encryption";
 import type { ISalary } from "../interfaces/salary";
 import type { IPenalty } from "../interfaces/penalty";
 import type { IBonus } from "../interfaces/bonus";
@@ -97,10 +96,6 @@ export default new (class SalaryController {
         message: "success",
         data: {
           data,
-          signature: encryption.signSignatureSalary(
-            data,
-            req.headers["access_token"] as string
-          ),
           unit: "$",
         },
       });
@@ -117,10 +112,7 @@ export default new (class SalaryController {
     const session = await startSession();
     session.startTransaction();
     try {
-      const { datas } = await salaryValidation.validateReleaseSalary(
-        req.body,
-        req.headers["access_token"] as string
-      );
+      const { datas } = await salaryValidation.validateReleaseSalary(req.body);
 
       const updateSalaryModel: (AnyBulkWriteOperation<ISalary> &
         MongooseBulkWritePerWriteOptions)[] = [];

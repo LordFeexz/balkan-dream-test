@@ -12,6 +12,7 @@ declare global {
       MICROSOFT_CLIENT_ID: string;
       MICROSOFT_OBJECT_ID: string;
       MICROSOFT_TENANT_ID: string;
+      ENCRYPTION_KEY: string;
     }
   }
 }

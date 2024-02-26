@@ -12,12 +12,11 @@ export default function GenerateSalaryBtn() {
     setLoading(true);
 
     generateSalary()
-      .then(({ signature, data }) => {
+      .then(({ data }) => {
         setDisplayData((prev) => ({
           ...prev,
-          signature,
           datas: data,
-          step:'Preview'
+          step: "Preview",
         }));
       })
       .catch((err: Error) => {

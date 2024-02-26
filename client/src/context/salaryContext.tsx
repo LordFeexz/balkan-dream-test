@@ -21,7 +21,6 @@ export interface SalaryWrapperProps {
 export default function SalaryWrapper({ children }: SalaryWrapperProps) {
   const [displayData, setDisplayData] = useState<TabSalaryContext>({
     activeTab: profileTabItems[0],
-    signature: "",
     datas: [],
     step: "Generate",
   });
