@@ -54,12 +54,7 @@ function ChangePage(step: SalaryStep,nextStep:MouseEventHandler) {
         </div>
       );
     case "Release":
-      return (
-        <>
-          <SalaryTabs />
-          <SalaryPreview />
-        </>
-      );
+      return <SalaryTabs />
   }
 }
 
