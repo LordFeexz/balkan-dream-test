@@ -4,7 +4,6 @@ import genSalaryPng from "../images/generate-salary-illustration.png";
 import GenerateSalaryBtn from "../components/mollecul/button/generateSalaryBtn";
 import SalaryTabs from "../components/organ/tabs/salaryTab";
 import SalaryTable from "../components/organ/table/salaryTable";
-import SalaryPreview from "../components/mollecul/content/salaryPreview";
 import type { SalaryStep } from "../interfaces/context";
 import { type MouseEventHandler, useContext } from "react";
 import { context } from "../context/salaryContext";

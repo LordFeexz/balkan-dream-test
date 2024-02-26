@@ -7,6 +7,7 @@ import jwt from "../utils/jwt";
 import response from "../middlewares/response";
 import { OAuth2Client, type TokenPayload } from "google-auth-library";
 import token from "../models/token";
+import adminService from "../services/admin";
 
 export default new (class AdminController {
   public async login(
@@ -68,6 +69,12 @@ export default new (class AdminController {
           statusCode: 401,
         });
 
+      if (!(await adminService.findOneByEmail(email)))
+        throw new AppError({
+          message: "invalid credentials",
+          statusCode: 401,
+        });
+
       const appToken = jwt.createTokenEmail(email);
       await token.create({
         token: appToken,
@@ -97,6 +104,12 @@ export default new (class AdminController {
 
       const { aud, email } = jwt.decodeToken(microsoftToken);
       if (aud !== process.env.MICROSOFT_CLIENT_ID)
+        throw new AppError({
+          message: "invalid credentials",
+          statusCode: 401,
+        });
+
+        if (!(await adminService.findOneByEmail(email)))
         throw new AppError({
           message: "invalid credentials",
           statusCode: 401,

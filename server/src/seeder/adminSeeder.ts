@@ -13,14 +13,16 @@ config();
       console.log(
         await admin.create({
           name: "Admin",
-          email: "admin123@gmail.com",
-          password: bcrypt.hash("Default@123"),
+          email: "balkandreamsdev@gmail.com",
+          password: bcrypt.hash("@Qwertyui123"),
         })
       );
       break;
     case "down":
     case "DOWN":
-      console.log(await admin.deleteOne({ email: "admin123@gmail.com" }));
+      console.log(
+        await admin.deleteOne({ email: "balkandreamsdev@gmail.com" })
+      );
       break;
     default:
       break;
