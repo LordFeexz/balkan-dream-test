@@ -4,14 +4,7 @@ import { swalError } from "../../../helpers/swal";
 import { useNavigate } from "react-router-dom";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import { microsoftLogin } from "../../../actions/user";
-
-const msalInstance = new msal.PublicClientApplication({
-  auth: {
-    clientId: process.env.REACT_APP_MSAL_CLIENT_ID as string,
-    redirectUri:
-      process.env.REACT_APP_MSAL_REDIRECT_URI ?? "http://localhost:3000",
-  },
-});
+import msalInstance from '../../../lib/msal'
 
 export default function MicrosoftLoginBtn() {
   useEffect(() => {

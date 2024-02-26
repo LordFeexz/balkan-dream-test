@@ -1,14 +1,18 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
 import { logout } from "../../actions/user";
+import msalInstance from "../../lib/msal";
 
 export default function MainLayout() {
+  const navigate = useNavigate();
   const location = useLocation();
   const currentRoute = location.pathname;
 
   const logoutHandler = async () => {
     await logout();
     localStorage.removeItem("access_token");
+    await msalInstance.clearCache();
+    navigate("/login");
   };
 
   return (
@@ -17,7 +21,12 @@ export default function MainLayout() {
         <div className="container">
           <div className="navbar navbar__container">
             <Link to="/employees">
-              <img src={logo} alt="EMS Mars logo" className="logo" />
+              <img
+                src={logo}
+                alt="EMS Mars logo"
+                className="logo"
+                loading="lazy"
+              />
             </Link>
             <ul className="navbar__menu">
               <li className={currentRoute === "/home" ? "active" : ""}>
