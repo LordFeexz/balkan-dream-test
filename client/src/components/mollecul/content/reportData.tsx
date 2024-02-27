@@ -17,7 +17,6 @@ export default function ReportData({ data }: ReportDataProps) {
       <td>{data.bonuses}</td>
       <td>{data.tax}</td>
       <td>{data.salary}</td>
-      <td>{data.employees}</td>
       <td className="table-actions">
         <Link
           to={{

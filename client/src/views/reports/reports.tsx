@@ -52,7 +52,6 @@ export default function ReportPage() {
                     <th>BONUSES</th>
                     <th>TAXES</th>
                     <th>SALARY</th>
-                    <th>EMPLOYEES</th>
                     <th>DETAIL</th>
                   </tr>
                 </thead>

@@ -751,6 +751,20 @@ export default new (class Employee extends BaseService<IEmployee> {
         },
       },
       {
+        $match: {
+          $expr: {
+            $and: [
+              {
+                $ne: ["$salaryPaymentMonth", null],
+              },
+              {
+                $ne: ["$salaryPaymentYear", null],
+              },
+            ],
+          },
+        },
+      },
+      {
         $lookup: {
           from: "penalties",
           let: {
