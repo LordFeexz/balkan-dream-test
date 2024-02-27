@@ -53,10 +53,10 @@ export default new (class SalaryValidation extends BaseValidation {
               loanDetail: yup
                 .object()
                 .shape({
-                  _id: yup.string().required("_id is required"),
-                  installment: yup.number().required("installment is required"),
-                  note: yup.string().required("note is required"),
-                  totalLoan: yup.number().required("totalLoan is required"),
+                  _id: yup.string().nullable(),
+                  installment: yup.number().nullable(),
+                  note: yup.string().nullable(),
+                  totalLoan: yup.number().nullable(),
                 })
                 .nullable(),
             })

@@ -27,8 +27,15 @@ export default createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-    loader: () =>
-      !localStorage.getItem("access_token") ? redirect("/login") : null,
+    loader: () => {
+      const currentRoute = window.location.pathname;
+      return !localStorage.getItem("access_token") &&
+        (currentRoute === "/about" ||
+          currentRoute === "/terms" ||
+          currentRoute === "/privacy")
+        ? redirect("/login")
+        : null;
+    },
     children: [
       {
         path: "/about",
