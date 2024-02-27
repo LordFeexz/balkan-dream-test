@@ -2,21 +2,26 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
 import { logout } from "../../actions/user";
 import msalInstance from "../../lib/msal";
+import LoadingOverlayWrapper from "react-loading-overlay-ts";
+import { useState } from "react";
 
 export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentRoute = location.pathname;
+  const [loading, setLoading] = useState<boolean>(false);
 
   const logoutHandler = async () => {
+    setLoading(true);
     await logout();
     localStorage.removeItem("access_token");
     await msalInstance.clearCache();
     navigate("/login");
+    setLoading(false);
   };
 
   return (
-    <div className="wrapper">
+    <LoadingOverlayWrapper className="wrapper" active={loading}>
       <header className="" role="banner">
         <div className="container">
           <div className="navbar navbar__container">
@@ -62,6 +67,6 @@ export default function MainLayout() {
       <main>
         <Outlet />
       </main>
-    </div>
+    </LoadingOverlayWrapper>
   );
 }

@@ -33,7 +33,9 @@ export default function MicrosoftLoginBtn() {
               localStorage.setItem("access_token", token);
               navigate("/employees");
             })
-            .catch((err) => {
+            .catch((err: Error) => {
+              swalError(err?.message || "something went wrong");
+              msalInstance.clearCache();
               return;
             });
         })
