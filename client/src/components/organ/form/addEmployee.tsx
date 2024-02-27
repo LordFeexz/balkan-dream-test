@@ -124,7 +124,7 @@ export default function AddEmployeeForm() {
         label="Gender"
         onChangeHandler={onChangeHandler}
         datas={[
-          { label: "Male", value: "Male" },
+          { label: "Male", value: "M" },
           { label: "Female", value: "F" },
         ].map(({ label, value }) => ({ label, value }))}
       />
