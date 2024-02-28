@@ -20,6 +20,7 @@ export default function DatePicker({
       name={name}
       showTimeSelect
       dateFormat="dd/MM/yyyy"
+      showTimeInput={false}
     />
   );
 }

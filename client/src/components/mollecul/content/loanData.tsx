@@ -12,12 +12,13 @@ export default function LoanData({ data }: LoanDataProps) {
       <td> {data.installment}</td>
       <td>
         {" "}
-        {data?.paymentHistory
-          ?.map((el) => el.amount)
-          .reduce(
-            (accumulator, currentValue) => accumulator - currentValue,
-            data.amount
-          ) || data.amount}
+        {data.amount -
+          (data?.paymentHistory
+            ?.map((el) => el.amount)
+            .reduce(
+              (accumulator, currentValue) => accumulator - currentValue,
+              data.amount
+            ) || data.amount)}
       </td>
       <td> {data.note?.description || "N/A"}</td>
     </tr>

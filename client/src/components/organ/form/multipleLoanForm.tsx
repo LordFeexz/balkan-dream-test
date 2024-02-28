@@ -23,7 +23,7 @@ export default function MultipleLoanForm() {
   const defaultValue: CreateLoanProps & { employeeId: string } = {
     amount: 0,
     unit: "BAM",
-    date: "",
+    date: new Date().toString(),
     description: "",
     period: 0,
     note: "",

@@ -21,7 +21,7 @@ export default function LoanForm() {
   const [data, setData] = useState<CreateLoanProps>({
     amount: 0,
     unit: "BAM",
-    date: "",
+    date: new Date().toString(),
     description: "",
     period: 0,
     note: "",

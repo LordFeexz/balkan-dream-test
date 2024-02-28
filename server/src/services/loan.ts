@@ -223,6 +223,7 @@ export default new (class LoanService extends BaseService<ILoan> {
                   },
                   remainingInstallment: { $first: "$installment" },
                   paymentHistory: { $first: "$paymentHistory" },
+                  status: { $first: "$status" },
                 },
               },
               {
@@ -233,20 +234,26 @@ export default new (class LoanService extends BaseService<ILoan> {
                   totalLoan: 1,
                   remainingInstallment: 1,
                   remainingDebt: {
-                    $subtract: [
-                      "$remainingDebt",
-                      {
-                        $sum: {
-                          $reduce: {
-                            input: "$paymentHistory",
-                            initialValue: 0,
-                            in: {
-                              $add: ["$$value", "$this.amount"],
+                    $cond: {
+                      if: {
+                        $eq: ["$status", "Process"],
+                      },
+                      then: {
+                        $subtract: [
+                          "$remainingDebt",
+                          {
+                            $reduce: {
+                              input: "$paymentHistory",
+                              initialValue: 0,
+                              in: {
+                                $add: ["$$value", "$$this.amount"],
+                              },
                             },
                           },
-                        },
+                        ],
                       },
-                    ],
+                      else: 0,
+                    },
                   },
                 },
               },

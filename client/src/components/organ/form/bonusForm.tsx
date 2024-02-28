@@ -14,7 +14,7 @@ export default function BonusForm() {
   const { identifier } = useParams();
   const [data, setData] = useState<BonusFormProps>({
     amount: 0,
-    date: "",
+    date: new Date().toString(),
     description: "",
     isRepeating: false,
     unit: "BAM",

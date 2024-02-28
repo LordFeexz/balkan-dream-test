@@ -20,7 +20,7 @@ import type { ILoanPayment } from "../../../interfaces/loanPayment";
 export default function LoanPaymentForm() {
   const { identifier } = useParams();
   const [data, setData] = useState<CreateLoanPaymentProps>({
-    date: "",
+    date: new Date().toString(),
     description: "",
     amount: 0,
     unit: "BAM",
