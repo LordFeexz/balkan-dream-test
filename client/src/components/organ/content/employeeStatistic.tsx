@@ -8,6 +8,23 @@ import PercentageInfo from "../../atom/content/percentageInfo";
 import InfoChart from "../../atom/content/infoChart";
 import { useLocation, useNavigate } from "react-router-dom";
 
+function GetDetailSalary(id: number) {
+  switch (id) {
+    case 1:
+      return "<=1000";
+    case 2:
+      return "<=2000";
+    case 3:
+      return "<=3000";
+    case 4:
+      return "<=4000";
+    case 5:
+      return "<=5000";
+    default:
+      return ">5000";
+  }
+}
+
 export default function EmployeeStatistic() {
   const navigate = useNavigate();
   const [statistic, setStatistic] = useState<EmployeeStatistic | null>(null);
@@ -27,7 +44,7 @@ export default function EmployeeStatistic() {
       (async () => {
         setStatistic(await getStatistic(month, year));
       })();
-  }, [statistic]);
+  }, [statistic, year, month]);
 
   const role: BaseDataEntry[] | null =
     statistic?.rolePrecentage.map((el) => ({
@@ -101,14 +118,14 @@ export default function EmployeeStatistic() {
                 key={el.key}
                 color={el.color}
                 keyInfo={el.key?.toString() as string}
-                info={`${
+                info={`${(
                   (el.value /
                     statistic.genderPrecentage.reduce(
                       (acc, curr) => curr.total + acc,
                       0
                     )) *
                   100
-                } %`}
+                ).toFixed(2)} %`}
               />
             ))}
             <PieChart data={gender ?? []} paddingAngle={1} animate />
@@ -120,14 +137,14 @@ export default function EmployeeStatistic() {
                 key={el.key}
                 color={el.color}
                 keyInfo={el.key?.toString() as string}
-                info={`${
+                info={`${(
                   (el.value /
                     statistic.activeEmployeePrecentage.reduce(
                       (acc, curr) => curr.total + acc,
                       0
                     )) *
                   100
-                } %`}
+                ).toFixed(2)} %`}
               />
             ))}
             <PieChart data={activeEmployee ?? []} paddingAngle={1} animate />
@@ -139,14 +156,14 @@ export default function EmployeeStatistic() {
                 key={el.key}
                 color={el.color}
                 keyInfo={el.key?.toString() as string}
-                info={`${
+                info={`${(
                   (el.value /
                     statistic.rolePrecentage.reduce(
                       (acc, curr) => curr.total + acc,
                       0
                     )) *
                   100
-                } %`}
+                ).toFixed(2)} %`}
               />
             ))}
             <PieChart data={role ?? []} paddingAngle={1} animate />
@@ -160,14 +177,14 @@ export default function EmployeeStatistic() {
                 keyInfo={Math.ceil(
                   new Date().getFullYear() - (el.key as number)
                 ).toString()}
-                info={`${
+                info={`${(
                   (el.value /
                     statistic.agePrecentage.reduce(
                       (acc, curr) => curr.total + acc,
                       0
                     )) *
                   100
-                } %`}
+                ).toFixed(2)} %`}
               />
             ))}
             <PieChart data={age ?? []} paddingAngle={1} animate />
@@ -178,15 +195,15 @@ export default function EmployeeStatistic() {
               <InfoChart
                 key={el.key}
                 color={el.color}
-                keyInfo={el.key?.toString() as string}
-                info={`${
+                keyInfo={GetDetailSalary(el.title as number)}
+                info={`${(
                   (el.value /
                     statistic.salaryPercentage.reduce(
                       (acc, curr) => curr.total + acc,
                       0
                     )) *
                   100
-                } %`}
+                ).toFixed()} %`}
               />
             ))}
             <PieChart data={salary ?? []} paddingAngle={1} animate />

@@ -6,6 +6,7 @@ import penaltyService from "../services/penalty";
 import response from "../middlewares/response";
 import helpers from "../helpers";
 import type { CreatePenaltyProps } from "../interfaces/penalty";
+import { Types } from "mongoose";
 
 export default new (class PenaltyController {
   public async createPenalty(
@@ -140,6 +141,32 @@ export default new (class PenaltyController {
           successData: penalties,
         },
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async deletePenalty(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { employeeId, penaltyId } = req.params;
+
+      const penalty = await penaltyService.findEmployeePenalty(
+        new Types.ObjectId(penaltyId),
+        new Types.ObjectId(employeeId)
+      );
+      if (!penalty)
+        throw new AppError({
+          message: "data not found",
+          statusCode: 404,
+        });
+
+      await penaltyService.deleteById(penalty._id);
+
+      response.createResponse({ res, code: 200, message: "success" });
     } catch (err) {
       next(err);
     }

@@ -19,4 +19,11 @@ export default new (class BonusService extends BaseService<IBonus> {
       { ...dbOpts }
     );
   }
+
+  public async findEmployeeBonus(
+    _id: Types.ObjectId,
+    employeeId: Types.ObjectId
+  ) {
+    return (await this.model.findOne({ _id, employeeId })) as IBonus | null;
+  }
 })();

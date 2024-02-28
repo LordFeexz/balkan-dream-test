@@ -1,9 +1,8 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import salaryPng from "../../images/salary-illustration.png";
 import anniversaryPng from "../../images/anniversary-illustration.png";
 import birthDayPng from "../../images/birthday-illustration.png";
 import { ArrowLeft, ArrowRight } from "react-feather";
-import { Link } from "react-router-dom";
 import { useState, useEffect, Suspense, useContext } from "react";
 import type { EmployeeDetail } from "../../interfaces/employee";
 import { findEmployeeById } from "../../actions/employee";

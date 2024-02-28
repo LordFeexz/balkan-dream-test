@@ -1,4 +1,4 @@
-import { HTTPPOST } from "../constant/request";
+import { HTTPDELETE, HTTPPOST } from "../constant/request";
 import { Employee } from "../interfaces/employee";
 import type {
   CreateBulkPenaltyResp,
@@ -16,6 +16,7 @@ import type { RootReducer } from "../store";
 import type { PenaltyAction } from "../reducer/penalty";
 import { GETPENALTYLIST } from "../constant/penalty";
 import NetworkError from "../base/error";
+import type { DeleteItemFunc } from "../interfaces";
 
 export const createPenalty = (
   id: string,
@@ -102,6 +103,28 @@ export const createBulkPenalty = (
       if (status !== 201) throw new NetworkError({ message });
 
       resolve(data);
+    } catch (err) {
+      reject(err);
+    }
+  });
+
+export const deletePenalty: DeleteItemFunc = (employeeId, penaltyId) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const {
+        status,
+        data: { message },
+      } = await request.Mutation({
+        url: `/penalty/${employeeId}/${penaltyId}`,
+        headers: {
+          access_token: localStorage.getItem("access_token"),
+        },
+        method: HTTPDELETE,
+      });
+
+      if (status !== 200) throw new NetworkError({ message });
+
+      resolve(message);
     } catch (err) {
       reject(err);
     }

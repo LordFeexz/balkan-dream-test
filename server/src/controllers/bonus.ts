@@ -4,6 +4,7 @@ import AppError from "../base/error";
 import bonusValidation from "../validations/bonus";
 import response from "../middlewares/response";
 import bonusService from "../services/bonus";
+import { Types } from "mongoose";
 
 export default new (class BonusController {
   public async createBonus(
@@ -30,6 +31,32 @@ export default new (class BonusController {
           await bonusValidation.validateCreateBonus(req.body)
         ),
       });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  public async deleteBonus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const { employeeId, bonusId } = req.params;
+
+      const bonus = await bonusService.findEmployeeBonus(
+        new Types.ObjectId(bonusId),
+        new Types.ObjectId(employeeId)
+      );
+      if (!bonus)
+        throw new AppError({
+          message: "data not found",
+          statusCode: 404,
+        });
+
+      await bonusService.deleteById(bonus._id);
+
+      response.createResponse({ res, code: 200, message: "success" });
     } catch (err) {
       next(err);
     }

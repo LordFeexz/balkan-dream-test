@@ -1,12 +1,18 @@
+import { deleteBonus } from "../actions/bonus";
+import { deletePenalty } from "../actions/penalty";
 import { months } from "../constant/month";
 import type { ContextValue } from "../context/tabContent";
-import type { DisplayContent, DisplaySalaryTab } from "../interfaces";
-import { EmployeeSalaryDetail } from "../interfaces/employee";
+import type {
+  DeleteItemFunc,
+  DisplayContent,
+  DisplaySalaryTab,
+} from "../interfaces";
+import type { EmployeeSalaryDetail } from "../interfaces/employee";
 
 export const getActiveEmployeeTabContent = (
   activeTab: string,
   { penalties, loanPayments, loans, salary, bonuses }: ContextValue
-) => {
+): DisplayContent[] => {
   switch (activeTab) {
     case "Bonuses":
       return bonuses.map(mapData);
@@ -18,6 +24,7 @@ export const getActiveEmployeeTabContent = (
         amount: el.amount,
         description: el.description,
         unit: el.unit,
+        _id: el._id,
       }));
     case "Loan Extra Payments":
       return loanPayments.map((el) => ({
@@ -25,10 +32,30 @@ export const getActiveEmployeeTabContent = (
         amount: el.amount,
         description: el.description,
         unit: el.unit,
+        _id: el._id,
       }));
     case "Salary Raises":
     default:
-      return salary.historyRaises.map(mapData);
+      return salary.historyRaises.map((el) => ({
+        date: el.date,
+        amount: el.amount,
+        description: el.description,
+        unit: el.unit,
+        _id: (el as any)._id,
+      }));
+  }
+};
+
+export const getActiveEmployeeTabFunc = (
+  activeTab: string
+): DeleteItemFunc | null => {
+  switch (activeTab) {
+    case "Bonuses":
+      return deleteBonus;
+    case "Penalties":
+      return deletePenalty;
+    default:
+      return null;
   }
 };
 
@@ -37,6 +64,7 @@ export const mapData = (el: DisplayContent) => ({
   amount: el.amount,
   description: el.description,
   unit: el.unit,
+  _id: el._id,
 });
 
 export const getActiveSalaryTabContent = (

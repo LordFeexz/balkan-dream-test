@@ -5,7 +5,7 @@ import type { ILoanNote } from "./loanNote";
 export interface ILoan extends BaseDocument {
   amount: number;
   installment: number;
-  date: Date;
+  date: string;
   description: string;
   unit: LoanUnit;
   employeeId: string;
@@ -49,7 +49,7 @@ export interface GetListSummaryEmployeeLoan {
 
 export interface PaymentHistory {
   amount: number;
-  date: Date;
+  date: string;
   description: string;
   unit: LoanUnit;
 }

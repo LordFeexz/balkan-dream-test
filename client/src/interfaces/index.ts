@@ -24,6 +24,7 @@ export interface DisplayContent {
   date: string;
   description: string;
   unit: LoanUnit;
+  _id: string;
 }
 
 export type CreateBulkResp<T = any, F = any> = {
@@ -46,3 +47,8 @@ export interface BaseDataEntry {
   value: number;
   key?: string | number;
 }
+
+export type DeleteItemFunc<T = any> = (
+  employeeId: string,
+  id: string
+) => Promise<T>;

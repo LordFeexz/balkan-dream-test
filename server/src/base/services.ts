@@ -23,6 +23,10 @@ export default abstract class BaseService<T extends BaseDocument> {
     return (await this.model.findById(id)) as T | null;
   }
 
+  public async deleteById(id: Types.ObjectId) {
+    return await this.model.findByIdAndDelete(id);
+  }
+
   public async bulkUpdate(
     payload: (AnyBulkWriteOperation<T> & MongooseBulkWritePerWriteOptions)[],
     dbOpts?: DbOpts

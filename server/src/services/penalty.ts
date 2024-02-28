@@ -32,6 +32,13 @@ export default new (class PenaltyService extends BaseService<IPenalty> {
     return await this.createMany(datas, dbOpts);
   }
 
+  public async findEmployeePenalty(
+    _id: Types.ObjectId,
+    employeeId: Types.ObjectId
+  ) {
+    return (await this.model.findOne({ _id, employeeId })) as IPenalty | null;
+  }
+
   public async getPenaltyList({
     sortBy,
     direction,
