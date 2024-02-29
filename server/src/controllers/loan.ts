@@ -153,15 +153,10 @@ export default new (class LoanController {
           continue;
         }
 
-        const startWork = employee.startdate;
-        startWork.setDate(
-          startWork.getMonth() + 2 + (startWork.getDate() + 28)
-        );
-        if (startWork < now) {
+        if (employee.startdate > now) {
           failed.push({
             ...data,
-            reason:
-              "employee hasnt start working or employee hasnt been working for at least one month",
+            reason: "employee hasnt start working",
           });
           continue;
         }

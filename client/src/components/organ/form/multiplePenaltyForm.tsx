@@ -93,25 +93,25 @@ export default function MultiplePenaltyForm() {
         label="Description"
       />
 
-<button
-          type="submit"
-          className="btn btn-primary"
-          style={{ float: "left" }}>
-          Add penalty
-        </button>
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{ float: "left" }}>
+        Add penalty
+      </button>
 
-        {!!penaltyForms.length && (
-          <LoadingOverlayWrapper spinner active={loading}>
-            <button
-              type="button"
-              disabled={loading}
-              className="btn btn-primary"
-              style={{ float: "right" }}
-              onClick={submitPenalty}>
-              Save all penalties
-            </button>
-          </LoadingOverlayWrapper>
-        )}
+      {!!penaltyForms.length && (
+        <LoadingOverlayWrapper spinner active={loading}>
+          <button
+            type="button"
+            disabled={loading}
+            className="btn btn-primary"
+            style={{ float: "right" }}
+            onClick={submitPenalty}>
+            Save all penalties
+          </button>
+        </LoadingOverlayWrapper>
+      )}
     </form>
   );
 }

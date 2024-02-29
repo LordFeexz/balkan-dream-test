@@ -6,10 +6,11 @@ import SalaryUnitDetail from "../../mollecul/content/salaryUnitDetailContent";
 import { releaseSalary } from "../../../actions/salary";
 import { swalError, swalSuccess } from "../../../helpers/swal";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
+import { useDispatch } from "react-redux";
 
 export default function SalaryTabs() {
-  const { activeTab, datas, setDisplayData } =
-    useContext(context);
+  const dispatch = useDispatch();
+  const { activeTab, datas, setDisplayData } = useContext(context);
   const data = getActiveSalaryTabContent(activeTab.name, datas);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -17,7 +18,7 @@ export default function SalaryTabs() {
     e.preventDefault();
 
     setLoading(true);
-    releaseSalary(datas)
+    dispatch<any>(releaseSalary(datas))
       .then((val: string) => {
         swalSuccess(val);
         setDisplayData((prev) => ({

@@ -1,3 +1,4 @@
+import { ThunkAction } from "redux-thunk";
 import NetworkError from "../base/error";
 import { HTTPPATCH, HTTPPOST } from "../constant/request";
 import type {
@@ -6,6 +7,9 @@ import type {
 } from "../interfaces/employee";
 import type { ISalary, UpdateSalaryProps } from "../interfaces/salary";
 import request from "../lib/axios";
+import type { RootReducer } from "../store";
+import type { LoanAction, LoanState } from "../reducer/loan";
+import { UPDATEAFTERSALARY } from "../constant/loan";
 
 export const raiseSalary = (
   id: string,
@@ -54,7 +58,14 @@ export const generateSalary = (): Promise<GenerateSalaryResp> =>
     }
   });
 
-export const releaseSalary = (datas: EmployeeSalaryDetail[]): Promise<string> =>
+export const releaseSalary = (
+  datas: EmployeeSalaryDetail[]
+): ThunkAction<
+  Promise<string>,
+  RootReducer,
+  any,
+  LoanAction<LoanState>
+> => async (dispatch) =>
   new Promise(async (resolve, reject) => {
     try {
       const {
@@ -70,6 +81,18 @@ export const releaseSalary = (datas: EmployeeSalaryDetail[]): Promise<string> =>
       });
 
       if (status !== 200) throw new NetworkError({ message });
+
+      dispatch<LoanAction>({
+        type: UPDATEAFTERSALARY,
+        payload: {
+          loans: [],
+          totalData: 0,
+          totalPage: 0,
+          summaryLoans: [],
+          summaryLoanTotalData: 0,
+          summaryLoanTotalPage: 0,
+        },
+      });
 
       resolve(message ?? "success");
     } catch (err) {

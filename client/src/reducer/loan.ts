@@ -9,6 +9,7 @@ import {
   CREATEBULKEMPLOYEELOAN,
   GETALLEMPLOYEELOAN,
   GETEMPLOYEELOANSUMMARY,
+  UPDATEAFTERSALARY,
 } from "../constant/loan";
 
 export interface LoanState {
@@ -70,6 +71,9 @@ const reducer: Reducer<LoanState, LoanAction> = (
         totalData: state.totalData + payload.length,
         totalPage: Math.ceil(state.totalData / 20),
       };
+    }
+    case UPDATEAFTERSALARY: {
+      return payload;
     }
     default:
       return state;
