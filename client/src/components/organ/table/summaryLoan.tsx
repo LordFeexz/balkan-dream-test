@@ -26,7 +26,7 @@ export default function SummaryLoanTable() {
           <th>Loans Amount [totaled]</th>
           <th>Loans [totaled]</th>
           <th>Installments [current]</th>
-          <th>Remaining Debt</th>
+          <th>Remaining Debt + Interest</th>
         </tr>
       </thead>
       <tbody>

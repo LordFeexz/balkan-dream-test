@@ -191,8 +191,6 @@ export default new (class LoanService extends BaseService<ILoan> {
         {
           $facet: {
             data: [
-              { $skip: (page - 1) * limit },
-              { $limit: limit },
               {
                 $lookup: {
                   from: "employees",
@@ -216,7 +214,21 @@ export default new (class LoanService extends BaseService<ILoan> {
                         if: {
                           $eq: ["$status", "Process"],
                         },
-                        then: "$amount",
+                        then: {
+                          $subtract: [
+                            {
+                              $multiply: ["$installment", "$period"],
+                            },
+                            {
+                              $multiply: [
+                                "$installment",
+                                {
+                                  $size: "$paymentHistory",
+                                },
+                              ],
+                            },
+                          ],
+                        },
                         else: 0,
                       },
                     },
@@ -233,28 +245,7 @@ export default new (class LoanService extends BaseService<ILoan> {
                   totalAmount: 1,
                   totalLoan: 1,
                   remainingInstallment: 1,
-                  remainingDebt: {
-                    $cond: {
-                      if: {
-                        $eq: ["$status", "Process"],
-                      },
-                      then: {
-                        $subtract: [
-                          "$remainingDebt",
-                          {
-                            $reduce: {
-                              input: "$paymentHistory",
-                              initialValue: 0,
-                              in: {
-                                $add: ["$$value", "$$this.amount"],
-                              },
-                            },
-                          },
-                        ],
-                      },
-                      else: 0,
-                    },
-                  },
+                  remainingDebt: 1,
                 },
               },
             ],
