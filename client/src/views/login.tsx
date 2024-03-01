@@ -2,7 +2,6 @@ import logo from "../images/logo.png";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import GoogleLoginButton from "../components/mollecul/form/googleLoginForm";
-import MicrosoftLoginBtn from "../components/mollecul/form/microsoftLogin";
 
 export default function LoginPage() {
   const [mount, setMount] = useState<boolean>(false);
@@ -27,8 +26,6 @@ export default function LoginPage() {
           <br />
           <br />
           {mount && <GoogleLoginButton />}
-          <br />
-          {mount && <MicrosoftLoginBtn />}
           <div className="intro">
             <ul>
               <li>
