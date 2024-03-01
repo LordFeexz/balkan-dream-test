@@ -341,9 +341,7 @@ export default new (class LoanController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { page, limit } = await loanValidation.queryValidation(req.query);
-
-      const { total, data } = await loanService.getSummaryLoan({ page, limit });
+      const { total, data } = await loanService.getSummaryLoan();
       if (!total)
         throw new AppError({
           message: "data not found",
@@ -354,8 +352,8 @@ export default new (class LoanController {
         { res, code: 200, message: "OK", data },
         {
           totalData: total,
-          limit,
-          page,
+          limit: Infinity,
+          page: 1,
           totalPage: 1,
         }
       );

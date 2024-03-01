@@ -22,7 +22,6 @@ export default function LoanForm() {
     amount: 0,
     unit: "BAM",
     date: new Date().toString(),
-    description: "",
     period: 0,
     note: "",
   });
@@ -102,12 +101,6 @@ export default function LoanForm() {
         onChangeHandler={onChangeHandler}
       />
 
-      <DescriptionForm
-        label="Description"
-        name="description"
-        value={data.description}
-        onChangeHandler={onChangeHandler}
-      />
       <DescriptionForm
         name="note"
         label="note (optional)"

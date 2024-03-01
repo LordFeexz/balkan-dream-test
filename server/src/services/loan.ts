@@ -40,11 +40,7 @@ export default new (class LoanService extends BaseService<ILoan> {
     return await this.createOneData(
       {
         amount,
-        installment: helpers.countInstallment(
-          amount,
-          period,
-          amount * (1 / 100)
-        ),
+        installment: helpers.countInstallment(amount, period),
         date,
         unit,
         description,
@@ -179,18 +175,17 @@ export default new (class LoanService extends BaseService<ILoan> {
     }
   }
 
-  public async getSummaryLoan({
-    page = 1,
-    limit = 20,
-  }: {
-    page?: number;
-    limit?: number;
-  }) {
+  public async getSummaryLoan() {
     try {
       const [result] = await this.model.aggregate([
         {
           $facet: {
             data: [
+              {
+                $match: {
+                  status: "Process",
+                },
+              },
               {
                 $lookup: {
                   from: "employees",
@@ -205,37 +200,45 @@ export default new (class LoanService extends BaseService<ILoan> {
               {
                 $group: {
                   _id: "$employeeId",
-                  surname: { $first: "$employee.name" },
-                  totalAmount: { $sum: "$amount" },
-                  totalLoan: { $sum: 1 },
+                  surname: {
+                    $first: "$employee.name",
+                  },
+                  totalAmount: {
+                    $sum: "$amount",
+                  },
                   remainingDebt: {
                     $sum: {
-                      $cond: {
-                        if: {
-                          $eq: ["$status", "Process"],
+                      $subtract: [
+                        {
+                          $multiply: ["$installment", "$period"],
                         },
-                        then: {
-                          $subtract: [
+                        {
+                          $multiply: [
+                            "$installment",
                             {
-                              $multiply: ["$installment", "$period"],
-                            },
-                            {
-                              $multiply: [
-                                "$installment",
-                                {
-                                  $size: "$paymentHistory",
-                                },
-                              ],
+                              $size: "$paymentHistory",
                             },
                           ],
                         },
-                        else: 0,
-                      },
+                      ],
                     },
                   },
-                  remainingInstallment: { $first: "$installment" },
-                  paymentHistory: { $first: "$paymentHistory" },
-                  status: { $first: "$status" },
+                  remainingInstallment: {
+                    $first: "$installment",
+                  },
+                  status: {
+                    $first: "$status",
+                  },
+                  totalPayed: {
+                    $sum: {
+                      $multiply: [
+                        "$installment",
+                        {
+                          $size: "$paymentHistory",
+                        },
+                      ],
+                    },
+                  },
                 },
               },
               {
@@ -243,7 +246,7 @@ export default new (class LoanService extends BaseService<ILoan> {
                   _id: 1,
                   surname: 1,
                   totalAmount: 1,
-                  totalLoan: 1,
+                  totalPayed: 1,
                   remainingInstallment: 1,
                   remainingDebt: 1,
                 },

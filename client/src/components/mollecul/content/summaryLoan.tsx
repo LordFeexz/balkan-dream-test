@@ -8,7 +8,7 @@ export default function SummaryLoanData({
   data: {
     surname,
     totalAmount,
-    totalLoan,
+    totalPayed,
     remainingDebt,
     remainingInstallment,
   },
@@ -17,7 +17,7 @@ export default function SummaryLoanData({
     <tr>
       <th>{surname}</th>
       <th>{totalAmount}</th>
-      <th>{totalLoan}</th>
+      <th>{totalPayed}</th>
       <th>{remainingInstallment}</th>
       <th>{remainingDebt}</th>
     </tr>

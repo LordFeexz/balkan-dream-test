@@ -14,8 +14,7 @@ export default function SummaryLoanTable() {
   >(({ loanReducer }) => loanReducer);
 
   useEffect(() => {
-    if (!summaryLoanTotalData)
-      dispatch<any>(getEmployeeLoanSummary({ page: 1 }));
+    if (!summaryLoanTotalData) dispatch<any>(getEmployeeLoanSummary({}));
   }, [summaryLoanTotalData]);
 
   return (
@@ -24,7 +23,7 @@ export default function SummaryLoanTable() {
         <tr>
           <th>Name</th>
           <th>Loans Amount [totaled]</th>
-          <th>Loans [totaled]</th>
+          <th>Loans [payed]</th>
           <th>Installments [current]</th>
           <th>Remaining Debt + Interest</th>
         </tr>

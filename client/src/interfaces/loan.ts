@@ -18,7 +18,6 @@ export interface ILoan extends BaseDocument {
 export interface CreateLoanProps {
   amount: number;
   date: string;
-  description: string;
   unit: LoanUnit;
   period: number;
   note?: string;
@@ -58,7 +57,7 @@ export interface SummaryLoan {
   _id: string;
   surname: string;
   totalAmount: number;
-  totalLoan: number;
+  totalPayed: number;
   remainingDebt: number;
   remainingInstallment: number;
 }

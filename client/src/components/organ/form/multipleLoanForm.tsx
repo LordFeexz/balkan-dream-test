@@ -24,7 +24,6 @@ export default function MultipleLoanForm() {
     amount: 0,
     unit: "BAM",
     date: new Date().toString(),
-    description: "",
     period: 0,
     note: "",
     employeeId: "",
@@ -126,12 +125,7 @@ export default function MultipleLoanForm() {
         value={data.employeeId}
         name="employeeId"
       />
-      <DescriptionForm
-        label="Description"
-        name="description"
-        value={data.description}
-        onChangeHandler={onChangeHandler}
-      />
+
       <DescriptionForm
         name="note"
         label="note (optional)"

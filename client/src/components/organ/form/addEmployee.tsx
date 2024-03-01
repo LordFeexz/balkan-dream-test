@@ -54,8 +54,9 @@ export default function AddEmployeeForm() {
     setLoading(true);
 
     for (const key in data)
-      if (!(data as any)[key]) {
+      if (!(data as any)[key] && key !== 'isPayoneer') {
         swalError(`${key} is required`);
+        setLoading(false);
         return;
       }
 

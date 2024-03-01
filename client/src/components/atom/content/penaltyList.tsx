@@ -25,15 +25,16 @@ export default function PenaltyList({ data }: PenaltyListProps) {
     ({ employeeReducer }) => employeeReducer
   );
 
-  const now = new Date()
+  const now = new Date();
 
   return (
     <tr>
       <td className="col-md-4">
         {employeeNames.find((el) => el._id === data.employeeId)?.surname || "-"}
       </td>
-      <td className="col-md-3">{now.getDate()}-{months[now.getMonth()].label}-
-              {now.getFullYear()}</td>
+      <td className="col-md-3">
+        {now.getDate()}-{months[now.getMonth()].label}-{now.getFullYear()}
+      </td>
       <td className="col-md-2">
         {data.amount} {data.unit}
       </td>
