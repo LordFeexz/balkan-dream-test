@@ -106,7 +106,11 @@ export default function EmployeeStatistic() {
                   }}
                 >
                   {" "}
-                  {activeEmployee?.reduce((acc, curr) => curr.value + acc, 0)}
+                  {activeEmployee?.reduce(
+                    (acc, curr) =>
+                      curr.key === "Active" ? curr.value : 0 + acc,
+                    0
+                  )}
                 </span>
               </h6>
             </div>
