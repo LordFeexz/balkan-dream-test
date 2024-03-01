@@ -1296,6 +1296,17 @@ export default new (class Employee extends BaseService<IEmployee> {
           ],
           activeEmployeePrecentage: [
             {
+              $match: {
+                $expr: {
+                  $and: [
+                    {
+                      $lte: ["$startdate", endDate],
+                    },
+                  ],
+                },
+              },
+            },
+            {
               $group: {
                 _id: {
                   $cond: [
