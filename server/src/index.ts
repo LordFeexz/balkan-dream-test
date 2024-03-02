@@ -16,14 +16,14 @@ class App {
 
   constructor() {
     this.app = express();
-    this.useFe()
-    this.feRoute()
+    this.useFe();
+    this.feRoute();
     this.plugins();
     this.appRoute();
     this.errorHandling();
   }
 
-  private useFe(){
+  private useFe() {
     this.app.use(
       express.static(join(__dirname, "../../client/build")),
       (req, res, next) => {
@@ -34,7 +34,7 @@ class App {
         );
         next();
       }
-    )
+    );
   }
 
   private plugins(): void {
@@ -86,12 +86,10 @@ class App {
   }
 
   private appRoute(): void {
-    this.app
-      .use(BASE_URL, routes)
-      .use(notFound);
+    this.app.use(BASE_URL, routes).use(notFound);
   }
 
-  private feRoute():void {
+  private feRoute(): void {
     this.app.use(/^(?!\/api\/v1\/).*/, (req, res) => {
       res.header("Access-Control-Allow-Origin", "*");
       res.setHeader(
@@ -100,7 +98,7 @@ class App {
       );
 
       res.sendFile(join(__dirname, "../../client/build/index.html"));
-    })
+    });
   }
 
   private errorHandling(): void {
