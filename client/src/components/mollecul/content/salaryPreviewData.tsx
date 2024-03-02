@@ -9,7 +9,7 @@ export default function SalaryPreviewData({ item }: SalaryPreviewDataProps) {
     <tr>
       <td>{item.surname}</td>
       <td>
-        {item.takeHomePay} minus Payoneer
+        {item.takeHomePay}
         {/* {totalNumberOfPayoneerSalaries} - {totalNumberOfHandSalaries} */}
       </td>
       <td>{item.salary + item.totalBonus}</td>

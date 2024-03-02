@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../../images/logo.png";
 import { logout } from "../../actions/user";
-// import msalInstance from "../../lib/msal";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import { useState } from "react";
 
@@ -15,7 +14,6 @@ export default function MainLayout() {
     setLoading(true);
     await logout();
     localStorage.removeItem("access_token");
-    // await msalInstance.clearCache();
     navigate("/login");
     setLoading(false);
   };

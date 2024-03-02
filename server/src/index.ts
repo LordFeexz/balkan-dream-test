@@ -9,15 +9,32 @@ import { BASE_URL } from "./constant";
 import routes from "./routes";
 import notFound from "./routes/notFound";
 import errorHandler from "./middlewares/errorHandler";
+import { join } from "path";
 
 class App {
   public app: Application;
 
   constructor() {
     this.app = express();
+    this.useFe()
+    this.feRoute()
     this.plugins();
     this.appRoute();
-    this.errorHandling()
+    this.errorHandling();
+  }
+
+  private useFe(){
+    this.app.use(
+      express.static(join(__dirname, "../../client/build")),
+      (req, res, next) => {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader(
+          "Content-Security-Policy",
+          "script-src 'self'  https://accounts.google.com/gsi/client http://oss.maxcdn.com"
+        );
+        next();
+      }
+    )
   }
 
   private plugins(): void {
@@ -69,12 +86,26 @@ class App {
   }
 
   private appRoute(): void {
-    this.app.use(BASE_URL, routes).use(notFound);
+    this.app
+      .use(BASE_URL, routes)
+      .use(notFound);
   }
 
-  private errorHandling():void {
-    this.app.use(errorHandler)
+  private feRoute():void {
+    this.app.use(/^(?!\/api\/v1\/).*/, (req, res) => {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.setHeader(
+        "Content-Security-Policy",
+        "script-src 'self'  https://accounts.google.com/gsi/client http://oss.maxcdn.com"
+      );
+
+      res.sendFile(join(__dirname, "../../client/build/index.html"));
+    })
+  }
+
+  private errorHandling(): void {
+    this.app.use(errorHandler);
   }
 }
 
-export default new App().app
+export default new App().app;
