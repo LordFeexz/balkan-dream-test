@@ -66,11 +66,7 @@ export default new (class LoanService extends BaseService<ILoan> {
     return await this.createMany(
       datas.map(({ amount, unit, date, description, period, employeeId }) => ({
         amount,
-        installment: helpers.countInstallment(
-          amount,
-          period,
-          amount * (1 / 100)
-        ),
+        installment: helpers.countInstallment(amount, period),
         date,
         unit,
         description,
