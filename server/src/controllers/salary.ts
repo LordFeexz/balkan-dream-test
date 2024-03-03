@@ -232,23 +232,17 @@ export default new (class SalaryController {
           });
         }
       }
-      const handler = [];
-      if (updatePenaltyModel.length)
-        handler.push(
-          penaltyService.bulkUpdate(updatePenaltyModel, { session })
-        );
-      if (updateSalaryModel.length)
-        handler.push(salaryService.bulkUpdate(updateSalaryModel, { session }));
-      if (updateBonusModel.length)
-        handler.push(bonusService.bulkUpdate(updateBonusModel, { session }));
-      if (updateLoanModel.length)
-        handler.push(loanService.bulkUpdate(updateLoanModel, { session }));
-      if (createLoanPayment.length)
-        handler.push(
-          loanPaymentService.createManyData(createLoanPayment, { session })
-        );
 
-      if (handler.length) await Promise.all(handler);
+      if (updatePenaltyModel.length)
+        await penaltyService.bulkUpdate(updatePenaltyModel, { session })
+      if (updateSalaryModel.length)
+        await salaryService.bulkUpdate(updateSalaryModel, { session })
+      if (updateBonusModel.length)
+        await bonusService.bulkUpdate(updateBonusModel, { session })
+      if (updateLoanModel.length)
+        await loanService.bulkUpdate(updateLoanModel, { session })
+      if (createLoanPayment.length)
+        await loanPaymentService.createManyData(createLoanPayment, { session })
 
       await session.commitTransaction();
       response.createResponse({
