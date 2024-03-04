@@ -5,7 +5,7 @@ import { IBonus } from "./bonus";
 import type { ILoan } from "./loan";
 import type { ILoanPayment } from "./loanPayment";
 import type { IPenalty } from "./penalty";
-import type { ISalary } from "./salary";
+import type { ISalary, PaymentHistory } from "./salary";
 
 export type IEmployee = BaseDocument & Employee;
 
@@ -60,6 +60,11 @@ export interface EmployeeSalaryDetail {
   bonuses: EmployeeSalaryUnitDetail[];
   isLastInstallment: boolean;
   loanDetail: LoanUnitDetail | null;
+}
+
+export interface GeneratedSalaryData {
+  data: EmployeeSalaryDetail[];
+  thisMonthPayment: PaymentHistory[];
 }
 
 export interface EmployeeSalaryUnitDetail {

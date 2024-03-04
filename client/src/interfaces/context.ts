@@ -26,6 +26,8 @@ export interface TabSalaryContext {
   activeTab: ProfileTabItem;
   datas: EmployeeSalaryDetail[];
   step: SalaryStep;
+  generatedDate: Date;
+  isRepeated: boolean;
 }
 
 export type SalaryStep = "Generate" | "Preview" | "Release";

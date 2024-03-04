@@ -37,7 +37,7 @@ export const raiseSalary = (
     }
   });
 
-export const generateSalary = (): Promise<GenerateSalaryResp> =>
+export const generateSalary = (date: Date): Promise<GenerateSalaryResp> =>
   new Promise(async (resolve, reject) => {
     try {
       const {
@@ -48,6 +48,7 @@ export const generateSalary = (): Promise<GenerateSalaryResp> =>
         headers: {
           access_token: localStorage.getItem("access_token"),
         },
+        params: { date },
       });
 
       if (status !== 200) throw new NetworkError({ message });
@@ -59,7 +60,8 @@ export const generateSalary = (): Promise<GenerateSalaryResp> =>
   });
 
 export const releaseSalary = (
-  datas: EmployeeSalaryDetail[]
+  datas: EmployeeSalaryDetail[],
+  date: Date
 ): ThunkAction<
   Promise<string>,
   RootReducer,
@@ -77,7 +79,7 @@ export const releaseSalary = (
         headers: {
           access_token: localStorage.getItem("access_token"),
         },
-        data: { datas },
+        data: { datas, date },
       });
 
       if (status !== 200) throw new NetworkError({ message });

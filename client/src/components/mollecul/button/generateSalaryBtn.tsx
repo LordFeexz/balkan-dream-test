@@ -6,17 +6,18 @@ import LoadingOverlayWrapper from "react-loading-overlay-ts";
 
 export default function GenerateSalaryBtn() {
   const [loading, setLoading] = useState<boolean>(false);
-  const { setDisplayData } = useContext(context);
+  const { setDisplayData, generatedDate } = useContext(context);
   const generateSalaryHandler: MouseEventHandler = (e) => {
     e.preventDefault();
     setLoading(true);
 
-    generateSalary()
-      .then(({ data }) => {
+    generateSalary(generatedDate)
+      .then(({ data, isRepeated }) => {
         setDisplayData((prev) => ({
           ...prev,
           datas: data,
           step: "Preview",
+          isRepeated,
         }));
       })
       .catch((err: Error) => {

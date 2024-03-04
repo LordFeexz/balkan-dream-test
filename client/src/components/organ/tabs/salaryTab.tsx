@@ -4,21 +4,32 @@ import Tabs from "../../atom/tabs/salaryTabs";
 import { getActiveSalaryTabContent } from "../../../helpers/global";
 import SalaryUnitDetail from "../../mollecul/content/salaryUnitDetailContent";
 import { releaseSalary } from "../../../actions/salary";
-import { swalError, swalSuccess } from "../../../helpers/swal";
+import { swalConfirm, swalError, swalSuccess } from "../../../helpers/swal";
 import LoadingOverlayWrapper from "react-loading-overlay-ts";
 import { useDispatch } from "react-redux";
 
 export default function SalaryTabs() {
   const dispatch = useDispatch();
-  const { activeTab, datas, setDisplayData } = useContext(context);
-  const data = getActiveSalaryTabContent(activeTab.name, datas);
+  const { activeTab, datas, setDisplayData, generatedDate, isRepeated } =
+    useContext(context);
+  const data = getActiveSalaryTabContent(activeTab.name, datas, generatedDate);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const submitSalary: MouseEventHandler = (e) => {
+  const submitSalary: MouseEventHandler = async (e) => {
     e.preventDefault();
 
+    if (isRepeated) {
+      const { isDenied, isDismissed } = await swalConfirm(
+        "This month's salary payment has been paid,want to continue this payment?"
+      );
+      if (isDenied || isDismissed) {
+        swalError("Canceled");
+        return;
+      }
+    }
+
     setLoading(true);
-    dispatch<any>(releaseSalary(datas))
+    dispatch<any>(releaseSalary(datas, generatedDate))
       .then((val: string) => {
         swalSuccess(val);
         setDisplayData((prev) => ({

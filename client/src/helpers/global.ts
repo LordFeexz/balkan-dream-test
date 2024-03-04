@@ -69,14 +69,15 @@ export const mapData = (el: DisplayContent) => ({
 
 export const getActiveSalaryTabContent = (
   activeTab: string,
-  datas: EmployeeSalaryDetail[]
+  datas: EmployeeSalaryDetail[],
+  generatedDate?: Date
 ): DisplaySalaryTab[] => {
   const results: DisplaySalaryTab[] = [];
   for (const data of datas) {
     switch (activeTab) {
       case "Bonuses": {
         for (const { date, description, amount } of data.bonuses) {
-          const dateDisplay = new Date(date);
+          const dateDisplay = new Date(date ?? generatedDate);
           results.push({
             date: `${dateDisplay.getDate()}-${
               months[dateDisplay.getMonth()].label
@@ -91,7 +92,7 @@ export const getActiveSalaryTabContent = (
       }
       case "Penalties": {
         for (const { date, description, amount } of data.penalties) {
-          const dateDisplay = new Date(date);
+          const dateDisplay = new Date(date ?? generatedDate);
           results.push({
             date: `${dateDisplay.getDate()}-${
               months[dateDisplay.getMonth()].label
@@ -104,7 +105,7 @@ export const getActiveSalaryTabContent = (
         break;
       }
       case "Loans": {
-        const now = new Date();
+        const now = generatedDate ?? new Date();
         if (data.loanDetail)
           results.push({
             surname: data.surname,
@@ -117,7 +118,7 @@ export const getActiveSalaryTabContent = (
         break;
       }
       case "Salary Raises": {
-        const now = new Date();
+        const now = generatedDate ?? new Date();
         results.push({
           surname: data.surname,
           amount: data.takeHomePay,

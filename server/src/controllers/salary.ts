@@ -73,6 +73,7 @@ export default new (class SalaryController {
     next: NextFunction
   ): Promise<void> {
     try {
+      const { date } = await salaryValidation.validateDateInput(req.query);
       const currency = await currencyExchanger.getUsdExchangeRate();
       if (!currency)
         throw new AppError({
@@ -89,7 +90,9 @@ export default new (class SalaryController {
           statusCode: 502,
         });
 
-      const data = await employeeService.getEmployeeSalary(exchangeRate);
+      const { data, thisMonthPayment } =
+        await employeeService.getEmployeeSalary(exchangeRate, date);
+
       response.createResponse({
         res,
         code: 200,
@@ -97,6 +100,7 @@ export default new (class SalaryController {
         data: {
           data,
           unit: "$",
+          isRepeated: !!thisMonthPayment.length,
         },
       });
     } catch (err) {
@@ -112,7 +116,9 @@ export default new (class SalaryController {
     const session = await startSession();
     session.startTransaction();
     try {
-      const { datas } = await salaryValidation.validateReleaseSalary(req.body);
+      const { datas, date } = await salaryValidation.validateReleaseSalary(
+        req.body
+      );
 
       const updateSalaryModel: (AnyBulkWriteOperation<ISalary> &
         MongooseBulkWritePerWriteOptions)[] = [];
@@ -126,7 +132,7 @@ export default new (class SalaryController {
       })[] = [];
       const updateLoanModel: (AnyBulkWriteOperation<ILoan> &
         MongooseBulkWritePerWriteOptions)[] = [];
-      const now = new Date();
+
       for (const {
         _id,
         takeHomePay,
@@ -134,8 +140,6 @@ export default new (class SalaryController {
         totalInstallment,
         totalPenalties,
         penalties,
-        salary,
-        surname,
         bonuses,
         isLastInstallment,
         loanDetail,
@@ -150,7 +154,7 @@ export default new (class SalaryController {
               $push: {
                 paymentHistory: {
                   amount: takeHomePay,
-                  date: now,
+                  date: date,
                   unit: "$",
                   description: "salary takehomepay payment",
                 },
@@ -213,7 +217,7 @@ export default new (class SalaryController {
                 $push: {
                   paymentHistory: {
                     unit: "$",
-                    date: now,
+                    date: date,
                     description: "employee loan payment",
                     amount: totalInstallment,
                   },
@@ -223,7 +227,7 @@ export default new (class SalaryController {
           });
 
           createLoanPayment.push({
-            date: now,
+            date: date,
             description: "employee loan payment",
             unit: "$",
             amount: totalInstallment,
@@ -234,15 +238,15 @@ export default new (class SalaryController {
       }
 
       if (updatePenaltyModel.length)
-        await penaltyService.bulkUpdate(updatePenaltyModel, { session })
+        await penaltyService.bulkUpdate(updatePenaltyModel, { session });
       if (updateSalaryModel.length)
-        await salaryService.bulkUpdate(updateSalaryModel, { session })
+        await salaryService.bulkUpdate(updateSalaryModel, { session });
       if (updateBonusModel.length)
-        await bonusService.bulkUpdate(updateBonusModel, { session })
+        await bonusService.bulkUpdate(updateBonusModel, { session });
       if (updateLoanModel.length)
-        await loanService.bulkUpdate(updateLoanModel, { session })
+        await loanService.bulkUpdate(updateLoanModel, { session });
       if (createLoanPayment.length)
-        await loanPaymentService.createManyData(createLoanPayment, { session })
+        await loanPaymentService.createManyData(createLoanPayment, { session });
 
       await session.commitTransaction();
       response.createResponse({

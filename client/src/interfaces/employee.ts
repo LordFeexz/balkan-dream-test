@@ -81,4 +81,5 @@ export interface LoanUnitDetail {
 export interface GenerateSalaryResp {
   data: EmployeeSalaryDetail[];
   unit: LoanUnit;
+  isRepeated: boolean;
 }

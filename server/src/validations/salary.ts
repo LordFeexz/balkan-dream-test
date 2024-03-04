@@ -2,7 +2,6 @@ import * as yup from "yup";
 import BaseValidation from "../base/validation";
 import type { UpdateSalaryProps } from "../interfaces/salary";
 import type { EmployeeSalaryDetail } from "../interfaces/employee";
-import encryption from "../utils/encryption";
 
 export default new (class SalaryValidation extends BaseValidation {
   public validateUpdateSalary = async (data: any) =>
@@ -22,7 +21,7 @@ export default new (class SalaryValidation extends BaseValidation {
   });
 
   public validateReleaseSalary = async (data: any) =>
-    await this.validate<{ datas: EmployeeSalaryDetail[] }>(
+    await this.validate<{ datas: EmployeeSalaryDetail[]; date: Date }>(
       yup.object().shape({
         datas: yup
           .array()
@@ -62,6 +61,15 @@ export default new (class SalaryValidation extends BaseValidation {
             })
           )
           .required("datas is required"),
+        date: yup.date().required("date is required"),
+      }),
+      data
+    );
+
+  public validateDateInput = async (data: any) =>
+    await this.validate<{ date: Date }>(
+      yup.object().shape({
+        date: yup.date().required("date is required"),
       }),
       data
     );
